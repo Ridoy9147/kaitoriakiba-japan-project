@@ -164,8 +164,8 @@
 							<div class="search_box">
 								<form class="m_fullsearch" method="get" action="/search#searchtop">
 									<div class="form-group mbtm0 clearfix">
-										<div class="input-group keyword_search">
-											<select class="form-control" name="type" class="fw_cat">
+										<div class="keyword_search">
+											<select class="form-control fw_cat" name="type">
 												<option value="">All Categories</option>
 																									<option value="4">Smartphones</option>
 																									<option value="15">Tablets</option>
@@ -226,15 +226,15 @@
 							<div class="search_box">
 								<form class="snssearch" method="get" action="/search#searchtop">
 									<div class="form-group">
-										<div class="input-group step_search">
-											<select class="form-control s_cat" name="cat">
+										<div class="step_search">
+											<div class="step_search_filters">
+												<select class="form-control s_cat" name="cat">
 											<option value="">Select Category</option>
 																							<option value="2">iPhone</option>
 																							<option value="9">Smartphones</option>
 																							<option value="998">Accessories</option>
 																							<option value="1041">Mobile Routers</option>
 																					</select>
-											<span class="step-divider">+</span>
 											<select class="form-control s_career" name="s_career" >
 												<option value="">By Carrier</option>
 																									<option value="1" >docomo</option>
@@ -245,7 +245,6 @@
 																									<option value="10" >SIM FREE</option>
 																									<option value="21" >RakutenMobile</option>
 																							</select>
-											<span class="step-divider">+</span>
 											<select class="form-control s_brand" name="brand">
 												<option value="">By Brand</option>
 																									<option value="1" >Apple</option>
@@ -261,7 +260,6 @@
 																									<option value="353" >SHARP</option>
 																									<option value="354" >SONY</option>
 																							</select>
-											<span class="step-divider">+</span>
 											<select class="form-control s_series" name="series">
 												<option value="">By Series</option>
 																									<option value="1" >iPhone</option>
@@ -284,7 +282,8 @@
 																									<option value="43" >dynapocket</option>
 																									<option value="45" >Ascend</option>
 																							</select>
-											<button class="btn" type="submit">Search <i class="fa fa-search" aria-hidden="true"></i></button>
+											</div>
+											<button class="btn step_search_btn" type="submit">Search <i class="fa fa-search" aria-hidden="true"></i></button>
 										</div>
 									</div>
 								</form>

@@ -527,11 +527,11 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 8px !important;
   width: 100% !important;
 }
 
-.keyword_search select.fw_cat {
+.keyword_search select.fw_cat,
+.keyword_search select {
   flex: 0 0 145px !important;
   width: 145px !important;
   height: 44px !important;
@@ -543,6 +543,7 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   color: #1e293b !important;
   box-shadow: none !important;
   margin: 0 !important;
+  margin-right: 10px !important;
 }
 
 .keyword_search input.keyword_search_text {
@@ -560,18 +561,17 @@ div[style*="border-bottom:1px solid #ccc"]::before {
 }
 
 .keyword_search input.keyword_search_text:focus,
-.keyword_search select.fw_cat:focus,
+.keyword_search select:focus,
 .step_search select:focus {
   border-color: #ef4444 !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
   outline: none !important;
 }
 
-/* Search Submit Button - Strict No Margin Offset */
+/* Search Action Buttons Base */
 .search_box .btn, 
-.search_word {
-  flex: 0 0 auto !important;
-  width: auto !important;
+.search_word,
+.step_search_btn {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
   color: #ffffff !important;
   font-size: 14px !important;
@@ -580,8 +580,6 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   border-radius: 8px !important;
   height: 44px !important;
   line-height: 44px !important;
-  padding: 0 22px !important;
-  margin: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -594,25 +592,43 @@ div[style*="border-bottom:1px solid #ccc"]::before {
 
 .search_box .btn:hover, 
 .search_word:hover, 
-.step_search button:hover {
+.step_search_btn:hover {
   background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35) !important;
 }
 
-/* Step by step search filter alignment */
+/* User requirement: First column search button has distinct left margin */
+.search_box .keyword_search .search_word,
+.keyword_search button,
+.keyword_search .btn {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  padding: 0 22px !important;
+  margin: 0 !important;
+  margin-left: 14px !important; /* Distinct space from input box */
+}
+
+/* Second Column: Step Search Layout */
 .step_search {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  gap: 6px !important;
+  display: block !important;
   width: 100% !important;
 }
 
+/* User requirement: Second column filter dropdowns have clear gaps between them */
+.step_search_filters {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important; /* 12px clear spacing between each select dropdown */
+  width: 100% !important;
+}
+
+.step_search_filters select,
 .step_search select {
-  flex: 1 1 calc(25% - 20px) !important;
-  min-width: 100px !important;
+  flex: 1 1 0% !important;
+  width: 25% !important;
+  min-width: 0 !important;
   height: 44px !important;
   border: 1.5px solid #cbd5e1 !important;
   border-radius: 8px !important;
@@ -621,34 +637,34 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   background-color: #ffffff !important;
   color: #1e293b !important;
   margin: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Clean, modern step divider icon (+) */
-.step-divider {
-  display: inline-flex !important;
+/* User requirement: Second column search button has distinct top space */
+.search_box .step_search .step_search_btn,
+.step_search button,
+.step_search .btn {
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 18px !important;
-  height: 18px !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: #94a3b8 !important;
-  line-height: 1 !important;
-  flex-shrink: 0 !important;
-  margin: 0 1px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  margin-top: 18px !important; /* Distinct top margin separating button from filters */
+  height: 44px !important;
+  line-height: 44px !important;
+  padding: 0 20px !important;
 }
 
-/* Hide legacy icons that caused double ++ */
-.step_search .fa-plus,
-.step_search i {
+.step_search .step-divider,
+.step_search .fa-plus {
   display: none !important;
 }
 
-.step_search button {
-  width: 100% !important;
-  margin-top: 10px !important;
-  height: 44px !important;
-  line-height: 44px !important;
+.keyword_search .fa-search,
+.step_search .fa-search {
+  display: inline-block !important;
+  color: #ffffff !important;
+  margin-left: 6px !important;
 }
 
 .hotword li a {
