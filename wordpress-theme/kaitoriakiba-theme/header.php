@@ -90,18 +90,21 @@
 <!-- WORDPRESS THEME TEMPLATE: header.php starts here                  -->
 <!-- ================================================================ -->
 <!--header-s-->
-<div class="seo">
-    <div class="container" style="padding-left:0px;">
-        <h1>iPhone, Smartphone &amp; Mobile Phone Buyback Specialist [Kaitori Akiba - Tokyo Akihabara]</h1>
-    </div>
-</div>
-<div class="user_bar">
-	<div class="container">
-				    <ul class="nav navbar-nav navbar-right nologin">
-				<li><a href="/register/" title="Register"><i class="fa fa-lock"></i> Register</a></li>
-        	    <li><a href="/login/" title="Login"><i class="fa fa-user-o"></i> Login</a></li>
+<div class="top-utility-bar">
+    <div class="container">
+        <div class="top-bar-inner">
+            <div class="top-bar-notice">
+                <span class="badge-official">Official Buyback Portal</span>
+                <span class="notice-text hidden-xs">iPhone, Smartphone &amp; Mobile Phone Specialist [Tokyo Akihabara]</span>
+            </div>
+            <ul class="top-nav-links">
+                <li><a href="<?php echo home_url('/sell-apply/'); ?>" class="link-highlight"><i class="fa fa-shopping-cart"></i> iPhone Buyback</a></li>
+                <li><a href="<?php echo home_url('/kyc-verify/'); ?>"><i class="fa fa-id-card-o"></i> eKYC Verify</a></li>
+                <li><a href="<?php echo home_url('/register/'); ?>"><i class="fa fa-user-plus"></i> Register</a></li>
+                <li><a href="<?php echo home_url('/login/'); ?>"><i class="fa fa-sign-in"></i> Login</a></li>
             </ul>
-			</div>
+        </div>
+    </div>
 </div>
 <div class="clearfix"></div>
 <header class="site-header-modern">

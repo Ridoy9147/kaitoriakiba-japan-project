@@ -31,82 +31,100 @@ body {
   background: #94a3b8;
 }
 
-/* --- 2. Top SEO Banner & User Bar --- */
-.seo {
+/* --- 2. Unified Top Utility Bar (Clean, Sleek & Non-breaking) --- */
+.top-utility-bar {
   background: #0f172a !important;
-  color: #94a3b8 !important;
-  padding: 6px 0 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 8px 0 !important;
+  position: relative !important;
+  z-index: 101 !important;
 }
 
-.seo h1 {
+.top-bar-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+.top-bar-notice {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.badge-official {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 3px 10px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  letter-spacing: 0.3px !important;
+}
+
+.notice-text {
+  color: #94a3b8 !important;
   font-size: 12px !important;
   font-weight: 500 !important;
-  color: #cbd5e1 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1.5 !important;
-  letter-spacing: 0.3px !important;
-  display: flex !important;
+}
+
+.top-nav-links {
+  display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-}
-
-.seo h1::before {
-  content: "✓ Official Buyback Portal";
-  display: inline-block;
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.user_bar {
-  background: #f8fafc !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  padding: 8px 0 !important;
-}
-
-.user_bar .container {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-end !important;
-}
-
-.user_bar ul.nologin {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
+  list-style: none !important;
   margin: 0 !important;
   padding: 0 !important;
-  list-style: none !important;
 }
 
-.user_bar ul li {
+.top-nav-links li {
   margin: 0 !important;
   padding: 0 !important;
   display: inline-block !important;
 }
 
-.user_bar ul li a {
+.top-nav-links li a {
+  color: #cbd5e1 !important;
   font-size: 12.5px !important;
   font-weight: 600 !important;
-  color: #475569 !important;
-  text-decoration: none !important;
   padding: 4px 10px !important;
   border-radius: 6px !important;
-  transition: all 0.2s ease !important;
+  text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 5px !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
 }
 
-.user_bar ul li a:hover {
-  color: #0f172a !important;
-  background: #e2e8f0 !important;
+.top-nav-links li a:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.top-nav-links li a.link-highlight {
+  color: #fca5a5 !important;
+  font-weight: 700 !important;
+}
+
+.top-nav-links li a.link-highlight:hover {
+  color: #ffffff !important;
+  background: rgba(239, 68, 68, 0.2) !important;
+}
+
+@media (max-width: 767px) {
+  .top-bar-inner {
+    justify-content: center !important;
+  }
+  .top-nav-links {
+    gap: 4px !important;
+  }
+  .top-nav-links li a {
+    font-size: 11.5px !important;
+    padding: 3px 6px !important;
+  }
 }
 
 /* --- 3. Main Header (Modern & Resilient Flexbox) --- */
