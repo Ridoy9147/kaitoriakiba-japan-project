@@ -827,26 +827,44 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   padding-left: 20px !important;
 }
 
-/* Brand & Carrier Logo Grid - Clean & Minimal Look (No clunky box-shadow) */
+/* Brand & Carrier Logo Grid - Full Width without margin: auto */
 .navigation-box ul li {
-  padding: 5px !important;
+  padding: 4px 6px !important;
+  list-style: none !important;
+  float: none !important;
+  width: 100% !important;
 }
 
-.navigation-box ul li a img {
-  border: 1px solid #f1f5f9 !important;
+.navigation-box ul li a {
+  display: block !important;
+  width: 100% !important;
+}
+
+.navigation-box ul li a img,
+.navigation-box ul li img,
+.navigation-box .img-responsive,
+.navigation-box .mcenter {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  display: block !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 8px !important;
   background: #ffffff !important;
   box-shadow: none !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  display: block !important;
 }
 
 .navigation-box ul li a:hover img {
-  border-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
   background: #f8fafc !important;
   transform: translateY(-2px) !important;
-  box-shadow: none !important;
-  opacity: 0.9 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  opacity: 0.95 !important;
 }
 
 .btn-more img {
