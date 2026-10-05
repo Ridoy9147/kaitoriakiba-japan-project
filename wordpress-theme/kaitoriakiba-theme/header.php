@@ -104,8 +104,38 @@
 			</div>
 </div>
 <div class="clearfix"></div>
-<header>
-	<div class="navbar-header visible-xs">
+<header class="site-header-modern">
+    <div class="container">
+        <div class="header-main-row">
+            <div class="header-brand">
+            	<a href="<?php echo home_url('/'); ?>" class="brand-link">
+                    <img src="<?php echo get_template_directory_uri(); ?>/upload/logo/logo.svg" title="Kaitori Akiba - iPhone &amp; Smartphone Buyback Tokyo Akihabara" alt="Kaitori Akiba" class="brand-logo-img" />
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="<?php echo home_url('/sell-apply/'); ?>" class="header-cta-btn">
+                    <i class="fa fa-paper-plane"></i>
+                    <span>Apply for Buyback</span>
+                </a>
+                <a href="<?php echo home_url('/cart/'); ?>" class="header-cart-badge">
+                    <i class="fa fa-shopping-bag"></i>
+                    <span class="cart-label">Cart</span>
+                    <em id="cart_quantity">0</em>
+                </a>
+                <div class="header-contact hidden-xs">
+                    <a href="<?php echo home_url('/qa/shop-access'); ?>" class="shop-info-link">
+                        <i class="fa fa-map-marker"></i>
+                        <div class="shop-info-text">
+                            <span class="shop-title">Akihabara Store</span>
+                            <span class="shop-sub">Open 10:00 - 19:30</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="navbar-header visible-xs">
 		<div class="header-menu ">
 			<ul>
 				<li class="btn-dt"><a href="javascript:void(0)">Search</a></li>
@@ -702,35 +732,7 @@
 				</div>
 					</div>
 	</div>
-    <div class="container header mbtm10" id="header" style="padding-left:0px;">
-        <div class="row gutter-0">
-            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-6 hidden-xs">
-            	<a href="/"><img src="<?php echo get_template_directory_uri(); ?>/upload/logo/logo.svg" title="Kaitori Akiba - iPhone &amp; Smartphone Buyback Tokyo Akihabara" alt="Kaitori Akiba" class="img-responsive" style="max-height:68px; padding-top:4px;"/></a>
-            </div>
-            <div class="col-xs-4 visible-xs">
-            	<a href="/"><img src="<?php echo get_template_directory_uri(); ?>/assets/images/topmenu/logo.svg" title="Kaitori Akiba - iPhone &amp; Smartphone Buyback Tokyo Akihabara" alt="Kaitori Akiba" class="img-responsive" style="max-height:55px; padding:8px 0px 0px 5px;"/></a>
-            </div>
-            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-8 gutter-0">
-            	<a href="/cart/">
-            		<div class="col-lg-3 col-md-5 col-sm-6 hidden-xs cart mtop15">
-                	    <em id="cart_quantity">0</em>
-                	    <span>Buyback Cart</span>
-                    </div>
-                </a>
-                <div class="col-lg-9 col-md-7 col-sm-6 hidden-xs">
-	            	<div class="worktime">
-	            	    <p class="tel"><a href="/qa/shop-access"><img src="<?php echo get_template_directory_uri(); ?>/assets/images/topmenu/tel.png" class="img-responsive" title="Toll-Free Support" alt="Toll-Free Support" /></a></p>
-	            	</div>
-	            </div>
-	            <div class="col-xs-9 visible-xs" style="float: right;">
-	            	<p class="tel"><a href="/qa/shop-access"><img src="<?php echo get_template_directory_uri(); ?>/assets/images/topmenu/tel.png" class="img-responsive" title="Toll-Free Support" alt="Toll-Free Support" /></a></p>
-	            </div>
-            </div>
-            
-            <div class="clearfix"></div>
-        </div>
-    </div>
-</header>
+
 <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/assets/css/bootstrapValidator.min.css">
 <script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/assets/js/bootstrapValidator.min.js"></script>
 <script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/assets/js/jquery.jsonp.js"></script>
