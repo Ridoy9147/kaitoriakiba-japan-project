@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>本人確認 (Identity Verification - eKYC) | Kaitori Akiba【買取アキバ】</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="古物営業法に基づく本人確認手続き（eKYC）。運転免許証・マイナンバーカード・在留カード等による身元確認。">
+    
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/base.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/custom-modern.css">
+
+    <style>
+        .kyc-container {
+            max-width: 680px;
+            margin: 36px auto 60px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 36px 32px;
+        }
+        .kyc-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .kyc-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .kyc-header p {
+            color: #64748b;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+        .legal-banner {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #166534;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .warning-banner {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-left: 4px solid #ef4444;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #991b1b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        .badge-req {
+            background: #fee2e2;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .form-control-custom {
+            height: 46px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14.5px;
+            padding: 10px 14px;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        .form-control-custom:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+            outline: none;
+        }
+
+        /* ID Cards Grid */
+        .id-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .id-type-card {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .id-type-card.selected {
+            border-color: #ef4444;
+            background: #fff5f5;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        .id-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 18px;
+        }
+        .id-type-card.selected .id-icon {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Upload frame box */
+        .id-upload-frame {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+        .id-upload-frame:hover {
+            border-color: #ef4444;
+            background: #fffafa;
+        }
+        .frame-preview {
+            max-height: 180px;
+            max-width: 100%;
+            border-radius: 8px;
+            display: none;
+            margin: 0 auto 10px auto;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-retake {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            display: none;
+            margin: 0 auto;
+        }
+
+        .btn-submit-kyc {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 10px;
+            height: 50px;
+            width: 100%;
+            border: none;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn-submit-kyc:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.45);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="seo">
+        <div class="container">
+            <h1>✓ Official Buyback Portal • Instant Cash Payout • High Rate Guarantee</h1>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="index.html">
+                <img src="assets/images/topmenu/logo.svg" alt="Kaitori Akiba" style="max-height: 52px;">
+            </a>
+            <div>
+                <a href="index.html" class="btn btn-default" style="font-weight:700; border-radius:8px;">
+                    <i class="fa fa-home"></i> ホームへ戻る (Home)
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="kyc-container">
+            <div class="kyc-header">
+                <h2>本人確認手続き (Identity Verification - eKYC)</h2>
+                <p>古物営業法に基づき、スマートフォン等の買取時には法令による身元確認が義務付けられています。</p>
+            </div>
+
+            <div class="legal-banner">
+                <i class="fa fa-lock" style="font-size:18px; margin-top:2px;"></i>
+                <div>
+                    <strong>個人情報保護および暗号化保管について：</strong><br>
+                    ご提出いただいた本人確認書類は、金融機関同等の256bit SSL暗号化通信にて厳重に保管され、古物営業法に基づく取引確認以外の目的には使用されません。
+                </div>
+            </div>
+
+            <form id="kycForm" onsubmit="return handleKycSubmit(event);">
+                <!-- Full Name (Kanji / Alphabet) -->
+                <div class="form-group">
+                    <label class="form-label" for="kyc_name">
+                        <span>氏名（漢字またはローマ字） <small>(Full Name - Match ID)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <input type="text" id="kyc_name" class="form-control-custom" placeholder="例: 秋葉 太郎 (身分証と完全一致)" required autocomplete="name">
+                </div>
+
+                <!-- Full Name (Katakana) -->
+                <div class="form-group">
+                    <label class="form-label" for="kyc_kana">
+                        <span>フリガナ（カタカナ） <small>(Name in Katakana)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <input type="text" id="kyc_kana" class="form-control-custom" placeholder="例: アキバ タロウ" required>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>生年月日 <small>(Date of Birth - 18歳以上のみ利用可)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <div style="display:flex; gap:10px;">
+                        <select id="dob_year" class="form-control-custom" style="flex:1.5;" required></select>
+                        <select id="dob_month" class="form-control-custom" style="flex:1;" required></select>
+                        <select id="dob_day" class="form-control-custom" style="flex:1;" required></select>
+                    </div>
+                    <small style="color:#64748b; font-size:12px;">※18歳未満の方は保護者の同意書および代理申込が必要です。</small>
+                </div>
+
+                <!-- Postal Code with Auto-fill Address Button -->
+                <div class="form-group">
+                    <label class="form-label" for="kyc_zip">
+                        <span>郵便番号 <small>(Postal Code - 7 digits)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="kyc_zip" class="form-control-custom" placeholder="例: 101-0021" maxlength="8" inputmode="numeric" style="flex:2;" required>
+                        <button type="button" class="btn btn-default" onclick="autoFillAddress();" style="flex:1.2; font-weight:700; border-radius:10px; height:46px;">
+                            <i class="fa fa-magic"></i> 住所自動入力
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Prefecture & City -->
+                <div style="display:flex; gap:12px;" class="form-group">
+                    <div style="flex:1;">
+                        <label class="form-label"><span>都道府県 <small>(Prefecture)</small></span><span class="badge-req">必須</span></label>
+                        <select id="kyc_pref" class="form-control-custom" required>
+                            <option value="">選択してください</option>
+                            <option value="東京都" selected>東京都</option>
+                            <option value="神奈川県">神奈川県</option>
+                            <option value="埼玉県">埼玉県</option>
+                            <option value="千葉県">千葉県</option>
+                            <option value="大阪府">大阪府</option>
+                            <option value="愛知県">愛知県</option>
+                            <option value="その他">その他 (全国対応)</option>
+                        </select>
+                    </div>
+                    <div style="flex:1.5;">
+                        <label class="form-label"><span>市区町村 <small>(City / Ward)</small></span><span class="badge-req">必須</span></label>
+                        <input type="text" id="kyc_city" class="form-control-custom" placeholder="例: 千代田区外神田" required>
+                    </div>
+                </div>
+
+                <!-- Street Address & Building -->
+                <div class="form-group">
+                    <label class="form-label" for="kyc_street">
+                        <span>番地・建物名・部屋番号 <small>(Street &amp; Building No.)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <input type="text" id="kyc_street" class="form-control-custom" placeholder="例: 1-2-3 アキバビル 401号室" required>
+                </div>
+
+                <!-- Occupation -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>ご職業 <small>(Occupation - 法令記録用)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <select id="kyc_job" class="form-control-custom" required>
+                        <option value="会社員・公務員">会社員・公務員 (Employee)</option>
+                        <option value="自営業・個人事業主">自営業・個人事業主 (Self-Employed)</option>
+                        <option value="パート・アルバイト">パート・アルバイト (Part-time)</option>
+                        <option value="学生 (18歳以上)">学生 (18歳以上 / Student)</option>
+                        <option value="主婦・主夫">専業主婦・主夫 (Homemaker)</option>
+                        <option value="その他">その他 (Other)</option>
+                    </select>
+                </div>
+
+                <hr style="border-color:#e2e8f0; margin:28px 0;">
+
+                <!-- ID Document Selection -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>ご提出いただく本人確認書類 <small>(ID Document Type)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <div class="id-type-grid">
+                        <div class="id-type-card selected" onclick="selectIdType(this, 'driver');">
+                            <div class="id-icon"><i class="fa fa-id-card"></i></div>
+                            <div>
+                                <div style="font-weight:700; font-size:13.5px;">運転免許証</div>
+                                <small style="color:#64748b;">表面・裏面の両面</small>
+                            </div>
+                        </div>
+                        <div class="id-type-card" onclick="selectIdType(this, 'mynumber');">
+                            <div class="id-icon"><i class="fa fa-vcard"></i></div>
+                            <div>
+                                <div style="font-weight:700; font-size:13.5px;">マイナンバーカード</div>
+                                <small style="color:#ef4444; font-weight:700;">※表面のみ！裏面厳禁</small>
+                            </div>
+                        </div>
+                        <div class="id-type-card" onclick="selectIdType(this, 'residence');">
+                            <div class="id-icon"><i class="fa fa-globe"></i></div>
+                            <div>
+                                <div style="font-weight:700; font-size:13.5px;">在留カード</div>
+                                <small style="color:#64748b;">有効期限3ヶ月以上・両面</small>
+                            </div>
+                        </div>
+                        <div class="id-type-card" onclick="selectIdType(this, 'passport');">
+                            <div class="id-icon"><i class="fa fa-plane"></i></div>
+                            <div>
+                                <div style="font-weight:700; font-size:13.5px;">日本国パスポート</div>
+                                <small style="color:#64748b;">顔写真面・所持人記入欄</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Warning Notice for My Number Card -->
+                <div class="warning-banner" id="mynumber_warning" style="display:none;">
+                    <i class="fa fa-exclamation-circle" style="font-size:18px;"></i>
+                    <strong>【厳重注意】マイナンバーカードの裏面は絶対にアップロードしないでください。</strong><br>
+                    マイナンバー（12桁の個人番号）が記載された裏面は法令により取得が禁止されています。表面のみを鮮明に撮影してください。
+                </div>
+
+                <!-- Front Image Upload -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>書類の表面写真 <small>(Front Side Photo)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <div class="id-upload-frame" onclick="document.getElementById('file_front').click();">
+                        <img id="prev_front" class="frame-preview">
+                        <div id="prompt_front">
+                            <i class="fa fa-camera" style="font-size:26px; color:#ef4444; margin-bottom:6px;"></i>
+                            <div style="font-weight:700; font-size:14px;">身分証の表面を撮影・アップロード</div>
+                            <small style="color:#64748b;">四隅が収まるように明るい場所で撮影してください</small>
+                        </div>
+                        <button type="button" id="btn_retake_front" class="btn-retake" onclick="event.stopPropagation(); document.getElementById('file_front').click();">再撮影・変更</button>
+                    </div>
+                    <input type="file" id="file_front" accept="image/*" capture="environment" style="display:none;" onchange="previewId(this, 'prev_front', 'prompt_front', 'btn_retake_front');" required>
+                </div>
+
+                <!-- Back Image Upload (Conditional) -->
+                <div class="form-group" id="back_upload_group">
+                    <label class="form-label">
+                        <span>書類の裏面写真 <small>(Back Side Photo)</small></span>
+                        <span class="badge-req" id="back_badge_req">必須</span>
+                    </label>
+                    <div class="id-upload-frame" onclick="document.getElementById('file_back').click();">
+                        <img id="prev_back" class="frame-preview">
+                        <div id="prompt_back">
+                            <i class="fa fa-camera" style="font-size:26px; color:#64748b; margin-bottom:6px;"></i>
+                            <div style="font-weight:700; font-size:14px;">身分証の裏面を撮影・アップロード</div>
+                            <small style="color:#64748b;">変更事項の有無に関わらず両面が必要です</small>
+                        </div>
+                        <button type="button" id="btn_retake_back" class="btn-retake" onclick="event.stopPropagation(); document.getElementById('file_back').click();">再撮影・変更</button>
+                    </div>
+                    <input type="file" id="file_back" accept="image/*" capture="environment" style="display:none;" onchange="previewId(this, 'prev_back', 'prompt_back', 'btn_retake_back');">
+                </div>
+
+                <!-- Verification Selfie -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>ご本人様の顔写真・セルフィー <small>(Selfie with Face in Frame)</small></span>
+                        <span class="badge-req">必須</span>
+                    </label>
+                    <div class="id-upload-frame" onclick="document.getElementById('file_selfie').click();">
+                        <img id="prev_selfie" class="frame-preview">
+                        <div id="prompt_selfie">
+                            <i class="fa fa-user-circle-o" style="font-size:26px; color:#3b82f6; margin-bottom:6px;"></i>
+                            <div style="font-weight:700; font-size:14px;">正面を向いたご自身のセルフィーを撮影</div>
+                            <small style="color:#64748b;">帽子やマスクを外して撮影してください</small>
+                        </div>
+                        <button type="button" id="btn_retake_selfie" class="btn-retake" onclick="event.stopPropagation(); document.getElementById('file_selfie').click();">再撮影・変更</button>
+                    </div>
+                    <input type="file" id="file_selfie" accept="image/*" capture="user" style="display:none;" onchange="previewId(this, 'prev_selfie', 'prompt_selfie', 'btn_retake_selfie');" required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="btnSubmitKyc" class="btn-submit-kyc">
+                    本人確認書類を提出する (Submit eKYC Verification)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Populate Date of Birth Selects
+        window.addEventListener('DOMContentLoaded', () => {
+            const ySel = document.getElementById('dob_year');
+            const mSel = document.getElementById('dob_month');
+            const dSel = document.getElementById('dob_day');
+
+            const currentYear = new Date().getFullYear();
+            for (let y = currentYear - 18; y >= currentYear - 85; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.innerText = y + '年 (' + (y >= 2019 ? '令和' + (y - 2018) : (y >= 1989 ? '平成' + (y - 1988) : '昭和' + (y - 1925))) + ')';
+                ySel.appendChild(opt);
+            }
+
+            for (let m = 1; m <= 12; m++) {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.innerText = m + '月';
+                mSel.appendChild(opt);
+            }
+
+            for (let d = 1; d <= 31; d++) {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.innerText = d + '日';
+                dSel.appendChild(opt);
+            }
+        });
+
+        function selectIdType(elem, type) {
+            document.querySelectorAll('.id-type-card').forEach(c => c.classList.remove('selected'));
+            elem.classList.add('selected');
+
+            const backGroup = document.getElementById('back_upload_group');
+            const mynumberWarn = document.getElementById('mynumber_warning');
+
+            if (type === 'mynumber') {
+                backGroup.style.display = 'none';
+                mynumberWarn.style.display = 'block';
+                document.getElementById('file_back').required = false;
+            } else {
+                backGroup.style.display = 'block';
+                mynumberWarn.style.display = 'none';
+                document.getElementById('file_back').required = (type === 'driver' || type === 'residence');
+            }
+        }
+
+        function previewId(input, imgId, promptId, retakeBtnId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(imgId);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById(promptId).style.display = 'none';
+                    document.getElementById(retakeBtnId).style.display = 'inline-block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function autoFillAddress() {
+            const zip = document.getElementById('kyc_zip').value.replace(/[-\s]/g, '');
+            if (!zip || zip.length !== 7) {
+                alert('7桁の郵便番号を入力してください。(例: 1010021)');
+                return;
+            }
+
+            // Quick JP Postal Code Auto-fill Demo
+            if (zip.startsWith('101')) {
+                document.getElementById('kyc_pref').value = '東京都';
+                document.getElementById('kyc_city').value = '千代田区外神田';
+            } else if (zip.startsWith('160')) {
+                document.getElementById('kyc_pref').value = '東京都';
+                document.getElementById('kyc_city').value = '新宿区西新宿';
+            } else if (zip.startsWith('530')) {
+                document.getElementById('kyc_pref').value = '大阪府';
+                document.getElementById('kyc_city').value = '大阪市北区梅田';
+            } else {
+                document.getElementById('kyc_pref').value = '東京都';
+                document.getElementById('kyc_city').value = '千代田区';
+            }
+        }
+
+        function handleKycSubmit(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('btnSubmitKyc');
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> 暗号化送信中 (Submitting eKYC...)';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert('本人確認書類の提出が完了しました！\n確認完了後、即時に買取金額のお振込み手続きへと進みます。\n(eKYC submitted successfully! We are reviewing your documents.)');
+                window.location.href = 'index.html';
+            }, 1500);
+
+            return false;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>新規会員登録 (Member Registration) | Kaitori Akiba【買取アキバ】</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Kaitori Akiba 新規会員登録ページ。iPhone・スマートフォンの高価買取サービスをご利用いただくための無料アカウント登録です。">
+    
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/base.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/custom-modern.css">
+    
+    <style>
+        .auth-container {
+            max-width: 580px;
+            margin: 40px auto 60px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 36px 32px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .auth-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .auth-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        .badge-req {
+            background: #fee2e2;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .badge-opt {
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .form-control-custom {
+            height: 46px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 15px;
+            padding: 10px 14px;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        .form-control-custom:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+            outline: none;
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .toggle-pwd {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        .strength-meter {
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: flex;
+            gap: 4px;
+        }
+        .strength-bar {
+            flex: 1;
+            height: 100%;
+            background: #e2e8f0;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+        .strength-text {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .check-custom {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-size: 13.5px;
+            color: #334155;
+            cursor: pointer;
+        }
+        .check-custom input {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .captcha-box {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+        .btn-submit-reg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 10px;
+            height: 50px;
+            width: 100%;
+            border: none;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .btn-submit-reg:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.45);
+        }
+        .field-error {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            font-weight: 600;
+        }
+        .field-error i {
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="seo">
+        <div class="container">
+            <h1>✓ Official Buyback Portal • Instant Cash Payout • High Rate Guarantee</h1>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="index.html">
+                <img src="assets/images/topmenu/logo.svg" alt="Kaitori Akiba" style="max-height: 52px;">
+            </a>
+            <div>
+                <a href="index.html" class="btn btn-default" style="font-weight:700; border-radius:8px;">
+                    <i class="fa fa-home"></i> トップページへ戻る (Home)
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Registration Form Container -->
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>新規会員登録 (Create Account)</h2>
+                <p>簡単30秒で登録完了！買取申し込みや査定履歴の管理がスムーズになります。</p>
+            </div>
+
+            <form id="regForm" novalidate onsubmit="return handleRegister(event);">
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="reg_email">
+                        <span>メールアドレス <small>(Email Address)</small></span>
+                        <span class="badge-req">必須 (Required)</span>
+                    </label>
+                    <input type="email" id="reg_email" name="email" class="form-control-custom" 
+                           placeholder="example@kaitoriakiba.jp" required autocomplete="email"
+                           aria-describedby="email-error">
+                    <div id="email-error" class="field-error"><i class="fa fa-exclamation-circle"></i>有効なメールアドレスを入力してください。 (Please enter a valid email address.)</div>
+                    <small style="color:#64748b; font-size:12px;">※登録後、確認用リンクまたは認証コードが送信されます。</small>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label class="form-label" for="reg_password">
+                        <span>パスワード <small>(Password)</small></span>
+                        <span class="badge-req">必須 (Required)</span>
+                    </label>
+                    <div class="password-wrapper">
+                        <input type="password" id="reg_password" name="password" class="form-control-custom" 
+                               placeholder="12文字以上の英数記号" required autocomplete="new-password"
+                               oninput="checkPasswordStrength(this.value);" aria-describedby="pwd-error">
+                        <i class="fa fa-eye toggle-pwd" onclick="togglePasswordVisibility('reg_password', this);"></i>
+                    </div>
+                    <div class="strength-meter">
+                        <div class="strength-bar" id="bar1"></div>
+                        <div class="strength-bar" id="bar2"></div>
+                        <div class="strength-bar" id="bar3"></div>
+                        <div class="strength-bar" id="bar4"></div>
+                    </div>
+                    <div class="strength-text">
+                        <span id="strength-label">強度: 未入力 (Strength)</span>
+                        <span>12文字以上推奨 (Min 12 chars)</span>
+                    </div>
+                    <div id="pwd-error" class="field-error"><i class="fa fa-exclamation-circle"></i>パスワードは12文字以上で入力してください。</div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label class="form-label" for="reg_confirm_password">
+                        <span>パスワード再確認 <small>(Confirm Password)</small></span>
+                        <span class="badge-req">必須 (Required)</span>
+                    </label>
+                    <div class="password-wrapper">
+                        <input type="password" id="reg_confirm_password" name="confirm_password" class="form-control-custom" 
+                               placeholder="パスワードを再度入力してください" required autocomplete="new-password"
+                               aria-describedby="confirm-pwd-error">
+                        <i class="fa fa-eye toggle-pwd" onclick="togglePasswordVisibility('reg_confirm_password', this);"></i>
+                    </div>
+                    <div id="confirm-pwd-error" class="field-error"><i class="fa fa-exclamation-circle"></i>パスワードが一致しません。 (Passwords do not match.)</div>
+                </div>
+
+                <!-- Japanese Phone Number -->
+                <div class="form-group">
+                    <label class="form-label" for="reg_tel">
+                        <span>携帯電話番号 <small>(Phone Number - JP Format)</small></span>
+                        <span class="badge-req">必須 (Required)</span>
+                    </label>
+                    <input type="tel" id="reg_tel" name="tel" class="form-control-custom" 
+                           placeholder="090-1234-5678 (ハイフン有無どちらでも可)" 
+                           inputmode="numeric" required autocomplete="tel" aria-describedby="tel-error">
+                    <div id="tel-error" class="field-error"><i class="fa fa-exclamation-circle"></i>有効な日本の携帯電話番号 (070/080/090) を入力してください。</div>
+                    <small style="color:#64748b; font-size:12px;">※SMS認証または取引連絡時に使用します。</small>
+                </div>
+
+                <hr style="border-color:#e2e8f0; margin: 24px 0;">
+
+                <!-- Terms and Privacy Checkboxes -->
+                <div class="form-group">
+                    <label class="check-custom">
+                        <input type="checkbox" id="agree_terms" required>
+                        <span>
+                            <a href="/site-terms/" target="_blank" style="color:#ef4444; font-weight:700;">利用規約 (Terms of Service)</a> に同意する <span class="badge-req" style="margin-left:4px;">必須</span>
+                        </span>
+                    </label>
+                    <div id="terms-error" class="field-error"><i class="fa fa-exclamation-circle"></i>利用規約への同意が必要です。</div>
+
+                    <label class="check-custom">
+                        <input type="checkbox" id="agree_privacy" required>
+                        <span>
+                            <a href="/privacypolicy/" target="_blank" style="color:#ef4444; font-weight:700;">プライバシーポリシー (Privacy Policy)</a> に同意する <span class="badge-req" style="margin-left:4px;">必須</span>
+                        </span>
+                    </label>
+                    <div id="privacy-error" class="field-error"><i class="fa fa-exclamation-circle"></i>プライバシーポリシーへの同意が必要です。</div>
+
+                    <label class="check-custom">
+                        <input type="checkbox" id="opt_marketing" checked>
+                        <span>お得な買取価格アップキャンペーンや新着情報をメールで受け取る <span class="badge-opt">任意</span></span>
+                    </label>
+                </div>
+
+                <!-- Cloudflare Turnstile / Captcha Mock -->
+                <div class="captcha-box">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="checkbox" id="captcha_check" style="width:20px; height:20px; cursor:pointer;" required>
+                        <span style="font-weight:700; font-size:14px; color:#1e293b;">私はロボットではありません <small>(I'm not a robot)</small></span>
+                    </div>
+                    <div style="text-align:right;">
+                        <i class="fa fa-shield" style="font-size:22px; color:#3b82f6;"></i>
+                        <div style="font-size:10px; color:#94a3b8;">Cloudflare Turnstile</div>
+                    </div>
+                </div>
+                <div id="captcha-error" class="field-error" style="margin-top:-14px; margin-bottom:14px;"><i class="fa fa-exclamation-circle"></i>セキュリティ認証を完了してください。</div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="btnSubmit" class="btn-submit-reg">
+                    アカウントを作成する (Create Account)
+                </button>
+            </form>
+
+            <div style="text-align:center; margin-top:24px; font-size:14px; color:#475569;">
+                すでにアカウントをお持ちですか？ 
+                <a href="index.html#header" style="color:#ef4444; font-weight:700; text-decoration:none;">ログイン (Log In)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function togglePasswordVisibility(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa fa-eye-slash toggle-pwd';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa fa-eye toggle-pwd';
+            }
+        }
+
+        function checkPasswordStrength(pwd) {
+            const b1 = document.getElementById('bar1');
+            const b2 = document.getElementById('bar2');
+            const b3 = document.getElementById('bar3');
+            const b4 = document.getElementById('bar4');
+            const lbl = document.getElementById('strength-label');
+
+            [b1, b2, b3, b4].forEach(b => b.style.background = '#e2e8f0');
+
+            if (!pwd) {
+                lbl.innerText = '強度: 未入力';
+                return;
+            }
+
+            let score = 0;
+            if (pwd.length >= 8) score++;
+            if (pwd.length >= 12) score++;
+            if (/[0-9]/.test(pwd) && /[a-zA-Z]/.test(pwd)) score++;
+            if (/[^a-zA-Z0-9]/.test(pwd)) score++;
+
+            if (score === 1) {
+                b1.style.background = '#ef4444';
+                lbl.innerText = '強度: 弱い (Weak)';
+                lbl.style.color = '#ef4444';
+            } else if (score === 2) {
+                b1.style.background = '#f59e0b';
+                b2.style.background = '#f59e0b';
+                lbl.innerText = '強度: 普通 (Fair)';
+                lbl.style.color = '#f59e0b';
+            } else if (score === 3) {
+                b1.style.background = '#3b82f6';
+                b2.style.background = '#3b82f6';
+                b3.style.background = '#3b82f6';
+                lbl.innerText = '強度: 良い (Good)';
+                lbl.style.color = '#3b82f6';
+            } else if (score >= 4) {
+                [b1, b2, b3, b4].forEach(b => b.style.background = '#10b981');
+                lbl.innerText = '強度: 非常に強力 (Strong)';
+                lbl.style.color = '#10b981';
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            let valid = true;
+
+            // Reset errors
+            document.querySelectorAll('.field-error').forEach(el => el.style.display = 'none');
+
+            // Email
+            const email = document.getElementById('reg_email').value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('email-error').style.display = 'block';
+                valid = false;
+            }
+
+            // Password
+            const pwd = document.getElementById('reg_password').value;
+            if (!pwd || pwd.length < 12) {
+                document.getElementById('pwd-error').style.display = 'block';
+                valid = false;
+            }
+
+            // Confirm Password
+            const confPwd = document.getElementById('reg_confirm_password').value;
+            if (pwd !== confPwd) {
+                document.getElementById('confirm-pwd-error').style.display = 'block';
+                valid = false;
+            }
+
+            // JP Tel check (070, 080, 090 or general 10-11 digits)
+            const tel = document.getElementById('reg_tel').value.replace(/[-\s]/g, '');
+            if (!tel || !/^(0[789]0\d{8}|0\d{9,10})$/.test(tel)) {
+                document.getElementById('tel-error').style.display = 'block';
+                valid = false;
+            }
+
+            // Terms
+            if (!document.getElementById('agree_terms').checked) {
+                document.getElementById('terms-error').style.display = 'block';
+                valid = false;
+            }
+
+            // Privacy
+            if (!document.getElementById('agree_privacy').checked) {
+                document.getElementById('privacy-error').style.display = 'block';
+                valid = false;
+            }
+
+            // Captcha
+            if (!document.getElementById('captcha_check').checked) {
+                document.getElementById('captcha-error').style.display = 'block';
+                valid = false;
+            }
+
+            if (!valid) return false;
+
+            const btn = document.getElementById('btnSubmit');
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> 登録処理中 (Creating Account...)';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert('会員登録が完了しました！\n確認メールを送信しましたので受信箱をご確認ください。\n(Account created successfully! Please check your email for the confirmation link.)');
+                window.location.href = 'index.html';
+            }, 1200);
+
+            return false;
+        }
+    </script>
+</body>
+</html>

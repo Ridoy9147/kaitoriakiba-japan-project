@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>iPhone 買取査定・申込フォーム (Buyback Application) | Kaitori Akiba【買取アキバ】</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Kaitori Akiba iPhone買取オンライン申込フォーム。かんたん6ステップで査定・申込完了。最短即日入金！">
+    
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/base.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/custom-modern.css">
+
+    <style>
+        .apply-container {
+            max-width: 840px;
+            margin: 30px auto 60px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 36px 32px;
+        }
+
+        /* Multi-step progress bar */
+        .progress-stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 36px;
+        }
+        .progress-stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        .step-item {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 16.66%;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #64748b;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px auto;
+            border: 2px solid #cbd5e1;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        .step-item.active .step-circle {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+        }
+        .step-item.completed .step-circle {
+            background: #10b981;
+            color: #ffffff;
+            border-color: #10b981;
+        }
+        .step-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        .step-item.active .step-label {
+            color: #0f172a;
+        }
+
+        .step-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .step-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-title i {
+            color: #ef4444;
+        }
+
+        .form-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        .badge-req {
+            background: #fee2e2;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .badge-opt {
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .form-control-custom {
+            height: 46px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14.5px;
+            padding: 10px 14px;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        .form-control-custom:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+            outline: none;
+        }
+
+        /* Radio Card Selection */
+        .radio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .radio-card {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: #ffffff;
+        }
+        .radio-card input {
+            position: absolute;
+            opacity: 0;
+        }
+        .radio-card:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+        .radio-card.selected {
+            border-color: #ef4444;
+            background: #fff5f5;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        .radio-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .radio-card-desc {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Color circles */
+        .color-swatches {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .color-swatch-item {
+            text-align: center;
+            cursor: pointer;
+        }
+        .color-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            margin: 0 auto 4px auto;
+            transition: all 0.2s;
+        }
+        .color-swatch-item.selected .color-circle {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Upload area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-area:hover {
+            border-color: #ef4444;
+            background: #fffafa;
+        }
+        .preview-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .preview-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #cbd5e1;
+            position: relative;
+        }
+        .thumb-wrapper {
+            position: relative;
+        }
+        .thumb-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        /* Navigation Buttons */
+        .stepper-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn-prev {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .btn-prev:hover {
+            background: #e2e8f0;
+        }
+        .btn-next {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 28px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+        }
+
+        /* Review summary */
+        .summary-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        .price-highlight {
+            background: #fff1f2;
+            border: 1.5px solid #fecdd3;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .price-val {
+            font-size: 32px;
+            font-weight: 900;
+            color: #dc2626;
+            margin: 6px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="seo">
+        <div class="container">
+            <h1>✓ Official Buyback Portal • Instant Cash Payout • High Rate Guarantee</h1>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="index.html">
+                <img src="assets/images/topmenu/logo.svg" alt="Kaitori Akiba" style="max-height: 52px;">
+            </a>
+            <div>
+                <a href="index.html" class="btn btn-default" style="font-weight:700; border-radius:8px;">
+                    <i class="fa fa-home"></i> ホームへ戻る (Home)
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="apply-container">
+            <!-- Stepper Progress Header -->
+            <div class="progress-stepper">
+                <div class="step-item active" id="step-node-1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">端末情報<br><small>Details</small></div>
+                </div>
+                <div class="step-item" id="step-node-2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">状態確認<br><small>Condition</small></div>
+                </div>
+                <div class="step-item" id="step-node-3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">ロック確認<br><small>Security</small></div>
+                </div>
+                <div class="step-item" id="step-node-4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">引渡方法<br><small>Delivery</small></div>
+                </div>
+                <div class="step-item" id="step-node-5">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">振込口座<br><small>Payment</small></div>
+                </div>
+                <div class="step-item" id="step-node-6">
+                    <div class="step-circle">6</div>
+                    <div class="step-label">最終確認<br><small>Review</small></div>
+                </div>
+            </div>
+
+            <form id="sellForm" onsubmit="return false;">
+                <!-- ================= STEP 1: Phone Details ================= -->
+                <div class="step-section active" id="sec-1">
+                    <div class="step-title"><i class="fa fa-mobile"></i> ステップ 1: iPhone端末情報の選択 (Phone Details)</div>
+                    
+                    <!-- Model Selection -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>iPhone機種名 (Model)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <select id="phone_model" class="form-control-custom" onchange="calculateEstimate();">
+                            <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+                            <option value="iPhone 16 Pro" selected>iPhone 16 Pro</option>
+                            <option value="iPhone 16 Plus">iPhone 16 Plus</option>
+                            <option value="iPhone 16">iPhone 16</option>
+                            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                            <option value="iPhone 15">iPhone 15</option>
+                            <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                            <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                            <option value="iPhone 14">iPhone 14</option>
+                            <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                            <option value="iPhone 13">iPhone 13</option>
+                        </select>
+                    </div>
+
+                    <!-- Storage Capacity -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>ストレージ容量 (Storage Capacity)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div class="radio-grid" id="storage_grid">
+                            <div class="radio-card" onclick="selectRadioCard(this, 'storage', '128GB');">
+                                <input type="radio" name="storage" value="128GB">
+                                <div class="radio-card-title">128GB</div>
+                            </div>
+                            <div class="radio-card selected" onclick="selectRadioCard(this, 'storage', '256GB');">
+                                <input type="radio" name="storage" value="256GB" checked>
+                                <div class="radio-card-title">256GB</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'storage', '512GB');">
+                                <input type="radio" name="storage" value="512GB">
+                                <div class="radio-card-title">512GB</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'storage', '1TB');">
+                                <input type="radio" name="storage" value="1TB">
+                                <div class="radio-card-title">1TB</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color Swatches -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>カラー (Color)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div class="color-swatches" id="color_swatches">
+                            <div class="color-swatch-item selected" onclick="selectColor(this, 'デザートチタニウム / Desert Titanium');">
+                                <div class="color-circle" style="background:#d4b39b;"></div>
+                                <small>Desert</small>
+                            </div>
+                            <div class="color-swatch-item" onclick="selectColor(this, 'ナチュラルチタニウム / Natural Titanium');">
+                                <div class="color-circle" style="background:#9f9b96;"></div>
+                                <small>Natural</small>
+                            </div>
+                            <div class="color-swatch-item" onclick="selectColor(this, 'ホワイトチタニウム / White Titanium');">
+                                <div class="color-circle" style="background:#f2f2f2;"></div>
+                                <small>White</small>
+                            </div>
+                            <div class="color-swatch-item" onclick="selectColor(this, 'ブラックチタニウム / Black Titanium');">
+                                <div class="color-circle" style="background:#2b2b2e;"></div>
+                                <small>Black</small>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected_color" value="デザートチタニウム / Desert Titanium">
+                    </div>
+
+                    <!-- Carrier / SIM -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>キャリア・SIMロック状態 (Carrier / SIM Status)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div class="radio-grid">
+                            <div class="radio-card selected" onclick="selectRadioCard(this, 'carrier', 'SIMフリー (SIM-Free)');">
+                                <input type="radio" name="carrier" value="SIMフリー (SIM-Free)" checked>
+                                <div class="radio-card-title">SIMフリー</div>
+                                <div class="radio-card-desc">Apple Store / SIMロック解除済</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'carrier', 'docomo');">
+                                <input type="radio" name="carrier" value="docomo">
+                                <div class="radio-card-title">docomo</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'carrier', 'au');">
+                                <input type="radio" name="carrier" value="au">
+                                <div class="radio-card-title">au</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'carrier', 'SoftBank');">
+                                <input type="radio" name="carrier" value="SoftBank">
+                                <div class="radio-card-title">SoftBank</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'carrier', 'Rakuten');">
+                                <input type="radio" name="carrier" value="Rakuten">
+                                <div class="radio-card-title">楽天モバイル</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IMEI Number -->
+                    <div class="form-group">
+                        <label class="form-label" for="imei_num">
+                            <span>
+                                IMEI番号 (15桁) 
+                                <i class="fa fa-question-circle" style="color:#3b82f6; cursor:pointer;" 
+                                   title="電話アプリで「*#06#」をダイヤルすると表示されます。(Dial *#06#)"></i>
+                            </span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <input type="text" id="imei_num" class="form-control-custom" 
+                               placeholder="例: 351234567890123" maxlength="15" inputmode="numeric">
+                        <small style="color:#64748b; font-size:12px;">※設定 ＞ 一般 ＞ 情報、またはダイヤル画面で「*#06#」を入力して確認できます。</small>
+                    </div>
+
+                    <!-- Purchase Age -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>購入時期・使用期間 (Device Age)</span>
+                            <span class="badge-opt">任意</span>
+                        </label>
+                        <select id="purchase_age" class="form-control-custom">
+                            <option value="1ヶ月以内 (Under 1 month)">1ヶ月以内 (Under 1 month)</option>
+                            <option value="1〜6ヶ月 (1-6 months)">1〜6ヶ月 (1-6 months)</option>
+                            <option value="6ヶ月〜1年 (6-12 months)">6ヶ月〜1年 (6-12 months)</option>
+                            <option value="1〜2年 (1-2 years)">1〜2年 (1-2 years)</option>
+                            <option value="2年以上 (2+ years)">2年以上 (2+ years)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ================= STEP 2: Condition Checklist ================= -->
+                <div class="step-section" id="sec-2">
+                    <div class="step-title"><i class="fa fa-check-square-o"></i> ステップ 2: 状態チェック (Condition Checklist)</div>
+                    
+                    <!-- Screen Condition -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>画面・液晶の状態 (Screen Condition)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div class="radio-grid">
+                            <div class="radio-card selected" onclick="selectRadioCard(this, 'screen_cond', '傷なし・美品 (Sランク/Aランク)');">
+                                <div class="radio-card-title">傷なし・美品</div>
+                                <div class="radio-card-desc">目立つ傷なし</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'screen_cond', '微細な小傷あり (Bランク)');">
+                                <div class="radio-card-title">微細な小傷</div>
+                                <div class="radio-card-desc">光に当てると見える程度</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'screen_cond', '深い傷・画面焼けあり');">
+                                <div class="radio-card-title">明らかな線傷</div>
+                                <div class="radio-card-desc">爪に引っかかる傷</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'screen_cond', '画面割れ・ヒビ (Cランク/ジャンク)');">
+                                <div class="radio-card-title">画面割れ・ヒビ</div>
+                                <div class="radio-card-desc">ガラス破損・液晶漏れ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Body Condition -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>外装・フレームの状態 (Body &amp; Frame)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div class="radio-grid">
+                            <div class="radio-card selected" onclick="selectRadioCard(this, 'body_cond', '目立つ傷なし (Flawless)');">
+                                <div class="radio-card-title">極美品</div>
+                                <div class="radio-card-desc">打痕・欠けなし</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'body_cond', '角に軽微な擦れ傷あり');">
+                                <div class="radio-card-title">微細なスレ</div>
+                                <div class="radio-card-desc">日常使用に伴う擦れ</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'body_cond', '目立つ打痕・塗装剥がれあり');">
+                                <div class="radio-card-title">目立つ打痕</div>
+                                <div class="radio-card-desc">落下傷・塗装剥げ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Battery Health -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>バッテリー最大容量 (Battery Health %)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div style="display:flex; align-items:center; gap:16px;">
+                            <input type="range" id="battery_range" min="50" max="100" value="95" style="flex:1;" 
+                                   oninput="document.getElementById('battery_val').value = this.value; calculateEstimate();">
+                            <div style="display:flex; align-items:center; gap:4px; width:100px;">
+                                <input type="number" id="battery_val" class="form-control-custom" value="95" min="50" max="100" 
+                                       style="height:38px; text-align:center;"
+                                       oninput="document.getElementById('battery_range').value = this.value; calculateEstimate();">
+                                <span style="font-weight:700;">%</span>
+                            </div>
+                        </div>
+                        <small style="color:#64748b; font-size:12px;">※「設定」＞「バッテリー」＞「バッテリーの状態」で確認できます。</small>
+                    </div>
+
+                    <!-- Hardware checklist -->
+                    <div class="form-group">
+                        <label class="form-label"><span>基本動作確認 (Functional Checks)</span><span class="badge-req">必須</span></label>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                            <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                                <div style="font-weight:700; font-size:13px; margin-bottom:6px;">電源は正常に入りますか？</div>
+                                <label><input type="radio" name="chk_power" value="はい" checked> 正常に起動する</label>
+                                <label style="margin-left:14px;"><input type="radio" name="chk_power" value="いいえ"> 起動しない</label>
+                            </div>
+                            <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                                <div style="font-weight:700; font-size:13px; margin-bottom:6px;">Face ID / カメラは正常ですか？</div>
+                                <label><input type="radio" name="chk_camera" value="はい" checked> 正常に動作する</label>
+                                <label style="margin-left:14px;"><input type="radio" name="chk_camera" value="いいえ"> 不具合あり</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>端末写真の添付 (Photos Upload - Front, Back, Sides)</span>
+                            <span class="badge-opt">任意 (推奨)</span>
+                        </label>
+                        <div class="upload-area" onclick="document.getElementById('photo_input').click();">
+                            <i class="fa fa-camera" style="font-size:28px; color:#ef4444; margin-bottom:8px;"></i>
+                            <div style="font-weight:700; color:#1e293b;">写真を選択またはカメラで撮影</div>
+                            <div style="font-size:12px; color:#64748b;">(前面・背面・四隅の傷など複数枚アップロード可)</div>
+                        </div>
+                        <input type="file" id="photo_input" multiple accept="image/*" style="display:none;" onchange="handlePhotoUpload(this);">
+                        <div class="preview-grid" id="photo_preview_grid"></div>
+                    </div>
+                </div>
+
+                <!-- ================= STEP 3: Lock & Security ================= -->
+                <div class="step-section" id="sec-3">
+                    <div class="step-title"><i class="fa fa-shield"></i> ステップ 3: ロック解除・セキュリティ確認 (Security Check)</div>
+                    
+                    <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:10px; padding:16px; margin-bottom:20px;">
+                        <div style="color:#9f1239; font-weight:800; font-size:14px; margin-bottom:4px;">
+                            <i class="fa fa-exclamation-triangle"></i> 重要：初期化およびアカウント連携の解除が必須です
+                        </div>
+                        <div style="color:#be123c; font-size:12.5px;">
+                            アクティベーションロックがかかった端末は買取不可となります。必ず事前にサインアウトと初期化を行ってください。
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="check-custom">
+                            <input type="checkbox" id="chk_findmy" required>
+                            <span><strong>「iPhoneを探す」をオフにしました</strong> (Find My iPhone is disabled) <span class="badge-req">必須</span></span>
+                        </label>
+                        <label class="check-custom">
+                            <input type="checkbox" id="chk_appleid" required>
+                            <span><strong>Apple ID / iCloudからサインアウトしました</strong> (Signed out of Apple ID) <span class="badge-req">必須</span></span>
+                        </label>
+                        <label class="check-custom">
+                            <input type="checkbox" id="chk_mdm" required>
+                            <span><strong>MDM・会社等の遠隔管理ロックはありません</strong> (No MDM / Corporate Lock) <span class="badge-req">必須</span></span>
+                        </label>
+                    </div>
+
+                    <!-- Purchase Payment Type & Installment Due Status -->
+                    <div class="form-group" style="margin-top:20px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+                        <label class="form-label">
+                            <span>端末代金の支払方法 (Payment Method at Purchase)</span>
+                            <span class="badge-req">必須</span>
+                        </label>
+                        <div class="radio-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:14px;">
+                            <div class="radio-card selected" id="card_pay_full" onclick="selectPaymentType('full', this);">
+                                <div class="radio-card-title"><i class="fa fa-check-circle" style="color:#10b981;"></i> 一括払い (Full Payment)</div>
+                                <div class="radio-card-desc">全額一括で購入（残債なし）</div>
+                            </div>
+                            <div class="radio-card" id="card_pay_installment" onclick="selectPaymentType('installment', this);">
+                                <div class="radio-card-title"><i class="fa fa-credit-card" style="color:#3b82f6;"></i> 分割払い (Installment Plan)</div>
+                                <div class="radio-card-desc">ローン・月々割・キャリア分割払い</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="payment_type" value="一括払い (Full Payment)">
+
+                        <!-- Dynamic Installment Status Sub-section (Conditional) -->
+                        <div id="installment_detail_box" style="display:none; border-top:1px dashed #cbd5e1; padding-top:16px; margin-top:10px;">
+                            <label class="form-label">
+                                <span>分割払いの残債（未払い残高）はありますか？ (Is there any remaining installment due?)</span>
+                                <span class="badge-req">必須</span>
+                            </label>
+                            <div class="radio-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:14px;">
+                                <div class="radio-card selected" id="card_debt_none" onclick="selectInstallmentDebtStatus('none', this);">
+                                    <div class="radio-card-title">残債なし・完済済</div>
+                                    <div class="radio-card-desc">分割終了 / 一括清算済み (◯)</div>
+                                </div>
+                                <div class="radio-card" id="card_debt_exist" onclick="selectInstallmentDebtStatus('exist', this);">
+                                    <div class="radio-card-title" style="color:#b91c1c;">残債あり（返済中）</div>
+                                    <div class="radio-card-desc">現在も分割支払い中 (▲)</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="installment_debt_status" value="残債なし (No Due)">
+
+                            <!-- If Debt exists: Amount & remaining months -->
+                            <div id="debt_amount_box" style="display:none; background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:14px; margin-top:10px;">
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                                    <div>
+                                        <label class="form-label" style="font-size:13px; color:#991b1b;">
+                                            <span>残債の残額 (Remaining Due Amount)</span>
+                                            <span class="badge-req">必須</span>
+                                        </label>
+                                        <div style="position:relative;">
+                                            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:700; color:#64748b;">¥</span>
+                                            <input type="number" id="debt_amount_val" class="form-control-custom" placeholder="例: 35000" min="0" step="1000" style="padding-left:28px;" inputmode="numeric">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:13px; color:#991b1b;">
+                                            <span>残りの支払回数・期間</span>
+                                            <span class="badge-opt">任意</span>
+                                        </label>
+                                        <select id="debt_months" class="form-control-custom">
+                                            <option value="">選択してください</option>
+                                            <option value="1〜3ヶ月 (残りわずか)">1〜3回 (1-3 months)</option>
+                                            <option value="4〜6ヶ月">4〜6回 (4-6 months)</option>
+                                            <option value="7〜12ヶ月">7〜12回 (7-12 months)</option>
+                                            <option value="1年以上">12回以上 (1+ years)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="margin-top:10px; color:#b91c1c; font-size:12px; line-height:1.5;">
+                                    <i class="fa fa-info-circle"></i> <strong>【分割中端末（利用制限▲）の買取について】</strong><br>
+                                    端末代金の分割支払いが残っている場合でも買取可能ですが、査定額の一部保留または減額となる場合がございます。また、売却後もキャリアへの端末代金支払いを継続する責任はお客様にございます。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="check-custom" style="background:#f8fafc; border:1px solid #e2e8f0; padding:14px; border-radius:8px;">
+                            <input type="checkbox" id="chk_legal_owner" required>
+                            <span><strong>宣誓：私は本端末の正当な所有者であり、不正取得・盗難品ではありません。</strong> (I certify that I am the legitimate owner of this device and it is not stolen.) <span class="badge-req">必須</span></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ================= STEP 4: Delivery Method ================= -->
+                <div class="step-section" id="sec-4">
+                    <div class="step-title"><i class="fa fa-truck"></i> ステップ 4: 買取・引渡方法の選択 (Delivery Method)</div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span>売却方法の選択 (Method)</span><span class="badge-req">必須</span></label>
+                        <div class="radio-grid" style="grid-template-columns: 1fr 1fr;">
+                            <div class="radio-card selected" onclick="selectRadioCard(this, 'delivery_type', '宅配買取 (Mail-in Delivery)'); toggleDeliveryUI('mail');">
+                                <div class="radio-card-title"><i class="fa fa-cube" style="font-size:22px; color:#10b981; display:block; margin-bottom:6px;"></i> 宅配買取 (郵送)</div>
+                                <div class="radio-card-desc">送料無料・自宅から発送</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadioCard(this, 'delivery_type', '店頭買取 (In-Store Visit)'); toggleDeliveryUI('store');">
+                                <div class="radio-card-title"><i class="fa fa-building-o" style="font-size:22px; color:#f59e0b; display:block; margin-bottom:6px;"></i> 店頭買取 (秋葉原店)</div>
+                                <div class="radio-card-desc">即日スピード現金払い</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="mail_delivery_options">
+                        <div class="form-group">
+                            <label class="form-label"><span>無料梱包キットの送付 (Shipping Kit)</span><span class="badge-req">必須</span></label>
+                            <label style="margin-right:20px;"><input type="radio" name="kit_req" value="希望する (ダンボール・伝票を送付)" checked> 希望する (無料キットをお届け)</label>
+                            <label><input type="radio" name="kit_req" value="希望しない (自分で梱包して即発送)"> 希望しない (自宅の箱で即発送)</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><span>集荷希望日時 (Preferred Pickup Date &amp; Time)</span><span class="badge-opt">任意</span></label>
+                            <div style="display:flex; gap:12px;">
+                                <input type="date" id="pickup_date" class="form-control-custom" style="flex:1;">
+                                <select id="pickup_time" class="form-control-custom" style="flex:1;">
+                                    <option value="午前中 (9:00〜12:00)">午前中 (9:00〜12:00)</option>
+                                    <option value="14:00〜16:00">14:00〜16:00</option>
+                                    <option value="16:00〜18:00">16:00〜18:00</option>
+                                    <option value="18:00〜20:00">18:00〜20:00</option>
+                                    <option value="19:00〜21:00">19:00〜21:00</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="store_delivery_options" style="display:none;">
+                        <div class="form-group">
+                            <label class="form-label"><span>来店予定日時 (Store Visit Date &amp; Time)</span><span class="badge-req">必須</span></label>
+                            <div style="display:flex; gap:12px;">
+                                <input type="date" id="visit_date" class="form-control-custom" style="flex:1;">
+                                <select id="visit_time" class="form-control-custom" style="flex:1;">
+                                    <option value="11:00〜13:00">11:00〜13:00</option>
+                                    <option value="13:00〜15:00">13:00〜15:00</option>
+                                    <option value="15:00〜17:00">15:00〜17:00</option>
+                                    <option value="17:00〜19:00">17:00〜19:00</option>
+                                </select>
+                            </div>
+                            <small style="color:#64748b; font-size:12px;">店舗所在地: 東京都千代田区外神田 (秋葉原駅徒歩3分)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= STEP 5: Payment Details ================= -->
+                <div class="step-section" id="sec-5">
+                    <div class="step-title"><i class="fa fa-credit-card"></i> ステップ 5: 振込先口座情報 (Payment Bank Details)</div>
+
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px; margin-bottom:20px;">
+                        <i class="fa fa-info-circle" style="color:#2563eb;"></i> 
+                        <strong style="color:#1e40af;">名義人に関するご注意：</strong> 
+                        <span style="color:#1d4ed8; font-size:12.5px;">お振込先口座名義は、本人確認書類（ID）のお名前と完全に一致している必要があります。</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span>銀行名 (Bank Name)</span><span class="badge-req">必須</span></label>
+                        <select id="bank_name" class="form-control-custom">
+                            <option value="三菱UFJ銀行">三菱UFJ銀行 (MUFG Bank)</option>
+                            <option value="三井住友銀行">三井住友銀行 (SMBC)</option>
+                            <option value="みずほ銀行">みずほ銀行 (Mizuho Bank)</option>
+                            <option value="ゆうちょ銀行">ゆうちょ銀行 (Japan Post Bank)</option>
+                            <option value="楽天銀行">楽天銀行 (Rakuten Bank)</option>
+                            <option value="PayPay銀行">PayPay銀行 (PayPay Bank)</option>
+                            <option value="住信SBIネット銀行">住信SBIネット銀行 (SBI Sumishin)</option>
+                            <option value="その他地方銀行・信用金庫">その他地方銀行・信用金庫 (Other Bank)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span>支店名 (Branch Name)</span><span class="badge-req">必須</span></label>
+                        <input type="text" id="bank_branch" class="form-control-custom" placeholder="例: 秋葉原支店 (または店番3桁)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span>口座種別 (Account Type)</span><span class="badge-req">必須</span></label>
+                        <label style="margin-right:24px;"><input type="radio" name="acc_type" value="普通" checked> 普通預金 (Ordinary)</label>
+                        <label><input type="radio" name="acc_type" value="当座"> 当座預金 (Current)</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span>口座番号 7桁 (Account Number)</span><span class="badge-req">必須</span></label>
+                        <input type="text" id="acc_number" class="form-control-custom" placeholder="例: 1234567 (半角数字7桁)" maxlength="7" inputmode="numeric" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span>口座名義人・カタカナ (Account Holder Name - Katakana)</span><span class="badge-req">必須</span></label>
+                        <input type="text" id="acc_holder" class="form-control-custom" placeholder="例: アキバ タロウ (全角カタカナ)" required>
+                        <small style="color:#64748b; font-size:12px;">※身分証明書と同一のフリガナを入力してください。</small>
+                    </div>
+                </div>
+
+                <!-- ================= STEP 6: Review & Submit ================= -->
+                <div class="step-section" id="sec-6">
+                    <div class="step-title"><i class="fa fa-file-text-o"></i> ステップ 6: 最終確認 (Summary &amp; Submit)</div>
+
+                    <!-- Price Highlight -->
+                    <div class="price-highlight">
+                        <div style="font-weight:700; color:#9f1239; font-size:14px;">オンライン事前査定予想金額 (Estimated Buyback Price)</div>
+                        <div class="price-val" id="summary_price">¥195,000</div>
+                        <small style="color:#881337;">※実機検品後の状態および付属品の有無により、最終価格が確定します。</small>
+                    </div>
+
+                    <!-- Details Summary Card -->
+                    <div class="summary-card">
+                        <div style="font-weight:800; font-size:16px; margin-bottom:12px; color:#0f172a; display:flex; justify-content:space-between;">
+                            <span>申込み内容の概要</span>
+                            <a href="javascript:goToStep(1);" style="color:#ef4444; font-size:13px; font-weight:700;"><i class="fa fa-pencil"></i> 修正する</a>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">機種・容量:</span>
+                            <strong id="sum_model">iPhone 16 Pro (256GB)</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">カラー:</span>
+                            <span id="sum_color">Desert Titanium</span>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">IMEI番号:</span>
+                            <span id="sum_imei">351234567890123</span>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">画面・外装状態:</span>
+                            <span id="sum_condition">美品 / Sランク</span>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">バッテリー容量:</span>
+                            <span id="sum_battery">95%</span>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">支払・残債状況:</span>
+                            <span id="sum_payment">一括払い (残債なし)</span>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">引渡方法:</span>
+                            <span id="sum_delivery">宅配買取 (無料集荷)</span>
+                        </div>
+                        <div class="summary-row">
+                            <span style="color:#64748b;">振込先:</span>
+                            <span id="sum_bank">三菱UFJ銀行</span>
+                        </div>
+                    </div>
+
+                    <!-- Legal compliance checkbox -->
+                    <div class="form-group">
+                        <label class="check-custom">
+                            <input type="checkbox" id="chk_final_agree" required>
+                            <span>古物営業法に基づく取引記録の10年間保存および売買規約に同意し、買取を申し込みます。</span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn-submit-reg" id="btnFinalSubmit" onclick="submitFinalApplication();" style="margin-top:16px;">
+                        <i class="fa fa-paper-plane"></i> 買取を申し込む (Submit Buyback Application)
+                    </button>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="stepper-nav" id="stepper_nav_bar">
+                    <button type="button" class="btn-prev" id="btnPrev" onclick="navigateStep(-1);" style="display:none;">
+                        <i class="fa fa-arrow-left"></i> 前へ戻る (Back)
+                    </button>
+                    <button type="button" class="btn-next" id="btnNext" onclick="navigateStep(1);" style="margin-left:auto;">
+                        次へ進む (Next) <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function selectRadioCard(element, groupName, value) {
+            const container = element.parentElement;
+            container.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            const radio = element.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                calculateEstimate();
+            }
+        }
+
+        function selectColor(element, colorName) {
+            document.querySelectorAll('.color-swatch-item').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('selected_color').value = colorName;
+        }
+
+        function selectPaymentType(type, card) {
+            document.querySelectorAll('#sec-3 .radio-grid:first-of-type .radio-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            const installmentBox = document.getElementById('installment_detail_box');
+            if (type === 'installment') {
+                document.getElementById('payment_type').value = '分割払い (Installment Plan)';
+                installmentBox.style.display = 'block';
+            } else {
+                document.getElementById('payment_type').value = '一括払い (Full Payment)';
+                installmentBox.style.display = 'none';
+                document.getElementById('debt_amount_box').style.display = 'none';
+                document.getElementById('installment_debt_status').value = '残債なし (No Due)';
+            }
+            calculateEstimate();
+        }
+
+        function selectInstallmentDebtStatus(status, card) {
+            document.querySelectorAll('#installment_detail_box .radio-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            const debtAmountBox = document.getElementById('debt_amount_box');
+            if (status === 'exist') {
+                document.getElementById('installment_debt_status').value = '残債あり (Due Exists - ▲)';
+                debtAmountBox.style.display = 'block';
+            } else {
+                document.getElementById('installment_debt_status').value = '完済済・残債なし (Cleared - ◯)';
+                debtAmountBox.style.display = 'none';
+            }
+            calculateEstimate();
+        }
+
+        function toggleDeliveryUI(type) {
+            if (type === 'mail') {
+                document.getElementById('mail_delivery_options').style.display = 'block';
+                document.getElementById('store_delivery_options').style.display = 'none';
+            } else {
+                document.getElementById('mail_delivery_options').style.display = 'none';
+                document.getElementById('store_delivery_options').style.display = 'block';
+            }
+        }
+
+        function handlePhotoUpload(input) {
+            const grid = document.getElementById('photo_preview_grid');
+            grid.innerHTML = '';
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'thumb-wrapper';
+                        wrapper.innerHTML = `
+                            <img src="${e.target.result}" class="preview-thumb">
+                            <span class="thumb-remove" onclick="this.parentElement.remove();">&times;</span>
+                        `;
+                        grid.appendChild(wrapper);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function calculateEstimate() {
+            const model = document.getElementById('phone_model').value;
+            let basePrice = 140000;
+            if (model.includes('16 Pro Max')) basePrice = 215000;
+            else if (model.includes('16 Pro')) basePrice = 195000;
+            else if (model.includes('16')) basePrice = 135000;
+            else if (model.includes('15 Pro Max')) basePrice = 165000;
+            else if (model.includes('15 Pro')) basePrice = 145000;
+            else if (model.includes('15')) basePrice = 115000;
+            else if (model.includes('14 Pro')) basePrice = 120000;
+            else if (model.includes('14')) basePrice = 90000;
+
+            const battery = parseInt(document.getElementById('battery_val').value) || 95;
+            if (battery < 80) basePrice -= 8000;
+
+            const payType = document.getElementById('payment_type') ? document.getElementById('payment_type').value : '';
+            const debtStatus = document.getElementById('installment_debt_status') ? document.getElementById('installment_debt_status').value : '';
+            if (payType.includes('分割払い') && debtStatus.includes('残債あり')) {
+                basePrice = Math.max(20000, basePrice - 10000);
+            }
+
+            document.getElementById('summary_price').innerText = '¥' + basePrice.toLocaleString();
+            return basePrice;
+        }
+
+        function navigateStep(direction) {
+            if (direction === 1 && !validateCurrentStep(currentStep)) {
+                return;
+            }
+
+            goToStep(currentStep + direction);
+        }
+
+        function goToStep(step) {
+            if (step < 1 || step > 6) return;
+
+            document.getElementById(`sec-${currentStep}`).classList.remove('active');
+            document.getElementById(`step-node-${currentStep}`).classList.remove('active');
+            if (step > currentStep) {
+                document.getElementById(`step-node-${currentStep}`).classList.add('completed');
+            }
+
+            currentStep = step;
+            document.getElementById(`sec-${currentStep}`).classList.add('active');
+            document.getElementById(`step-node-${currentStep}`).classList.add('active');
+
+            // Button controls
+            document.getElementById('btnPrev').style.display = (currentStep === 1) ? 'none' : 'inline-block';
+            document.getElementById('btnNext').style.display = (currentStep === 6) ? 'none' : 'inline-block';
+
+            if (currentStep === 6) {
+                populateSummary();
+            }
+
+            window.scrollTo({ top: 150, behavior: 'smooth' });
+        }
+
+        function validateCurrentStep(step) {
+            if (step === 1) {
+                const imei = document.getElementById('imei_num').value.trim();
+                if (!imei || imei.length !== 15 || !/^\d+$/.test(imei)) {
+                    alert('15桁の正しいIMEI番号を入力してください。(Please enter a valid 15-digit IMEI number)');
+                    return false;
+                }
+            } else if (step === 3) {
+                if (!document.getElementById('chk_findmy').checked ||
+                    !document.getElementById('chk_appleid').checked ||
+                    !document.getElementById('chk_mdm').checked ||
+                    !document.getElementById('chk_legal_owner').checked) {
+                    alert('セキュリティおよび所有権に関する必須確認事項にすべてチェックを入れてください。');
+                    return false;
+                }
+                const payType = document.getElementById('payment_type').value;
+                const debtStatus = document.getElementById('installment_debt_status').value;
+                if (payType.includes('分割払い') && debtStatus.includes('残債あり')) {
+                    const debtVal = document.getElementById('debt_amount_val').value.trim();
+                    if (!debtVal || parseInt(debtVal) < 0) {
+                        alert('分割払いの残債がある場合は、未払いの残額（概算金額）を入力してください。(Please enter the remaining due amount)');
+                        document.getElementById('debt_amount_val').focus();
+                        return false;
+                    }
+                }
+            } else if (step === 5) {
+                const branch = document.getElementById('bank_branch').value.trim();
+                const num = document.getElementById('acc_number').value.trim();
+                const holder = document.getElementById('acc_holder').value.trim();
+                if (!branch || !num || !holder) {
+                    alert('振込先口座情報をすべて正しく入力してください。');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function populateSummary() {
+            document.getElementById('sum_model').innerText = document.getElementById('phone_model').value;
+            document.getElementById('sum_color').innerText = document.getElementById('selected_color').value;
+            document.getElementById('sum_imei').innerText = document.getElementById('imei_num').value;
+            document.getElementById('sum_battery').innerText = document.getElementById('battery_val').value + '%';
+            
+            // Payment & Installment Summary
+            const payType = document.getElementById('payment_type').value;
+            if (payType.includes('一括払い')) {
+                document.getElementById('sum_payment').innerText = '一括払い (残債なし・◯)';
+            } else {
+                const debtStatus = document.getElementById('installment_debt_status').value;
+                if (debtStatus.includes('残債あり')) {
+                    const dueAmt = document.getElementById('debt_amount_val').value;
+                    const dueAmtStr = dueAmt ? '¥' + parseInt(dueAmt).toLocaleString() : '未入力';
+                    const months = document.getElementById('debt_months').value;
+                    document.getElementById('sum_payment').innerHTML = `<span style="color:#b91c1c; font-weight:700;">分割中（残債あり・▲）</span> <br><small style="color:#64748b;">残高: ${dueAmtStr} ${months ? '(' + months + ')' : ''}</small>`;
+                } else {
+                    document.getElementById('sum_payment').innerText = '分割払い (完済済・残債なし・◯)';
+                }
+            }
+            
+            document.getElementById('sum_bank').innerText = document.getElementById('bank_name').value + ' ' + document.getElementById('bank_branch').value;
+        }
+
+        function submitFinalApplication() {
+            if (!document.getElementById('chk_final_agree').checked) {
+                alert('利用規約および法令に基づく事項に同意してください。');
+                return;
+            }
+
+            const btn = document.getElementById('btnFinalSubmit');
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> 申込送信中 (Submitting...)';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert('買取お申し込みを受け付けました！\n申込番号: KA-' + Math.floor(100000 + Math.random() * 900000) + '\nご登録のメールアドレスに受付完了メールを送信しました。\n(Application submitted successfully! Please proceed to Identity Verification eKYC if not completed.)');
+                window.location.href = 'kyc-verify.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
