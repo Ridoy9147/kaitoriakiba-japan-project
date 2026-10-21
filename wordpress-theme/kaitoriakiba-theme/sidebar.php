@@ -43,7 +43,7 @@
                 'Y!mobile'      => 'upload/career/Y!mobile.jpg',
                 'uqmobile'      => 'upload/career/uqmobile.jpg',
                 'simfree'       => 'upload/career/simfree.jpg',
-                'RakutenMobile' => 'upload/career/20220526/??.jpg',
+                'RakutenMobile' => 'upload/career/simfree.jpg',
             );
             foreach ( $careers as $c_slug => $c_path ) :
                 $c_img = file_exists( get_template_directory() . '/' . $c_path ) ? get_template_directory_uri() . '/' . $c_path : get_template_directory_uri() . '/upload/career/simfree.jpg';

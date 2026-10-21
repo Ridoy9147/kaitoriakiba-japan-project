@@ -108,6 +108,10 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
+        $title     = ! empty( $settings['title'] ) ? $settings['title'] : __( '本人確認 (Identity Verification - eKYC)', 'kaitoriakiba' );
+        $subtitle  = ! empty( $settings['subtitle'] ) ? $settings['subtitle'] : __( '古物営業法に基づき、スマートフォン等の買取時には本人確認書類の提出が義務付けられています。', 'kaitoriakiba' );
+        $show_legal= ! empty( $settings['show_legal_banner'] ) ? $settings['show_legal_banner'] : 'yes';
+
         $pre_order = isset( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : '';
         $pre_name  = isset( $_GET['name'] ) ? sanitize_text_field( $_GET['name'] ) : '';
         $pre_email = isset( $_GET['email'] ) ? sanitize_email( $_GET['email'] ) : '';
@@ -123,14 +127,14 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
             
             <div class="kyc-header" style="text-align: center; margin-bottom: 24px;">
                 <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-                    <i class="fa fa-id-card-o" style="color:#ef4444;"></i> <?php echo esc_html( $settings['title'] ); ?>
+                    <i class="fa fa-id-card-o" style="color:#ef4444;"></i> <?php echo esc_html( $title ); ?>
                 </h1>
                 <p style="color: #64748b; font-size: 13.5px; line-height: 1.5; margin:0;">
-                    <?php echo esc_html( $settings['subtitle'] ); ?>
+                    <?php echo esc_html( $subtitle ); ?>
                 </p>
             </div>
 
-            <?php if ( $settings['show_legal_banner'] === 'yes' ) : ?>
+            <?php if ( $show_legal === 'yes' ) : ?>
             <div class="legal-banner" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; border-radius: 10px; padding: 14px 16px; margin-bottom: 24px; font-size: 13px; color: #166534; display: flex; align-items: flex-start; gap: 10px;">
                 <i class="fa fa-lock" style="font-size: 18px; margin-top: 2px;"></i>
                 <div>

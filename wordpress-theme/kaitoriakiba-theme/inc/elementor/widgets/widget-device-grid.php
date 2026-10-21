@@ -135,15 +135,21 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
+        $posts_per_page = ! empty( $settings['posts_per_page'] ) ? intval( $settings['posts_per_page'] ) : 8;
+        $orderby        = ! empty( $settings['orderby'] ) ? $settings['orderby'] : 'date';
+        $order          = ! empty( $settings['order'] ) ? $settings['order'] : 'DESC';
+        $columns        = ! empty( $settings['columns'] ) ? $settings['columns'] : '4';
+        $btn_text       = ! empty( $settings['button_text'] ) ? $settings['button_text'] : __( 'Apply for Buyback', 'kaitoriakiba' );
+
         $args = array(
             'post_type'      => 'kaitori_device',
-            'posts_per_page' => intval( $settings['posts_per_page'] ),
+            'posts_per_page' => $posts_per_page,
             'post_status'    => 'publish',
-            'orderby'        => $settings['orderby'],
-            'order'          => $settings['order'],
+            'orderby'        => $orderby,
+            'order'          => $order,
         );
 
-        if ( $settings['orderby'] === 'meta_value_num' ) {
+        if ( $orderby === 'meta_value_num' ) {
             $args['meta_key'] = '_max_buyback_price';
         }
 
@@ -170,11 +176,11 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
 
         // Determine Bootstrap column class
         $col_class = 'col-lg-3 col-md-3 col-sm-4 col-xs-12';
-        if ( $settings['columns'] === '2' ) {
+        if ( $columns === '2' ) {
             $col_class = 'col-lg-6 col-md-6 col-sm-6 col-xs-12';
-        } elseif ( $settings['columns'] === '3' ) {
+        } elseif ( $columns === '3' ) {
             $col_class = 'col-lg-4 col-md-4 col-sm-6 col-xs-12';
-        } elseif ( $settings['columns'] === '6' ) {
+        } elseif ( $columns === '6' ) {
             $col_class = 'col-lg-2 col-md-3 col-sm-4 col-xs-6';
         }
         ?>

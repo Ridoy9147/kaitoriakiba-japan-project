@@ -78,7 +78,7 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-        $tax = $settings['taxonomy_type'];
+        $tax = ! empty( $settings['taxonomy_type'] ) ? $settings['taxonomy_type'] : 'carrier';
 
         $default_titles = array(
             'carrier'         => __( 'Browse by Carrier', 'kaitoriakiba' ),
@@ -87,12 +87,14 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
             'device_category' => __( 'Browse by Category', 'kaitoriakiba' ),
         );
 
-        $box_title = ! empty( $settings['custom_title'] ) ? $settings['custom_title'] : $default_titles[$tax];
+        $box_title = ! empty( $settings['custom_title'] ) ? $settings['custom_title'] : ( isset( $default_titles[$tax] ) ? $default_titles[$tax] : __( 'Browse Devices', 'kaitoriakiba' ) );
+
+        $num_items = ! empty( $settings['number_of_items'] ) ? intval( $settings['number_of_items'] ) : 12;
 
         $terms = get_terms( array(
             'taxonomy'   => $tax,
             'hide_empty' => false,
-            'number'     => intval( $settings['number_of_items'] ),
+            'number'     => $num_items,
         ) );
         ?>
         <div class="navigation-box" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:20px;">

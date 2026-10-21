@@ -91,14 +91,48 @@ require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
 require_once KAITORIAKIBA_DIR . '/inc/tgmpa/tgmpa-config.php';
 
 /**
- * 4. Load Elementor Custom Widgets when Elementor is active
+ * 4. Safe Helper: Check if a post/page is built with Elementor
  */
-function kaitoriakiba_load_elementor() {
+function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
+    if ( ! did_action( 'elementor/loaded' ) || ! class_exists( '\Elementor\Plugin' ) ) {
+        return false;
+    }
+    if ( ! $post_id ) {
+        $post_id = get_queried_object_id();
+    }
+    if ( ! $post_id ) {
+        global $post;
+        $post_id = isset( $post->ID ) ? $post->ID : 0;
+    }
+    if ( ! $post_id || $post_id <= 0 ) {
+        return false;
+    }
+
+    try {
+        if ( isset( \Elementor\Plugin::$instance->documents ) ) {
+            $document = \Elementor\Plugin::$instance->documents->get( $post_id );
+            if ( $document && method_exists( $document, 'is_built_with_elementor' ) ) {
+                return (bool) $document->is_built_with_elementor();
+            }
+        }
+    } catch ( \Throwable $e ) {
+        return false;
+    }
+
+    return false;
+}
+
+/**
+ * 5. Load Elementor Custom Widgets & Categories
+ */
+function kaitoriakiba_init_elementor() {
     if ( did_action( 'elementor/loaded' ) ) {
         require_once KAITORIAKIBA_DIR . '/inc/elementor/elementor-init.php';
     }
 }
-add_action( 'init', 'kaitoriakiba_load_elementor', 20 );
+add_action( 'elementor/init', 'kaitoriakiba_init_elementor' );
+add_action( 'plugins_loaded', 'kaitoriakiba_init_elementor', 25 );
+add_action( 'init', 'kaitoriakiba_init_elementor', 1 );
 
 /**
  * 5. Register Elementor Page Templates

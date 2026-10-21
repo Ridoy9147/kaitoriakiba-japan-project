@@ -97,10 +97,13 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
         $settings = $this->get_settings_for_display();
 
         $post_id = ! empty( $settings['device_id'] ) ? intval( $settings['device_id'] ) : get_the_ID();
-        $is_device_post = ( get_post_type( $post_id ) === 'kaitori_device' );
+        $is_device_post = ( $post_id && get_post_type( $post_id ) === 'kaitori_device' );
 
-        $title      = $is_device_post ? get_the_title( $post_id ) : $settings['default_title'];
-        $base_price = $is_device_post ? ( get_post_meta( $post_id, '_max_buyback_price', true ) ?: $settings['default_price'] ) : $settings['default_price'];
+        $def_title = ! empty( $settings['default_title'] ) ? $settings['default_title'] : 'iPhone 16 Pro 256GB SIMフリー';
+        $def_price = ! empty( $settings['default_price'] ) ? intval( $settings['default_price'] ) : 168000;
+
+        $title      = $is_device_post ? get_the_title( $post_id ) : $def_title;
+        $base_price = $is_device_post ? ( get_post_meta( $post_id, '_max_buyback_price', true ) ?: $def_price ) : $def_price;
         $jan        = $is_device_post ? ( get_post_meta( $post_id, '_jan_code', true ) ?: '4549995734140' ) : '4549995734140';
         $model_num  = $is_device_post ? ( get_post_meta( $post_id, '_model_number', true ) ?: 'A3293' ) : 'A3293';
         
@@ -118,6 +121,9 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                 array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png', 'label' => 'Natural Titanium' ),
             );
         }
+
+        $show_ranks = ! empty( $settings['show_rank_table'] ) ? $settings['show_rank_table'] : 'yes';
+        $show_inst  = ! empty( $settings['show_installment_notice'] ) ? $settings['show_installment_notice'] : 'yes';
         ?>
         <div class="kaitori-single-calc-widget">
             <div class="product-hero-card" style="background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.04); margin-bottom:30px;">
@@ -176,7 +182,7 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                 </div>
             </div>
 
-            <?php if ( $settings['show_rank_table'] === 'yes' ) : ?>
+            <?php if ( $show_ranks === 'yes' ) : ?>
                 <!-- Ranks S-D Table -->
                 <div style="background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; padding:24px; margin-bottom:24px;">
                     <h3 style="font-size:17px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:16px;">
@@ -221,7 +227,7 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                 </div>
             <?php endif; ?>
 
-            <?php if ( $settings['show_installment_notice'] === 'yes' ) : ?>
+            <?php if ( $show_inst === 'yes' ) : ?>
                 <!-- Installment Info Box -->
                 <div style="background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; padding:20px; margin-bottom:24px;">
                     <h4 style="font-size:15px; font-weight:800; color:#0f172a; margin-top:0;">

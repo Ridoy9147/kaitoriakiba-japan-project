@@ -109,7 +109,10 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
-        $is_login = ( $settings['default_tab'] === 'login' ) || ( isset( $_GET['action'] ) && $_GET['action'] === 'login' );
+        $def_tab = ! empty( $settings['default_tab'] ) ? $settings['default_tab'] : 'register';
+        $is_login = ( $def_tab === 'login' ) || ( isset( $_GET['action'] ) && $_GET['action'] === 'login' );
+        $reg_title = ! empty( $settings['register_title'] ) ? $settings['register_title'] : __( '新規会員登録 (Register)', 'kaitoriakiba' );
+        $log_title = ! empty( $settings['login_title'] ) ? $settings['login_title'] : __( '会員ログイン (Login)', 'kaitoriakiba' );
         ?>
         <div class="auth-container" style="margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
             
@@ -140,7 +143,7 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
                 <div id="authRegisterPanel" style="display:<?php echo $is_login ? 'none' : 'block'; ?>;">
                     <div class="auth-header" style="text-align: center; margin-bottom: 24px;">
                         <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
-                            <?php echo esc_html( $settings['register_title'] ); ?>
+                            <?php echo esc_html( $reg_title ); ?>
                         </h2>
                         <p style="color: #64748b; font-size: 13.5px; margin:0;">
                             <?php _e( '会員登録を行うと、次回からの入力省略や買取履歴の確認、会員限定ボーナスがご利用いただけます。', 'kaitoriakiba' ); ?>
@@ -200,7 +203,7 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
                 <div id="authLoginPanel" style="display:<?php echo $is_login ? 'block' : 'none'; ?>;">
                     <div class="auth-header" style="text-align: center; margin-bottom: 24px;">
                         <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
-                            <?php echo esc_html( $settings['login_title'] ); ?>
+                            <?php echo esc_html( $log_title ); ?>
                         </h2>
                         <p style="color: #64748b; font-size: 13.5px; margin:0;">
                             <?php _e( 'ご登録のメールアドレスとパスワードを入力してください。', 'kaitoriakiba' ); ?>

@@ -90,15 +90,17 @@ class Kaitori_Announcement_Widget extends \Elementor\Widget_Base {
             'info'    => '#3b82f6',
         );
 
-        $type = $settings['alert_type'];
+        $type = ! empty( $settings['alert_type'] ) && isset( $bg_colors[$settings['alert_type']] ) ? $settings['alert_type'] : 'danger';
+        $title = ! empty( $settings['alert_title'] ) ? $settings['alert_title'] : ( ! empty( $settings['banner_text'] ) ? $settings['banner_text'] : '【重要なお知らせ】iPhone 16 / 15 シリーズ超高価買取キャンペーン実施中！' );
+        $content = ! empty( $settings['alert_content'] ) ? $settings['alert_content'] : '現在、秋葉原店持込および郵送買取にてiPhone 16 Pro / 15 Proの買取価格を強化中。店頭なら最短5分で即日現金お渡し可能です。';
         ?>
         <div class="kaitori-announcement-banner" style="background:<?php echo $bg_colors[$type]; ?>; border:1.5px solid <?php echo $border_colors[$type]; ?>; border-radius:12px; padding:18px 24px; margin:20px 0; display:flex; align-items:flex-start; gap:16px;">
             <div style="font-size:24px; color:<?php echo $icon_colors[$type]; ?>; line-height:1;">
                 <i class="fa fa-exclamation-triangle"></i>
             </div>
             <div>
-                <h4 style="font-size:15px; font-weight:800; color:#0f172a; margin:0 0 6px 0;"><?php echo esc_html( $settings['alert_title'] ); ?></h4>
-                <p style="font-size:13px; color:#475569; margin:0; line-height:1.5;"><?php echo esc_html( $settings['alert_content'] ); ?></p>
+                <h4 style="font-size:15px; font-weight:800; color:#0f172a; margin:0 0 6px 0;"><?php echo esc_html( $title ); ?></h4>
+                <p style="font-size:13px; color:#475569; margin:0; line-height:1.5;"><?php echo esc_html( $content ); ?></p>
             </div>
         </div>
         <?php

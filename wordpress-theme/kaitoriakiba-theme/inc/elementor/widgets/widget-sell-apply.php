@@ -124,23 +124,28 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
+        $def_carrier   = ! empty( $settings['default_carrier'] ) ? $settings['default_carrier'] : 'SIMフリー';
+        $form_title    = ! empty( $settings['form_title'] ) ? $settings['form_title'] : __( 'iPhone・スマホ買取 査定・オンライン申込', 'kaitoriakiba' );
+        $form_subtitle = ! empty( $settings['form_subtitle'] ) ? $settings['form_subtitle'] : __( 'かんたんステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！', 'kaitoriakiba' );
+        $show_stepper  = ! empty( $settings['show_stepper'] ) ? $settings['show_stepper'] : 'yes';
+
         $pre_model    = isset( $_GET['model'] ) ? sanitize_text_field( $_GET['model'] ) : '';
         $pre_storage  = isset( $_GET['storage'] ) ? sanitize_text_field( $_GET['storage'] ) : '256GB';
-        $pre_carrier  = isset( $_GET['carrier'] ) ? sanitize_text_field( $_GET['carrier'] ) : $settings['default_carrier'];
+        $pre_carrier  = isset( $_GET['carrier'] ) ? sanitize_text_field( $_GET['carrier'] ) : $def_carrier;
         $pre_delivery = isset( $_GET['delivery'] ) ? sanitize_text_field( $_GET['delivery'] ) : 'mail';
         ?>
         <div class="apply-container" style="margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
             
             <div class="apply-header" style="text-align: center; margin-bottom: 30px;">
                 <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 8px;">
-                    <i class="fa fa-mobile" style="color:#ef4444;"></i> <?php echo esc_html( $settings['form_title'] ); ?>
+                    <i class="fa fa-mobile" style="color:#ef4444;"></i> <?php echo esc_html( $form_title ); ?>
                 </h1>
                 <p style="color: #64748b; font-size: 13.5px; margin: 0;">
-                    <?php echo esc_html( $settings['form_subtitle'] ); ?>
+                    <?php echo esc_html( $form_subtitle ); ?>
                 </p>
             </div>
 
-            <?php if ( $settings['show_stepper'] === 'yes' ) : ?>
+            <?php if ( $show_stepper === 'yes' ) : ?>
             <!-- Stepper Progress Header -->
             <div class="progress-stepper" style="display: flex; justify-content: space-between; position: relative; margin-bottom: 36px;">
                 <div class="step-item active" id="step-node-1" style="position: relative; z-index: 2; text-align: center; width: 16.66%;">

@@ -9,13 +9,7 @@
 get_header();
 
 // Check if page is built with Elementor
-$is_elementor = false;
-if ( did_action( 'elementor/loaded' ) ) {
-    $document = \Elementor\Plugin::$instance->documents->get( get_the_ID() );
-    if ( $document && $document->is_built_with_elementor() ) {
-        $is_elementor = true;
-    }
-}
+$is_elementor = kaitoriakiba_is_elementor_page();
 
 if ( $is_elementor ) :
     ?>

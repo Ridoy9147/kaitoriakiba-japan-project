@@ -92,6 +92,13 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
+
+        $card1_title = ! empty( $settings['card1_title'] ) ? $settings['card1_title'] : '店頭買取 (In-Store Buyback)';
+        $card1_desc  = ! empty( $settings['card1_desc'] ) ? $settings['card1_desc'] : '秋葉原店へ直接端末をお持ち込み。最短5分で動作確認・査定完了、その場で現金手渡し！';
+        $card2_title = ! empty( $settings['card2_title'] ) ? $settings['card2_title'] : '郵送買取 (Mail-In Buyback)';
+        $card2_desc  = ! empty( $settings['card2_desc'] ) ? $settings['card2_desc'] : '送料無料の宅配キット完備。到着当日に即日査定＆指定口座へ即日振込！';
+        $card3_title = ! empty( $settings['card3_title'] ) ? $settings['card3_title'] : '法人買取 (Corporate Buyback)';
+        $card3_desc  = ! empty( $settings['card3_desc'] ) ? $settings['card3_desc'] : '社用スマホ・タブレットの大量台数一括買取。データ完全消去証明書の発行や請求書払い対応。';
         ?>
         <div class="kaitori-process-flow-widget" style="margin: 30px 0;">
             <div class="row">
@@ -101,9 +108,9 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
                             <div style="width:42px; height:42px; border-radius:10px; background:#fff7ed; color:#ea580c; display:flex; align-items:center; justify-content:center; font-size:20px;">
                                 <i class="fa fa-building"></i>
                             </div>
-                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $settings['card1_title'] ); ?></h3>
+                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $card1_title ); ?></h3>
                         </div>
-                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $settings['card1_desc'] ); ?></p>
+                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $card1_desc ); ?></p>
                         <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>" class="btn btn-default" style="margin-top:16px; width:100%; font-weight:700; border-radius:6px; border-color:#cbd5e1;">店頭買取を申込む &rarr;</a>
                     </div>
                 </div>
@@ -114,9 +121,9 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
                             <div style="width:42px; height:42px; border-radius:10px; background:#f0fdf4; color:#16a34a; display:flex; align-items:center; justify-content:center; font-size:20px;">
                                 <i class="fa fa-truck"></i>
                             </div>
-                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $settings['card2_title'] ); ?></h3>
+                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $card2_title ); ?></h3>
                         </div>
-                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $settings['card2_desc'] ); ?></p>
+                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $card2_desc ); ?></p>
                         <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>" class="btn btn-success" style="margin-top:16px; width:100%; font-weight:700; border-radius:6px; background:#16a34a; border-color:#16a34a;">郵送買取を申込む &rarr;</a>
                     </div>
                 </div>
@@ -127,9 +134,9 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
                             <div style="width:42px; height:42px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:20px;">
                                 <i class="fa fa-briefcase"></i>
                             </div>
-                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $settings['card3_title'] ); ?></h3>
+                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $card3_title ); ?></h3>
                         </div>
-                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $settings['card3_desc'] ); ?></p>
+                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $card3_desc ); ?></p>
                         <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>" class="btn btn-primary" style="margin-top:16px; width:100%; font-weight:700; border-radius:6px; background:#2563eb; border-color:#2563eb;">法人見積・相談 &rarr;</a>
                     </div>
                 </div>

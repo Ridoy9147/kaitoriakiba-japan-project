@@ -152,6 +152,22 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
+        $kw_title       = ! empty( $settings['kw_title'] ) ? $settings['kw_title'] : __( 'Search by device model name or model number!', 'kaitoriakiba' );
+        $kw_subtitle    = ! empty( $settings['kw_subtitle'] ) ? $settings['kw_subtitle'] : __( 'Please enter device name, model number, JAN code, etc.', 'kaitoriakiba' );
+        $kw_btn_text    = ! empty( $settings['kw_button_text'] ) ? $settings['kw_button_text'] : __( 'Search', 'kaitoriakiba' );
+        $step_title     = ! empty( $settings['step_title'] ) ? $settings['step_title'] : __( 'Step-by-Step Category Search', 'kaitoriakiba' );
+        $step_subtitle  = ! empty( $settings['step_subtitle'] ) ? $settings['step_subtitle'] : __( 'Select one or more categories (Multiple selection supported)', 'kaitoriakiba' );
+        $step_btn_text  = ! empty( $settings['step_button_text'] ) ? $settings['step_button_text'] : __( 'Search', 'kaitoriakiba' );
+
+        $keywords_list  = ! empty( $settings['keywords_list'] ) && is_iterable( $settings['keywords_list'] ) ? $settings['keywords_list'] : array(
+            array( 'keyword' => 'iPhone 16' ),
+            array( 'keyword' => 'iPhone 16 Pro' ),
+            array( 'keyword' => 'iPhone 15' ),
+            array( 'keyword' => 'Pixel 8' ),
+            array( 'keyword' => 'iPad' ),
+            array( 'keyword' => 'Nintendo switch' ),
+        );
+
         $categories = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );
         $carriers   = get_terms( array( 'taxonomy' => 'carrier', 'hide_empty' => false ) );
         $brands     = get_terms( array( 'taxonomy' => 'brand', 'hide_empty' => false ) );
@@ -162,8 +178,8 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                 <!-- 1. Keyword Search -->
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="search_title">
-                        <div class="search_title_h2"><?php echo esc_html( $settings['kw_title'] ); ?></div>
-                        <div class="search_title_h3"><?php echo esc_html( $settings['kw_subtitle'] ); ?></div>
+                        <div class="search_title_h2"><?php echo esc_html( $kw_title ); ?></div>
+                        <div class="search_title_h3"><?php echo esc_html( $kw_subtitle ); ?></div>
                     </div>
                     <div class="search_box">
                         <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
@@ -182,16 +198,19 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                         <?php endif; ?>
                                     </select>
                                     <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php esc_attr_e( 'Keyword search (2+ characters)', 'kaitoriakiba' ); ?>" required="required" autocomplete="off">
-                                    <button class="btn search_word" type="submit"><?php echo esc_html( $settings['kw_button_text'] ); ?> <i class="fa fa-search"></i></button>
+                                    <button class="btn search_word" type="submit"><?php echo esc_html( $kw_btn_text ); ?> <i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
-                        <?php if ( ! empty( $settings['keywords_list'] ) ) : ?>
+                        <?php if ( ! empty( $keywords_list ) ) : ?>
                             <div class="title" style="margin-top: 14px; font-size: 13px; font-weight: bold; color: #475569;">
                                 <?php _e( 'Popular Search Keywords!', 'kaitoriakiba' ); ?>
                                 <ul class="hotword" style="margin-top: 6px;">
-                                    <?php foreach ( $settings['keywords_list'] as $kw_item ) : ?>
-                                        <li><a href="<?php echo esc_url( add_query_arg( 'q', urlencode( $kw_item['keyword'] ), home_url( '/devices/' ) ) ); ?>"><?php echo esc_html( $kw_item['keyword'] ); ?></a></li>
+                                    <?php foreach ( $keywords_list as $kw_item ) : 
+                                        $kw_name = isset( $kw_item['keyword'] ) ? $kw_item['keyword'] : '';
+                                        if ( empty( $kw_name ) ) continue;
+                                    ?>
+                                        <li><a href="<?php echo esc_url( add_query_arg( 'q', urlencode( $kw_name ), home_url( '/devices/' ) ) ); ?>"><?php echo esc_html( $kw_name ); ?></a></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </div>
@@ -202,8 +221,8 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                 <!-- 2. Step-by-Step Search -->
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="search_title">
-                        <div class="search_title_h2"><?php echo esc_html( $settings['step_title'] ); ?></div>
-                        <div class="search_title_h3"><?php echo esc_html( $settings['step_subtitle'] ); ?></div>
+                        <div class="search_title_h2"><?php echo esc_html( $step_title ); ?></div>
+                        <div class="search_title_h3"><?php echo esc_html( $step_subtitle ); ?></div>
                     </div>
                     <div class="search_box">
                         <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
@@ -262,7 +281,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                             <?php endif; ?>
                                         </select>
                                     </div>
-                                    <button class="btn step_search_btn" type="submit"><?php echo esc_html( $settings['step_button_text'] ); ?> <i class="fa fa-search"></i></button>
+                                    <button class="btn step_search_btn" type="submit"><?php echo esc_html( $step_btn_text ); ?> <i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
