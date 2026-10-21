@@ -111,6 +111,82 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
 
         $this->end_controls_section();
 
+        // Member Favorites Notice Banner (layout_x matching authentic site)
+        $this->start_controls_section(
+            'section_favorites_banner',
+            array(
+                'label' => __( 'Member Favorites Notice Banner (お気に入り案内)', 'kaitoriakiba' ),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'show_favorites_banner',
+            array(
+                'label'        => __( 'Show Favorites Notice Banner', 'kaitoriakiba' ),
+                'type'         => \Elementor\Controls_Manager::SWITCHER,
+                'label_on'     => __( 'Show', 'kaitoriakiba' ),
+                'label_off'    => __( 'Hide', 'kaitoriakiba' ),
+                'return_value' => 'yes',
+                'default'      => 'yes',
+            )
+        );
+
+        $this->add_control(
+            'favorites_header_image',
+            array(
+                'label'   => __( 'Favorites Banner Header Image', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::MEDIA,
+                'default' => array(
+                    'url' => get_template_directory_uri() . '/assets/images/mainpage/sub_box_header05.png',
+                ),
+                'condition' => array(
+                    'show_favorites_banner' => 'yes',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'favorites_line_1',
+            array(
+                'label'       => __( 'Notice Line 1', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '一覧の各商品にある「★」ボタンを押すと、お気に入り登録ができます。',
+                'condition'   => array(
+                    'show_favorites_banner' => 'yes',
+                ),
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'favorites_line_2',
+            array(
+                'label'       => __( 'Notice Line 2', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => 'お気に入りに登録した商品を一覧で確認でき、価格の変動などもすぐにチェック可能です。',
+                'condition'   => array(
+                    'show_favorites_banner' => 'yes',
+                ),
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'favorites_line_3',
+            array(
+                'label'       => __( 'Notice Line 3 (Warning)', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '※会員限定機能となります。ご利用にはログインが必要です。',
+                'condition'   => array(
+                    'show_favorites_banner' => 'yes',
+                ),
+                'label_block' => true,
+            )
+        );
+
+        $this->end_controls_section();
+
         // Display & Label Options Section
         $this->start_controls_section(
             'section_display_opts',
@@ -249,6 +325,29 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
         }
         $theme_uri = get_template_directory_uri();
         ?>
+        <?php if ( 'yes' === $settings['show_favorites_banner'] ) : 
+            $fav_img = ! empty( $settings['favorites_header_image']['url'] ) ? $settings['favorites_header_image']['url'] : ( $theme_uri . '/assets/images/mainpage/sub_box_header05.png' );
+        ?>
+            <div class="mainpage-box xs-pad0 kaitori-fav-banner-wrap" style="margin-bottom: 20px;">
+                <div class="sub-box" id="layout_x" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; padding:20px; margin-bottom:15px;">
+                    <?php if ( ! empty( $fav_img ) ) : ?>
+                        <div class="text-center head_img" style="margin-bottom: 15px;">
+                            <img src="<?php echo esc_url( $fav_img ); ?>" alt="Member Favorites" class="img-responsive" style="margin: 0 auto; display:block;" />
+                        </div>
+                    <?php endif; ?>
+                    <?php if ( ! empty( $settings['favorites_line_1'] ) ) : ?>
+                        <p style="text-indent: 15%; margin-bottom: 6px; font-size: 13px; color: #334155; font-weight: 500;"><?php echo esc_html( $settings['favorites_line_1'] ); ?></p>
+                    <?php endif; ?>
+                    <?php if ( ! empty( $settings['favorites_line_2'] ) ) : ?>
+                        <p style="text-indent: 15%; margin-bottom: 6px; font-size: 13px; color: #334155; font-weight: 500;"><?php echo esc_html( $settings['favorites_line_2'] ); ?></p>
+                    <?php endif; ?>
+                    <?php if ( ! empty( $settings['favorites_line_3'] ) ) : ?>
+                        <p style="text-align: center; color: #ef4444; font-weight: 700; font-size: 13px; margin-top: 10px; margin-bottom: 0;"><?php echo esc_html( $settings['favorites_line_3'] ); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="mainpage-box xs-pad0 kaitori-device-grid-wrapper">
             <div class="sub-box" id="layout_y">
                 <?php if ( ! empty( $header_img ) ) : ?>

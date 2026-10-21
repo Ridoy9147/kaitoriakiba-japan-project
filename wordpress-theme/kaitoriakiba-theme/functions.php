@@ -321,12 +321,18 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
             'elType'   => 'section',
             'settings' => array(),
             'elements' => array(
-                // Left Column: Sidebar (Carriers, Brands, Series)
+                // Left Column: Sidebar (Top Ads, Carriers, Brands, Series, Newsletter)
                 array(
                     'id'       => 'col_sidebar_' . wp_generate_password( 6, false, false ),
                     'elType'   => 'column',
                     'settings' => array( '_column_size' => 25 ),
                     'elements' => array(
+                        array(
+                            'id'         => 'wid_side_ad_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_sidebar_ad',
+                            'settings'   => array(),
+                        ),
                         array(
                             'id'         => 'wid_side_carrier_' . wp_generate_password( 6, false, false ),
                             'elType'     => 'widget',
@@ -383,6 +389,12 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                                     array( 'item_title' => 'Google Pixel', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/google.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=google' ) ),
                                 ),
                             ),
+                        ),
+                        array(
+                            'id'         => 'wid_side_newsletter_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_sidebar_newsletter',
+                            'settings'   => array(),
                         ),
                     ),
                 ),
@@ -455,7 +467,7 @@ function kaitoriakiba_auto_populate_elementor_homepage() {
         if ( $is_home ) {
             $data = get_post_meta( $post_id, '_elementor_data', true );
             // Auto-populate if missing or incomplete
-            if ( empty( $data ) || $data === '[]' || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_news_box' ) ) {
+            if ( empty( $data ) || $data === '[]' || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_news_box' ) || false === strpos( $data, 'kaitori_sidebar_ad' ) || false === strpos( $data, 'kaitori_sidebar_newsletter' ) ) {
                 $schema = kaitoriakiba_get_full_elementor_homepage_schema();
                 update_post_meta( $post_id, '_wp_page_template', 'template-elementor-fullwidth.php' );
                 update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );

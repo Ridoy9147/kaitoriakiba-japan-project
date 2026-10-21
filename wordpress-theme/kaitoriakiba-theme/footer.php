@@ -10,8 +10,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
+    <!-- Authentic Sister Services Banner Row (href_list from index.html) -->
+    <div class="bg-white" style="background:#ffffff; padding: 25px 0 10px 0; border-top: 1px solid #e2e8f0;">
+        <div class="href_list">
+            <div class="container">
+                <div class="gutter-10 clearflex row">
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://kaitoriakiba.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/phone.jpg" alt="Smartphones" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://ipadkaitori.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/ipad.jpg" alt="Tablets" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://gamekaitori.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/game.jpg" alt="Gaming Consoles" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://cosmekaitori.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/meizhuang.jpg" alt="Cosmetics" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://applianceskaitori.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/appliances.jpg" alt="Home Appliances" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://camerakaitori.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/cameras.jpg" alt="Cameras" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://pckaitori.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/pc.jpg" alt="Personal Computers" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3" style="margin-bottom:15px;">
+                        <a href="https://kaitoriakiba.jp" target="_blank" rel="noopener">
+                            <img src="<?php echo get_template_directory_uri(); ?>/upload/ad/20180512/kaitoriakiba_link.jpg" alt="Kaitori Akiba Link" class="img-responsive" style="width:100%; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05);" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modern Site Footer -->
-    <footer style="background: #0f172a; color: #94a3b8; padding: 50px 0 24px 0; margin-top: 60px;">
+    <footer style="background: #0f172a; color: #94a3b8; padding: 50px 0 24px 0; margin-top: 0;">
         <div class="container">
             <div class="row">
                 <!-- Col 1: Brand & Store Info -->
