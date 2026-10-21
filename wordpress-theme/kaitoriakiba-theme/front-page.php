@@ -26,15 +26,11 @@ get_header();
 global $post;
 $render_elementor = false;
 
-// 1. If currently inside Elementor Editor or Preview, ALWAYS call the_content() so Elementor loads smoothly
+// 1. If currently inside Elementor Editor, Preview, or page is built with Elementor
 if ( function_exists( 'kaitoriakiba_is_elementor_active' ) && kaitoriakiba_is_elementor_active() ) {
     $render_elementor = true;
 } elseif ( function_exists( 'kaitoriakiba_is_elementor_page' ) && kaitoriakiba_is_elementor_page() ) {
-    // 2. If page was edited and saved with Elementor builder
-    $raw_content = isset( $post->post_content ) ? trim( $post->post_content ) : '';
-    if ( ! empty( $raw_content ) && $raw_content !== '<!-- Kaitori Akiba Modern Buyback Portal Homepage -->' ) {
-        $render_elementor = true;
-    }
+    $render_elementor = true;
 }
 
 if ( $render_elementor ) :

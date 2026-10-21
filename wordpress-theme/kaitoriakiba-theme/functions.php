@@ -231,49 +231,7 @@ function kaitoriakiba_get_price( $post_id = null ) {
 function kaitoriakiba_get_full_elementor_homepage_schema() {
     $theme_uri = get_template_directory_uri();
     return array(
-        // Section 1: Process Flow 3-Big Buttons
-        array(
-            'id'       => 'sec_flow_buttons_' . wp_generate_password( 6, false, false ),
-            'elType'   => 'section',
-            'settings' => array(),
-            'elements' => array(
-                array(
-                    'id'       => 'col_flow_buttons_' . wp_generate_password( 6, false, false ),
-                    'elType'   => 'column',
-                    'settings' => array( '_column_size' => 100 ),
-                    'elements' => array(
-                        array(
-                            'id'         => 'wid_flow_buttons_' . wp_generate_password( 6, false, false ),
-                            'elType'     => 'widget',
-                            'widgetType' => 'kaitori_process_flow',
-                            'settings'   => array(),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        // Section 2: Urgent Announcements & Quick Guides
-        array(
-            'id'       => 'sec_announcement_' . wp_generate_password( 6, false, false ),
-            'elType'   => 'section',
-            'settings' => array(),
-            'elements' => array(
-                array(
-                    'id'       => 'col_announcement_' . wp_generate_password( 6, false, false ),
-                    'elType'   => 'column',
-                    'settings' => array( '_column_size' => 100 ),
-                    'elements' => array(
-                        array(
-                            'id'         => 'wid_announcement_' . wp_generate_password( 6, false, false ),
-                            'elType'     => 'widget',
-                            'widgetType' => 'kaitori_announcement_banner',
-                            'settings'   => array(),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        // Section 3: Dual Search Box & 8 Category Icons
+        // Section 1: Dual Search Box & 8 Category Icons
         array(
             'id'       => 'sec_search_' . wp_generate_password( 6, false, false ),
             'elType'   => 'section',
@@ -294,13 +252,76 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                 ),
             ),
         ),
-        // Section 4: Main 2-Column Section (Sidebar 25% + Main Body 75%)
+        // Section 2: Process Flow 3-Big Buttons
+        array(
+            'id'       => 'sec_flow_buttons_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_flow_buttons_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_flow_buttons_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_process_flow',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 3: Urgent Announcements & Quick Guides
+        array(
+            'id'       => 'sec_announcement_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_announcement_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_announcement_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_announcement_banner',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 4: Hero Navigation Banners, Posters & Swiper Slider
+        array(
+            'id'       => 'sec_hero_slider_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_hero_slider_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_hero_slider_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_hero_banner',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 5: Main 2-Column Section (Sidebar 25% + Main Body 75%)
         array(
             'id'       => 'sec_main_two_columns_' . wp_generate_password( 6, false, false ),
             'elType'   => 'section',
             'settings' => array(),
             'elements' => array(
-                // Left Column: Sidebar
+                // Left Column: Sidebar (Carriers, Brands, Series)
                 array(
                     'id'       => 'col_sidebar_' . wp_generate_password( 6, false, false ),
                     'elType'   => 'column',
@@ -317,6 +338,8 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                                     array( 'item_title' => 'docomo', 'item_image' => array( 'url' => $theme_uri . '/upload/career/docomo.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=docomo' ) ),
                                     array( 'item_title' => 'au', 'item_image' => array( 'url' => $theme_uri . '/upload/career/au.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=au' ) ),
                                     array( 'item_title' => 'SoftBank', 'item_image' => array( 'url' => $theme_uri . '/upload/career/softbank.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=softbank' ) ),
+                                    array( 'item_title' => 'Y!mobile', 'item_image' => array( 'url' => $theme_uri . '/upload/career/Y!mobile.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=ymobile' ) ),
+                                    array( 'item_title' => 'UQ mobile', 'item_image' => array( 'url' => $theme_uri . '/upload/career/uqmobile.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=uqmobile' ) ),
                                     array( 'item_title' => 'SIM FREE', 'item_image' => array( 'url' => $theme_uri . '/upload/career/simfree.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=simfree' ) ),
                                 ),
                             ),
@@ -328,22 +351,47 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                             'settings'   => array(
                                 'data_mode' => 'custom',
                                 'box_title' => 'ブランドから探す (Browse by Brand)',
+                                'custom_items_list' => array(
+                                    array( 'item_title' => 'Apple', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/apple.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=apple' ) ),
+                                    array( 'item_title' => 'Xiaomi', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/20200603/3.png' ), 'item_url' => array( 'url' => '/devices/?brand=xiaomi' ) ),
+                                    array( 'item_title' => 'OPPO', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/OPPO.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=oppo' ) ),
+                                    array( 'item_title' => 'ASUS', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/asus.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=asus' ) ),
+                                    array( 'item_title' => 'FUJITSU', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/fujitsu.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=fujitsu' ) ),
+                                    array( 'item_title' => 'SAMSUNG', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/samsung.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=samsung' ) ),
+                                    array( 'item_title' => 'Google', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/google.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=google' ) ),
+                                    array( 'item_title' => 'HUAWEI', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/huawei.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=huawei' ) ),
+                                    array( 'item_title' => 'KYOCERA', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/kyocera.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=kyocera' ) ),
+                                    array( 'item_title' => 'SHARP', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/sharp.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=sharp' ) ),
+                                    array( 'item_title' => 'Sony', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/sony.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=sony' ) ),
+                                ),
+                            ),
+                        ),
+                        array(
+                            'id'         => 'wid_side_series_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_taxonomy_browse',
+                            'settings'   => array(
+                                'data_mode' => 'custom',
+                                'box_title' => 'シリーズから探す (Browse by Series)',
+                                'custom_items_list' => array(
+                                    array( 'item_title' => 'iPhone', 'item_image' => array( 'url' => $theme_uri . '/upload/series/iphone.jpg' ), 'item_url' => array( 'url' => '/devices/?series=iphone' ) ),
+                                    array( 'item_title' => 'Xperia', 'item_image' => array( 'url' => $theme_uri . '/upload/series/xperia.jpg' ), 'item_url' => array( 'url' => '/devices/?series=xperia' ) ),
+                                    array( 'item_title' => 'Galaxy', 'item_image' => array( 'url' => $theme_uri . '/upload/series/galaxy.jpg' ), 'item_url' => array( 'url' => '/devices/?series=galaxy' ) ),
+                                    array( 'item_title' => 'AQUOS', 'item_image' => array( 'url' => $theme_uri . '/upload/series/aquos.jpg' ), 'item_url' => array( 'url' => '/devices/?series=aquos' ) ),
+                                    array( 'item_title' => 'arrows', 'item_image' => array( 'url' => $theme_uri . '/upload/series/arrows.jpg' ), 'item_url' => array( 'url' => '/devices/?series=arrows' ) ),
+                                    array( 'item_title' => 'ZenFone', 'item_image' => array( 'url' => $theme_uri . '/upload/series/zenfone.jpg' ), 'item_url' => array( 'url' => '/devices/?series=zenfone' ) ),
+                                    array( 'item_title' => 'Google Pixel', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/google.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=google' ) ),
+                                ),
                             ),
                         ),
                     ),
                 ),
-                // Right Column: Main Body
+                // Right Column: Main Body (News, Device Grid, Checkpoints, FAQ)
                 array(
                     'id'       => 'col_main_body_' . wp_generate_password( 6, false, false ),
                     'elType'   => 'column',
                     'settings' => array( '_column_size' => 75 ),
                     'elements' => array(
-                        array(
-                            'id'         => 'wid_hero_slider_' . wp_generate_password( 6, false, false ),
-                            'elType'     => 'widget',
-                            'widgetType' => 'kaitori_hero_banner',
-                            'settings'   => array(),
-                        ),
                         array(
                             'id'         => 'wid_news_' . wp_generate_password( 6, false, false ),
                             'elType'     => 'widget',
@@ -355,8 +403,8 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                             'elType'     => 'widget',
                             'widgetType' => 'kaitori_device_grid',
                             'settings'   => array(
-                                'section_title' => 'iPhone 高価買取対象機種',
-                                'count'         => 8,
+                                'posts_per_page' => 12,
+                                'button_text'    => '買取申込',
                             ),
                         ),
                         array(
@@ -377,6 +425,49 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
         ),
     );
 }
+
+/**
+ * Automatically ensure Elementor homepage has all authentic sections populated
+ * when opening Elementor editor or preview on Front Page / Home Page.
+ */
+function kaitoriakiba_auto_populate_elementor_homepage() {
+    $post_id = 0;
+    if ( isset( $_GET['post'] ) ) {
+        $post_id = intval( $_GET['post'] );
+    } elseif ( isset( $_GET['elementor-preview'] ) ) {
+        $post_id = intval( $_GET['elementor-preview'] );
+    } elseif ( is_front_page() || is_home() ) {
+        $post_id = (int) get_option( 'page_on_front' );
+    }
+
+    if ( ! $post_id ) {
+        $home_page = get_page_by_path( 'home' );
+        if ( $home_page ) {
+            $post_id = $home_page->ID;
+        }
+    }
+
+    if ( $post_id > 0 ) {
+        $front_id = (int) get_option( 'page_on_front' );
+        $post = get_post( $post_id );
+        $is_home = ( $post_id === $front_id ) || ( $post && 'home' === $post->post_name );
+
+        if ( $is_home ) {
+            $data = get_post_meta( $post_id, '_elementor_data', true );
+            // Auto-populate if missing or incomplete
+            if ( empty( $data ) || $data === '[]' || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_news_box' ) ) {
+                $schema = kaitoriakiba_get_full_elementor_homepage_schema();
+                update_post_meta( $post_id, '_wp_page_template', 'template-elementor-fullwidth.php' );
+                update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+                update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
+                update_post_meta( $post_id, '_elementor_version', '3.20.0' );
+                update_post_meta( $post_id, '_elementor_data', wp_slash( wp_json_encode( $schema ) ) );
+            }
+        }
+    }
+}
+add_action( 'template_redirect', 'kaitoriakiba_auto_populate_elementor_homepage', 1 );
+add_action( 'admin_init', 'kaitoriakiba_auto_populate_elementor_homepage' );
 
 /**
  * 8. One-Click Admin Handler & Notice to Populate All Sections into Elementor Homepage
