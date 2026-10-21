@@ -173,7 +173,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
         $brands     = get_terms( array( 'taxonomy' => 'brand', 'hide_empty' => false ) );
         $series_list= get_terms( array( 'taxonomy' => 'series', 'hide_empty' => false ) );
         ?>
-        <div class="kaitori-elementor-search-box search">
+        <div class="container search" style="margin-top: 15px; margin-bottom: 25px;">
             <div class="row">
                 <!-- 1. Keyword Search -->
                 <div class="col-lg-6 col-md-6 col-sm-12">
@@ -182,35 +182,38 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                         <div class="search_title_h3"><?php echo esc_html( $kw_subtitle ); ?></div>
                     </div>
                     <div class="search_box">
-                        <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                        <form class="m_fullsearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                             <div class="form-group mbtm0 clearfix">
                                 <div class="keyword_search">
-                                    <select class="form-control fw_cat" name="cat">
+                                    <select class="form-control fw_cat" name="category">
                                         <option value=""><?php _e( 'All Categories', 'kaitoriakiba' ); ?></option>
                                         <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
                                             <?php foreach ( $categories as $cat ) : ?>
                                                 <option value="<?php echo esc_attr( $cat->slug ); ?>"><?php echo esc_html( $cat->name ); ?></option>
                                             <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <option value="iphone">iPhone</option>
-                                            <option value="smartphone">Smartphones</option>
-                                            <option value="tablet">Tablets</option>
+                                        <?php else : ?>
+                                            <option value="smartphones"><?php _e( 'Smartphones', 'kaitoriakiba' ); ?></option>
+                                            <option value="tablets"><?php _e( 'Tablets', 'kaitoriakiba' ); ?></option>
+                                            <option value="gaming"><?php _e( 'Gaming Consoles', 'kaitoriakiba' ); ?></option>
+                                            <option value="appliances"><?php _e( 'Home Appliances', 'kaitoriakiba' ); ?></option>
+                                            <option value="cameras"><?php _e( 'Cameras', 'kaitoriakiba' ); ?></option>
+                                            <option value="pc"><?php _e( 'PC & Laptops', 'kaitoriakiba' ); ?></option>
                                         <?php endif; ?>
                                     </select>
-                                    <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php esc_attr_e( 'Keyword search (2+ characters)', 'kaitoriakiba' ); ?>" required="required" autocomplete="off">
+                                    <input type="text" class="form-control keyword_search_text q" name="s" placeholder="<?php esc_attr_e( 'Keyword search (2+ characters)', 'kaitoriakiba' ); ?>" required="required" autocomplete="off" />
                                     <button class="btn search_word" type="submit"><?php echo esc_html( $kw_btn_text ); ?> <i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
                         <?php if ( ! empty( $keywords_list ) ) : ?>
-                            <div class="title" style="margin-top: 14px; font-size: 13px; font-weight: bold; color: #475569;">
+                            <div class="title" style="margin-top: 10px; color: #ffffff;">
                                 <?php _e( 'Popular Search Keywords!', 'kaitoriakiba' ); ?>
                                 <ul class="hotword" style="margin-top: 6px;">
                                     <?php foreach ( $keywords_list as $kw_item ) : 
                                         $kw_name = isset( $kw_item['keyword'] ) ? $kw_item['keyword'] : '';
                                         if ( empty( $kw_name ) ) continue;
                                     ?>
-                                        <li><a href="<?php echo esc_url( add_query_arg( 'q', urlencode( $kw_name ), home_url( '/devices/' ) ) ); ?>"><?php echo esc_html( $kw_name ); ?></a></li>
+                                        <li><a href="<?php echo esc_url( home_url( '/devices/?s=' . urlencode( $kw_name ) ) ); ?>"><?php echo esc_html( $kw_name ); ?></a></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </div>
@@ -218,66 +221,80 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                     </div>
                 </div>
 
-                <!-- 2. Step-by-Step Search -->
+                <!-- 2. Step-by-Step Category Search -->
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="search_title">
                         <div class="search_title_h2"><?php echo esc_html( $step_title ); ?></div>
                         <div class="search_title_h3"><?php echo esc_html( $step_subtitle ); ?></div>
                     </div>
                     <div class="search_box">
-                        <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                        <form class="snssearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                             <div class="form-group">
                                 <div class="step_search">
                                     <div class="step_search_filters">
-                                        <select class="form-control s_cat" name="cat">
+                                        <select class="form-control s_cat" name="category">
                                             <option value=""><?php _e( 'Select Category', 'kaitoriakiba' ); ?></option>
                                             <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
                                                 <?php foreach ( $categories as $cat ) : ?>
                                                     <option value="<?php echo esc_attr( $cat->slug ); ?>"><?php echo esc_html( $cat->name ); ?></option>
                                                 <?php endforeach; ?>
-                                            <?php else: ?>
+                                            <?php else : ?>
                                                 <option value="iphone">iPhone</option>
                                                 <option value="smartphones">Smartphones</option>
+                                                <option value="accessories">Accessories</option>
+                                                <option value="routers">Mobile Routers</option>
                                             <?php endif; ?>
                                         </select>
-
-                                        <select class="form-control s_career" name="s_career">
+                                        <select class="form-control s_career" name="carrier">
                                             <option value=""><?php _e( 'By Carrier', 'kaitoriakiba' ); ?></option>
                                             <?php if ( ! empty( $carriers ) && ! is_wp_error( $carriers ) ) : ?>
                                                 <?php foreach ( $carriers as $car ) : ?>
                                                     <option value="<?php echo esc_attr( $car->slug ); ?>"><?php echo esc_html( $car->name ); ?></option>
                                                 <?php endforeach; ?>
-                                            <?php else: ?>
-                                                <option value="simfree">SIM FREE</option>
+                                            <?php else : ?>
                                                 <option value="docomo">docomo</option>
                                                 <option value="au">au</option>
                                                 <option value="softbank">SoftBank</option>
+                                                <option value="ymobile">Y!mobile</option>
+                                                <option value="uqmobile">UQ mobile</option>
+                                                <option value="simfree">SIM FREE</option>
+                                                <option value="rakuten">RakutenMobile</option>
                                             <?php endif; ?>
                                         </select>
-
                                         <select class="form-control s_brand" name="brand">
                                             <option value=""><?php _e( 'By Brand', 'kaitoriakiba' ); ?></option>
                                             <?php if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) : ?>
                                                 <?php foreach ( $brands as $b ) : ?>
                                                     <option value="<?php echo esc_attr( $b->slug ); ?>"><?php echo esc_html( $b->name ); ?></option>
                                                 <?php endforeach; ?>
-                                            <?php else: ?>
+                                            <?php else : ?>
                                                 <option value="apple">Apple</option>
+                                                <option value="xiaomi">Xiaomi</option>
+                                                <option value="oppo">OPPO</option>
+                                                <option value="asus">ASUS</option>
+                                                <option value="fujitsu">FUJITSU</option>
+                                                <option value="samsung">SAMSUNG</option>
                                                 <option value="google">Google</option>
+                                                <option value="huawei">HUAWEI</option>
+                                                <option value="kyocera">KYOCERA</option>
+                                                <option value="motorola">MOTOROLA</option>
+                                                <option value="sharp">SHARP</option>
                                                 <option value="sony">SONY</option>
                                             <?php endif; ?>
                                         </select>
-
                                         <select class="form-control s_series" name="series">
                                             <option value=""><?php _e( 'By Series', 'kaitoriakiba' ); ?></option>
                                             <?php if ( ! empty( $series_list ) && ! is_wp_error( $series_list ) ) : ?>
                                                 <?php foreach ( $series_list as $ser ) : ?>
                                                     <option value="<?php echo esc_attr( $ser->slug ); ?>"><?php echo esc_html( $ser->name ); ?></option>
                                                 <?php endforeach; ?>
-                                            <?php else: ?>
+                                            <?php else : ?>
                                                 <option value="iphone">iPhone</option>
                                                 <option value="xperia">Xperia</option>
                                                 <option value="galaxy">Galaxy</option>
+                                                <option value="arrows">arrows</option>
+                                                <option value="aquos">AQUOS</option>
+                                                <option value="zenfone">Zenfone</option>
                                             <?php endif; ?>
                                         </select>
                                     </div>

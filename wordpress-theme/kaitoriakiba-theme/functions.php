@@ -233,7 +233,28 @@ function kaitoriakiba_get_price( $post_id = null ) {
 function kaitoriakiba_get_full_elementor_homepage_schema() {
     $theme_uri = get_template_directory_uri();
     return array(
-        // Section 1: Process Flow 3-Big Buttons (guid - matching index.html top order)
+        // Section 1: Dual Search Box (Keyword & Step-by-Step Category search - At the Very Top)
+        array(
+            'id'       => 'sec_search_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_search_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_search_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_search_box',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 2: Process Flow 3-Big Buttons (guid - matching index.html top order)
         array(
             'id'       => 'sec_flow_buttons_' . wp_generate_password( 6, false, false ),
             'elType'   => 'section',
@@ -254,7 +275,7 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                 ),
             ),
         ),
-        // Section 2: Urgent Announcements & Quick Guides (home_liuxiang + qingbao)
+        // Section 3: Urgent Announcements & Quick Guides (home_liuxiang + qingbao)
         array(
             'id'       => 'sec_announcement_' . wp_generate_password( 6, false, false ),
             'elType'   => 'section',
@@ -269,27 +290,6 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                             'id'         => 'wid_announcement_' . wp_generate_password( 6, false, false ),
                             'elType'     => 'widget',
                             'widgetType' => 'kaitori_announcement_banner',
-                            'settings'   => array(),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        // Section 3: Dual Search Box (Keyword & Step-by-Step Category search)
-        array(
-            'id'       => 'sec_search_' . wp_generate_password( 6, false, false ),
-            'elType'   => 'section',
-            'settings' => array(),
-            'elements' => array(
-                array(
-                    'id'       => 'col_search_' . wp_generate_password( 6, false, false ),
-                    'elType'   => 'column',
-                    'settings' => array( '_column_size' => 100 ),
-                    'elements' => array(
-                        array(
-                            'id'         => 'wid_search_' . wp_generate_password( 6, false, false ),
-                            'elType'     => 'widget',
-                            'widgetType' => 'kaitori_search_box',
                             'settings'   => array(),
                         ),
                     ),
@@ -472,6 +472,12 @@ function kaitoriakiba_auto_populate_elementor_homepage() {
 
     if ( ! $post_id ) {
         $home_page = get_page_by_path( 'home' );
+        if ( ! $home_page ) {
+            $pages = get_posts( array( 'post_type' => 'page', 'title' => 'Home', 'posts_per_page' => 1 ) );
+            if ( ! empty( $pages ) ) {
+                $home_page = $pages[0];
+            }
+        }
         if ( $home_page ) {
             $post_id = $home_page->ID;
         }
@@ -479,19 +485,27 @@ function kaitoriakiba_auto_populate_elementor_homepage() {
 
     if ( $post_id > 0 ) {
         $front_id = (int) get_option( 'page_on_front' );
-        $post = get_post( $post_id );
-        $is_home = ( $post_id === $front_id ) || ( $post && 'home' === $post->post_name );
+        $post     = get_post( $post_id );
+        $is_home  = ( $post_id === $front_id ) || ( $post && ( 'home' === $post->post_name || 'Home' === $post->post_title || 'ホーム' === $post->post_title ) );
 
-        if ( $is_home ) {
-            $data = get_post_meta( $post_id, '_elementor_data', true );
-            // Auto-populate if missing or incomplete, or explicitly requested via ?reload_elementor_schema=1
-            if ( isset( $_GET['reload_elementor_schema'] ) || empty( $data ) || $data === '[]' || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_news_box' ) || false === strpos( $data, 'kaitori_sidebar_ad' ) || false === strpos( $data, 'kaitori_sidebar_newsletter' ) ) {
+        if ( $is_home || ( isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ) ) {
+            $data       = get_post_meta( $post_id, '_elementor_data', true );
+            $schema_ver = get_post_meta( $post_id, '_kaitori_schema_ver', true );
+
+            // Auto-populate if missing or incomplete or outdated schema or explicitly requested
+            if ( isset( $_GET['reload_elementor_schema'] ) || empty( $data ) || $data === '[]' || '2026_v4' !== $schema_ver || false === strpos( $data, 'kaitori_search_box' ) || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_sidebar_ad' ) || false === strpos( $data, 'kaitori_sidebar_newsletter' ) ) {
                 $schema = kaitoriakiba_get_full_elementor_homepage_schema();
                 update_post_meta( $post_id, '_wp_page_template', 'template-elementor-fullwidth.php' );
                 update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
                 update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
                 update_post_meta( $post_id, '_elementor_version', '3.20.0' );
                 update_post_meta( $post_id, '_elementor_data', wp_slash( wp_json_encode( $schema ) ) );
+                update_post_meta( $post_id, '_kaitori_schema_ver', '2026_v4' );
+
+                if ( ! $front_id ) {
+                    update_option( 'show_on_front', 'page' );
+                    update_option( 'page_on_front', $post_id );
+                }
             }
         }
     }
@@ -535,6 +549,7 @@ function kaitoriakiba_elementor_homepage_admin_handler() {
             update_post_meta( $home_page->ID, '_elementor_template_type', 'wp-page' );
             update_post_meta( $home_page->ID, '_elementor_version', '3.20.0' );
             update_post_meta( $home_page->ID, '_elementor_data', wp_slash( wp_json_encode( $el_schema ) ) );
+            update_post_meta( $home_page->ID, '_kaitori_schema_ver', '2026_v4' );
             
             // Redirect with success message
             wp_safe_redirect( admin_url( 'post.php?post=' . $home_page->ID . '&action=elementor' ) );

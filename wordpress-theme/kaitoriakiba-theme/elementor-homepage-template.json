@@ -1,0 +1,207 @@
+{
+  "version": "0.4",
+  "title": "Kaitori Akiba Homepage (Complete All Sections)",
+  "type": "page",
+  "content": [
+    {
+      "id": "sec_search_box",
+      "elType": "section",
+      "settings": {},
+      "elements": [
+        {
+          "id": "col_search_box",
+          "elType": "column",
+          "settings": {
+            "_column_size": 100
+          },
+          "elements": [
+            {
+              "id": "wid_search_box",
+              "elType": "widget",
+              "widgetType": "kaitori_search_box",
+              "settings": {
+                "kw_title": "Search by device model name or model number!",
+                "kw_subtitle": "Please enter device name, model number, JAN code, etc.",
+                "kw_button_text": "Search",
+                "step_title": "Step-by-Step Category Search",
+                "step_subtitle": "Select one or more categories (Multiple selection supported)",
+                "step_button_text": "Search"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec_flow_buttons",
+      "elType": "section",
+      "settings": {},
+      "elements": [
+        {
+          "id": "col_flow_buttons",
+          "elType": "column",
+          "settings": {
+            "_column_size": 100
+          },
+          "elements": [
+            {
+              "id": "wid_flow_buttons",
+              "elType": "widget",
+              "widgetType": "kaitori_process_flow",
+              "settings": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec_announcements",
+      "elType": "section",
+      "settings": {},
+      "elements": [
+        {
+          "id": "col_announcements",
+          "elType": "column",
+          "settings": {
+            "_column_size": 100
+          },
+          "elements": [
+            {
+              "id": "wid_announcements",
+              "elType": "widget",
+              "widgetType": "kaitori_announcement_banner",
+              "settings": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec_hero_slider",
+      "elType": "section",
+      "settings": {},
+      "elements": [
+        {
+          "id": "col_hero_slider",
+          "elType": "column",
+          "settings": {
+            "_column_size": 100
+          },
+          "elements": [
+            {
+              "id": "wid_hero_slider",
+              "elType": "widget",
+              "widgetType": "kaitori_hero_banner",
+              "settings": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec_main_two_columns",
+      "elType": "section",
+      "settings": {},
+      "elements": [
+        {
+          "id": "col_sidebar",
+          "elType": "column",
+          "settings": {
+            "_column_size": 25
+          },
+          "elements": [
+            {
+              "id": "wid_side_ad",
+              "elType": "widget",
+              "widgetType": "kaitori_sidebar_ad",
+              "settings": {}
+            },
+            {
+              "id": "wid_side_carrier",
+              "elType": "widget",
+              "widgetType": "kaitori_taxonomy_browse",
+              "settings": {
+                "data_mode": "custom",
+                "display_mode": "carrier_full",
+                "box_title": "キャリアから探す",
+                "box_link": {
+                  "url": "/career/"
+                }
+              }
+            },
+            {
+              "id": "wid_side_brand",
+              "elType": "widget",
+              "widgetType": "kaitori_taxonomy_browse",
+              "settings": {
+                "data_mode": "custom",
+                "display_mode": "brand_grid",
+                "box_title": "ブランドから探す",
+                "box_link": {
+                  "url": "/brand/"
+                },
+                "show_more_button": "yes"
+              }
+            },
+            {
+              "id": "wid_side_series",
+              "elType": "widget",
+              "widgetType": "kaitori_taxonomy_browse",
+              "settings": {
+                "data_mode": "custom",
+                "display_mode": "brand_grid",
+                "box_title": "シリーズから探す",
+                "box_link": {
+                  "url": "/series/"
+                },
+                "show_more_button": "yes"
+              }
+            },
+            {
+              "id": "wid_side_newsletter",
+              "elType": "widget",
+              "widgetType": "kaitori_sidebar_newsletter",
+              "settings": {}
+            }
+          ]
+        },
+        {
+          "id": "col_main_body",
+          "elType": "column",
+          "settings": {
+            "_column_size": 75
+          },
+          "elements": [
+            {
+              "id": "wid_news",
+              "elType": "widget",
+              "widgetType": "kaitori_news_box",
+              "settings": {}
+            },
+            {
+              "id": "wid_device_grid",
+              "elType": "widget",
+              "widgetType": "kaitori_device_grid",
+              "settings": {
+                "posts_per_page": 12,
+                "button_text": "買取申込"
+              }
+            },
+            {
+              "id": "wid_checkpoints",
+              "elType": "widget",
+              "widgetType": "kaitori_checkpoints_box",
+              "settings": {}
+            },
+            {
+              "id": "wid_faq",
+              "elType": "widget",
+              "widgetType": "kaitori_faq",
+              "settings": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
