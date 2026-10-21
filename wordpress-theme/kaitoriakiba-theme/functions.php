@@ -110,9 +110,42 @@ require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
 require_once KAITORIAKIBA_DIR . '/inc/tgmpa/tgmpa-config.php';
 
 /**
- * 4. Safe Helper: Check if a post/page is built with Elementor
+ * 4. Safe Helper: Check if Elementor Editor or Preview is currently active
+ */
+function kaitoriakiba_is_elementor_active() {
+    // Check GET query parameters commonly used by Elementor Editor & Preview iframe
+    if ( isset( $_GET['elementor-preview'] ) || ( isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ) ) {
+        return true;
+    }
+
+    if ( did_action( 'elementor/loaded' ) && class_exists( '\Elementor\Plugin' ) ) {
+        try {
+            $plugin = \Elementor\Plugin::$instance;
+            if ( $plugin ) {
+                if ( isset( $plugin->preview ) && method_exists( $plugin->preview, 'is_preview_mode' ) && $plugin->preview->is_preview_mode() ) {
+                    return true;
+                }
+                if ( isset( $plugin->editor ) && method_exists( $plugin->editor, 'is_edit_mode' ) && $plugin->editor->is_edit_mode() ) {
+                    return true;
+                }
+            }
+        } catch ( \Throwable $e ) {
+            // Ignore
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Check if a post/page is built with Elementor
  */
 function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
+    // If currently editing or previewing in Elementor, always return true
+    if ( kaitoriakiba_is_elementor_active() ) {
+        return true;
+    }
+
     if ( ! $post_id ) {
         $post_id = get_queried_object_id();
     }
@@ -127,16 +160,22 @@ function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
     // 1. Fastest & 100% safe check: Elementor stores '_elementor_edit_mode' meta on edited posts
     $edit_mode = get_post_meta( $post_id, '_elementor_edit_mode', true );
     if ( 'builder' === $edit_mode ) {
-        return true;
+        $data = get_post_meta( $post_id, '_elementor_data', true );
+        if ( ! empty( $data ) && $data !== '[]' ) {
+            return true;
+        }
     }
 
     // 2. Safe check with Elementor plugin instance
     if ( did_action( 'elementor/loaded' ) && class_exists( '\Elementor\Plugin' ) ) {
         try {
-            if ( method_exists( '\Elementor\Plugin', 'instance' ) ) {
-                $plugin = \Elementor\Plugin::instance();
-                if ( $plugin && isset( $plugin->db ) && method_exists( $plugin->db, 'is_built_with_elementor' ) ) {
-                    return (bool) $plugin->db->is_built_with_elementor( $post_id );
+            $plugin = \Elementor\Plugin::$instance;
+            if ( $plugin && isset( $plugin->db ) && method_exists( $plugin->db, 'is_built_with_elementor' ) ) {
+                if ( $plugin->db->is_built_with_elementor( $post_id ) ) {
+                    $data = get_post_meta( $post_id, '_elementor_data', true );
+                    if ( ! empty( $data ) && $data !== '[]' ) {
+                        return true;
+                    }
                 }
             }
         } catch ( \Throwable $e ) {

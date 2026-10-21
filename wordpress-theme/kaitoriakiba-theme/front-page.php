@@ -22,18 +22,22 @@
 
 get_header();
 
-// Check if page has custom Elementor content
+// Check if page should render Elementor content or fallback
 global $post;
-$has_custom_elementor = false;
-if ( kaitoriakiba_is_elementor_page() ) {
+$render_elementor = false;
+
+// 1. If currently inside Elementor Editor or Preview, ALWAYS call the_content() so Elementor loads smoothly
+if ( function_exists( 'kaitoriakiba_is_elementor_active' ) && kaitoriakiba_is_elementor_active() ) {
+    $render_elementor = true;
+} elseif ( function_exists( 'kaitoriakiba_is_elementor_page' ) && kaitoriakiba_is_elementor_page() ) {
+    // 2. If page was edited and saved with Elementor builder
     $raw_content = isset( $post->post_content ) ? trim( $post->post_content ) : '';
-    // If not just the empty demo placeholder comment, treat as custom Elementor page
     if ( ! empty( $raw_content ) && $raw_content !== '<!-- Kaitori Akiba Modern Buyback Portal Homepage -->' ) {
-        $has_custom_elementor = true;
+        $render_elementor = true;
     }
 }
 
-if ( $has_custom_elementor ) :
+if ( $render_elementor ) :
     ?>
     <main id="primary" class="site-main elementor-content-wrap">
         <?php
