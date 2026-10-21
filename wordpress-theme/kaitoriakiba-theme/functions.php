@@ -99,6 +99,8 @@ function kaitoriakiba_enqueue_scripts() {
     ) );
 }
 add_action( 'wp_enqueue_scripts', 'kaitoriakiba_enqueue_scripts' );
+add_action( 'elementor/editor/after_enqueue_styles', 'kaitoriakiba_enqueue_scripts' );
+add_action( 'elementor/preview/enqueue_styles', 'kaitoriakiba_enqueue_scripts' );
 
 /**
  * 3. Load Modules & Custom Post Types
@@ -231,28 +233,7 @@ function kaitoriakiba_get_price( $post_id = null ) {
 function kaitoriakiba_get_full_elementor_homepage_schema() {
     $theme_uri = get_template_directory_uri();
     return array(
-        // Section 1: Dual Search Box & 8 Category Icons
-        array(
-            'id'       => 'sec_search_' . wp_generate_password( 6, false, false ),
-            'elType'   => 'section',
-            'settings' => array(),
-            'elements' => array(
-                array(
-                    'id'       => 'col_search_' . wp_generate_password( 6, false, false ),
-                    'elType'   => 'column',
-                    'settings' => array( '_column_size' => 100 ),
-                    'elements' => array(
-                        array(
-                            'id'         => 'wid_search_' . wp_generate_password( 6, false, false ),
-                            'elType'     => 'widget',
-                            'widgetType' => 'kaitori_search_box',
-                            'settings'   => array(),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        // Section 2: Process Flow 3-Big Buttons
+        // Section 1: Process Flow 3-Big Buttons (guid - matching index.html top order)
         array(
             'id'       => 'sec_flow_buttons_' . wp_generate_password( 6, false, false ),
             'elType'   => 'section',
@@ -273,7 +254,7 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                 ),
             ),
         ),
-        // Section 3: Urgent Announcements & Quick Guides
+        // Section 2: Urgent Announcements & Quick Guides (home_liuxiang + qingbao)
         array(
             'id'       => 'sec_announcement_' . wp_generate_password( 6, false, false ),
             'elType'   => 'section',
@@ -288,6 +269,27 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                             'id'         => 'wid_announcement_' . wp_generate_password( 6, false, false ),
                             'elType'     => 'widget',
                             'widgetType' => 'kaitori_announcement_banner',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 3: Dual Search Box (Keyword & Step-by-Step Category search)
+        array(
+            'id'       => 'sec_search_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_search_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_search_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_search_box',
                             'settings'   => array(),
                         ),
                     ),
@@ -466,8 +468,8 @@ function kaitoriakiba_auto_populate_elementor_homepage() {
 
         if ( $is_home ) {
             $data = get_post_meta( $post_id, '_elementor_data', true );
-            // Auto-populate if missing or incomplete
-            if ( empty( $data ) || $data === '[]' || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_news_box' ) || false === strpos( $data, 'kaitori_sidebar_ad' ) || false === strpos( $data, 'kaitori_sidebar_newsletter' ) ) {
+            // Auto-populate if missing or incomplete, or explicitly requested via ?reload_elementor_schema=1
+            if ( isset( $_GET['reload_elementor_schema'] ) || empty( $data ) || $data === '[]' || false === strpos( $data, 'kaitori_checkpoints_box' ) || false === strpos( $data, 'kaitori_news_box' ) || false === strpos( $data, 'kaitori_sidebar_ad' ) || false === strpos( $data, 'kaitori_sidebar_newsletter' ) ) {
                 $schema = kaitoriakiba_get_full_elementor_homepage_schema();
                 update_post_meta( $post_id, '_wp_page_template', 'template-elementor-fullwidth.php' );
                 update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
