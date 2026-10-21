@@ -136,12 +136,12 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
 
 
         // =====================================================================
-        // SECTION 2: PROMO BANNER POSTER
+        // SECTION 2: PROMO BANNER POSTERS (REPEATER)
         // =====================================================================
         $this->start_controls_section(
             'section_promo_poster',
             array(
-                'label' => __( '2. Promo Poster Banner (キャンペーンバナー)', 'kaitoriakiba' ),
+                'label' => __( '2. Promo Poster Banners (キャンペーンポスター)', 'kaitoriakiba' ),
                 'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
             )
         );
@@ -149,29 +149,66 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'show_promo_poster',
             array(
-                'label'   => __( 'Show Promo Poster', 'kaitoriakiba' ),
+                'label'   => __( 'Show Promo Posters', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::SWITCHER,
                 'default' => 'yes',
             )
         );
 
-        $this->add_control(
+        $repeater_posters = new \Elementor\Repeater();
+
+        $repeater_posters->add_control(
             'poster_image',
             array(
                 'label'   => __( 'Poster Image', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::MEDIA,
                 'default' => array( 'url' => $theme_uri . '/upload/ad/20251229/63a58246c446bf1710aa78f25c4b2619.png' ),
-                'condition' => array( 'show_promo_poster' => 'yes' ),
             )
         );
 
-        $this->add_control(
+        $repeater_posters->add_control(
             'poster_url',
             array(
                 'label'   => __( 'Poster Link URL', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::URL,
                 'default' => array( 'url' => '/sell-apply/?delivery=mail' ),
-                'condition' => array( 'show_promo_poster' => 'yes' ),
+            )
+        );
+
+        $repeater_posters->add_control(
+            'poster_alt',
+            array(
+                'label'   => __( 'Alt Text', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'Promotion Poster',
+            )
+        );
+
+        $this->add_control(
+            'posters_list',
+            array(
+                'label'       => __( 'Posters List', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::REPEATER,
+                'fields'      => $repeater_posters->get_controls(),
+                'default'     => array(
+                    array(
+                        'poster_image' => array( 'url' => $theme_uri . '/upload/ad/20251229/63a58246c446bf1710aa78f25c4b2619.png' ),
+                        'poster_url'   => array( 'url' => '/sell-apply/?delivery=mail' ),
+                        'poster_alt'   => 'Free Shipping Mail-in Buyback Terms',
+                    ),
+                    array(
+                        'poster_image' => array( 'url' => $theme_uri . '/upload/ad/20230728/20230728.png' ),
+                        'poster_url'   => array( 'url' => '/sell-apply/?delivery=mail' ),
+                        'poster_alt'   => 'Mail-in Shipping Info',
+                    ),
+                    array(
+                        'poster_image' => array( 'url' => $theme_uri . '/upload/ad/20210621/member_rank.png' ),
+                        'poster_url'   => array( 'url' => '/register/' ),
+                        'poster_alt'   => 'Kaitori Akiba - Member Benefits & Rewards',
+                    ),
+                ),
+                'title_field' => '{{{ poster_alt }}}',
+                'condition'   => array( 'show_promo_poster' => 'yes' ),
             )
         );
 
@@ -215,7 +252,7 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
             array(
                 'label'   => __( 'Slide Banner Image', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::MEDIA,
-                'default' => array( 'url' => $theme_uri . '/upload/ad/20260226/iPad.png' ),
+                'default' => array( 'url' => $theme_uri . '/upload/ad/20180508/mainbanner-1.jpg' ),
             )
         );
 
@@ -236,19 +273,19 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
                 'fields'      => $repeater_slides->get_controls(),
                 'default'     => array(
                     array(
-                        'slide_title' => 'iPad & Tablet Buyback',
-                        'slide_image' => array( 'url' => $theme_uri . '/upload/ad/20260226/iPad.png' ),
+                        'slide_title' => 'iPad High Buyback Rate Chart',
+                        'slide_image' => array( 'url' => $theme_uri . '/upload/ad/20180508/mainbanner-1.jpg' ),
                         'slide_url'   => array( 'url' => '/devices/?cat=tablets' ),
                     ),
                     array(
-                        'slide_title' => 'Apple Watch Buyback Special',
-                        'slide_image' => array( 'url' => $theme_uri . '/upload/ad/20260114/Watch.png' ),
-                        'slide_url'   => array( 'url' => '/devices/?cat=watches' ),
+                        'slide_title' => 'Gaming Consoles Enhanced Buyback Rates',
+                        'slide_image' => array( 'url' => $theme_uri . '/upload/ad/20180508/mainbanner-3.jpg' ),
+                        'slide_url'   => array( 'url' => '/devices/?cat=games' ),
                     ),
                     array(
-                        'slide_title' => 'Gaming Consoles Buyback Rates',
-                        'slide_image' => array( 'url' => $theme_uri . '/upload/ad/20260210/Switch.png' ),
-                        'slide_url'   => array( 'url' => '/devices/?cat=games' ),
+                        'slide_title' => 'Official LINE Account',
+                        'slide_image' => array( 'url' => $theme_uri . '/upload/ad/20220222/450216 Kaitori Akibaスライドバナー.png' ),
+                        'slide_url'   => array( 'url' => 'https://lin.ee/5wvtHzl' ),
                     ),
                 ),
                 'title_field' => '{{{ slide_title }}}',
@@ -263,7 +300,7 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
         $settings  = $this->get_settings_for_display();
         $theme_uri = get_template_directory_uri();
         ?>
-        <div class="maintop" style="margin-top: 15px;">
+        <div class="maintop" style="padding-top: 10px;">
             <?php if ( 'yes' === $settings['show_hero_nav'] ) : 
                 $b1_top = ! empty( $settings['banner1_top_image']['url'] ) ? $settings['banner1_top_image']['url'] : $theme_uri . '/assets/images/maintop/nav_img_1.jpg';
                 $b1_btn = ! empty( $settings['banner1_btn_image']['url'] ) ? $settings['banner1_btn_image']['url'] : $theme_uri . '/assets/images/maintop/nav_btn_1.png';
@@ -273,30 +310,36 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
                 $b2_btn = ! empty( $settings['banner2_btn_image']['url'] ) ? $settings['banner2_btn_image']['url'] : $theme_uri . '/assets/images/maintop/nav_btn_2.png';
                 $b2_url = ! empty( $settings['banner2_url']['url'] ) ? $settings['banner2_url']['url'] : home_url( '/devices/' );
             ?>
-                <div class="container pding0">
+                <div class="container">
                     <div class="row">
-                        <div class="m-img-nav col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-right:8px;">
-                            <a href="<?php echo esc_url( $b1_url ); ?>"><img src="<?php echo esc_url( $b1_top ); ?>" class="img-responsive mbtm15" alt="iPhone Buyback" style="width:100%; border-radius:6px;"></a>
-                            <a href="<?php echo esc_url( $b1_url ); ?>"><img src="<?php echo esc_url( $b1_btn ); ?>" class="img-responsive" alt="iPhone Rates" style="width:100%;"></a>
+                        <div class="m-img-nav col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <a href="<?php echo esc_url( $b1_url ); ?>"><img src="<?php echo esc_url( $b1_top ); ?>" class="img-responsive mbtm15" alt="iPhone Buyback Price List"></a>
+                            <a href="<?php echo esc_url( $b1_url ); ?>"><img src="<?php echo esc_url( $b1_btn ); ?>" class="img-responsive" alt="iPhone Buyback Chart"></a>
                         </div>
-                        <div class="m-img-nav col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-left:8px;">
-                            <a href="<?php echo esc_url( $b2_url ); ?>"><img src="<?php echo esc_url( $b2_top ); ?>" class="img-responsive mbtm15" alt="Smartphone Buyback" style="width:100%; border-radius:6px;"></a>
-                            <a href="<?php echo esc_url( $b2_url ); ?>"><img src="<?php echo esc_url( $b2_btn ); ?>" class="img-responsive" alt="Smartphone Rates" style="width:100%;"></a>
+                        <div class="m-img-nav col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <a href="<?php echo esc_url( $b2_url ); ?>"><img src="<?php echo esc_url( $b2_top ); ?>" class="img-responsive mbtm15" alt="Smartphone Buyback List by Brand"></a>
+                            <a href="<?php echo esc_url( $b2_url ); ?>"><img src="<?php echo esc_url( $b2_btn ); ?>" class="img-responsive" alt="Smartphone Buyback Rates"></a>
                         </div>
                         <div class="clearfix"></div>
                     </div>
                 </div>
             <?php endif; ?>
 
-            <!-- Promo Banner Poster -->
-            <?php if ( 'yes' === $settings['show_promo_poster'] ) : 
-                $poster_img = ! empty( $settings['poster_image']['url'] ) ? $settings['poster_image']['url'] : $theme_uri . '/upload/ad/20251229/63a58246c446bf1710aa78f25c4b2619.png';
-                $poster_url = ! empty( $settings['poster_url']['url'] ) ? $settings['poster_url']['url'] : home_url( '/sell-apply/?delivery=mail' );
-            ?>
-                <div class="container pding0" style="margin-top:10px;">
-                    <a href="<?php echo esc_url( $poster_url ); ?>">
-                        <img src="<?php echo esc_url( $poster_img ); ?>" alt="Free Shipping Mail-in Buyback" class="img-responsive col-center poster" style="width:100%; max-width:100%; border-radius:6px; display:block;"/>
-                    </a>
+            <!-- Promo Banner Posters -->
+            <?php if ( 'yes' === $settings['show_promo_poster'] && ! empty( $settings['posters_list'] ) ) : ?>
+                <div class="container pding0">
+                    <?php foreach ( $settings['posters_list'] as $pst ) : 
+                        $p_img = ! empty( $pst['poster_image']['url'] ) ? $pst['poster_image']['url'] : '';
+                        $p_url = ! empty( $pst['poster_url']['url'] ) ? $pst['poster_url']['url'] : '#';
+                        $p_alt = ! empty( $pst['poster_alt'] ) ? $pst['poster_alt'] : '';
+                        if ( ! $p_img ) continue;
+                    ?>
+                        <li style="list-style:none;">
+                            <a href="<?php echo esc_url( $p_url ); ?>">
+                                <img src="<?php echo esc_url( $p_img ); ?>" alt="<?php echo esc_attr( $p_alt ); ?>" class="img-responsive col-center poster"/>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
 
@@ -313,7 +356,7 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
                                 ?>
                                     <div class="swiper-slide">
                                         <a href="<?php echo esc_url( $s_url ); ?>">
-                                            <img src="<?php echo esc_url( $s_img ); ?>" alt="<?php echo esc_attr( $slide['slide_title'] ); ?>" class="img-responsive" style="width:100%; border-radius:6px;">
+                                            <img src="<?php echo esc_url( $s_img ); ?>" alt="<?php echo esc_attr( $slide['slide_title'] ); ?>" class="img-responsive" style="width:100%">
                                         </a>
                                     </div>
                                 <?php endforeach; ?>

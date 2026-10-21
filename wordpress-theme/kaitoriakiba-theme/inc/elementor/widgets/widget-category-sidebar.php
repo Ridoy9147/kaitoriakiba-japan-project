@@ -1,11 +1,13 @@
 <?php
 /**
- * Elementor Taxonomy Browse Sidebar Widget
+ * Elementor Taxonomy / Category Browse Widget
  * 
- * 100% Fully Editable in Elementor:
- * - Allows full repeater editing of Brand, Carrier, and Series logos, titles, and links.
- * - Supports dynamic mode from WordPress taxonomies as well.
- * - Enforces 100% full-width images (no auto margin margins) as required.
+ * Supports 3 authentic Japanese portal layout modes matching index.html:
+ * 1. Carrier Browse (Full-width carrier image banners)
+ * 2. Brand Browse (3-column logo grid: .quick_side col-lg-4)
+ * 3. Series Browse (Clean text links list: .navigation-h3)
+ * 
+ * 100% Fully Editable in Elementor.
  * 
  * @package KaitoriAkiba
  */
@@ -14,18 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
+class Kaitori_Category_Sidebar_Widget extends \Elementor\Widget_Base {
 
     public function get_name() {
         return 'kaitori_taxonomy_browse';
     }
 
     public function get_title() {
-        return __( 'Browse by Taxonomy / Brands (キャリア・ブランド別一覧)', 'kaitoriakiba' );
+        return __( 'Browse by Category / Brands (条件から探す)', 'kaitoriakiba' );
     }
 
     public function get_icon() {
-        return 'eicon-gallery-grid';
+        return 'eicon-folder';
     }
 
     public function get_categories() {
@@ -39,45 +41,51 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
         $this->start_controls_section(
             'section_content',
             array(
-                'label' => __( 'Navigation Box Settings', 'kaitoriakiba' ),
+                'label' => __( 'Box Settings', 'kaitoriakiba' ),
                 'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
-            )
-        );
-
-        $this->add_control(
-            'data_mode',
-            array(
-                'label'   => __( 'Data Mode', 'kaitoriakiba' ),
-                'type'    => \Elementor\Controls_Manager::SELECT,
-                'default' => 'custom',
-                'options' => array(
-                    'custom'  => __( 'Editable Custom Items (Repeater)', 'kaitoriakiba' ),
-                    'dynamic' => __( 'Dynamic from WordPress Taxonomies', 'kaitoriakiba' ),
-                ),
             )
         );
 
         $this->add_control(
             'box_title',
             array(
-                'label'       => __( 'Box Header Title', 'kaitoriakiba' ),
-                'type'        => \Elementor\Controls_Manager::TEXT,
-                'default'     => 'ブランドから探す (Browse by Brand)',
-                'placeholder' => __( 'e.g. ブランドから探す', 'kaitoriakiba' ),
+                'label'   => __( 'Section Title', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'ブランドから探す (Browse by Brand)',
             )
         );
 
-        // =====================================================================
-        // REPEATER FOR CUSTOM ITEMS
-        // =====================================================================
+        $this->add_control(
+            'box_link',
+            array(
+                'label'   => __( 'Title Link URL', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::URL,
+                'default' => array( 'url' => '/brand/' ),
+            )
+        );
+
+        $this->add_control(
+            'display_mode',
+            array(
+                'label'   => __( 'Display Layout Mode', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'default' => 'brand_grid',
+                'options' => array(
+                    'brand_grid'   => __( '3-Column Brand Logo Grid (クイックロゴ)', 'kaitoriakiba' ),
+                    'carrier_full' => __( 'Full-Width Carrier Banners (キャリアバナー)', 'kaitoriakiba' ),
+                    'series_list'  => __( 'Text Link List (シリーズ一覧リスト)', 'kaitoriakiba' ),
+                ),
+            )
+        );
+
         $repeater = new \Elementor\Repeater();
 
         $repeater->add_control(
             'item_title',
             array(
-                'label'       => __( 'Brand / Item Name', 'kaitoriakiba' ),
+                'label'       => __( 'Item Name', 'kaitoriakiba' ),
                 'type'        => \Elementor\Controls_Manager::TEXT,
-                'default'     => 'Brand Name',
+                'default'     => 'Apple',
                 'label_block' => true,
             )
         );
@@ -85,10 +93,10 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
         $repeater->add_control(
             'item_image',
             array(
-                'label'   => __( 'Logo / Banner Image', 'kaitoriakiba' ),
+                'label'   => __( 'Item Image / Logo', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::MEDIA,
                 'default' => array(
-                    'url' => '',
+                    'url' => $theme_uri . '/upload/brand/apple.jpg',
                 ),
             )
         );
@@ -96,148 +104,48 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
         $repeater->add_control(
             'item_url',
             array(
-                'label'       => __( 'Link URL', 'kaitoriakiba' ),
-                'type'        => \Elementor\Controls_Manager::URL,
-                'placeholder' => __( 'https://your-link.com or /devices/?brand=apple', 'kaitoriakiba' ),
-                'default'     => array(
-                    'url' => '/devices/',
+                'label'   => __( 'Item Link URL', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::URL,
+                'default' => array(
+                    'url' => '/devices/?brand=apple',
                 ),
+            )
+        );
+
+        $this->add_control(
+            'show_more_button',
+            array(
+                'label'        => __( 'Show More Button (もっと見る)', 'kaitoriakiba' ),
+                'type'         => \Elementor\Controls_Manager::SWITCHER,
+                'default'      => 'yes',
+                'return_value' => 'yes',
             )
         );
 
         $this->add_control(
             'custom_items_list',
             array(
-                'label'       => __( 'Brands / Items List', 'kaitoriakiba' ),
+                'label'       => __( 'Items List', 'kaitoriakiba' ),
                 'type'        => \Elementor\Controls_Manager::REPEATER,
                 'fields'      => $repeater->get_controls(),
                 'default'     => array(
-                    array(
-                        'item_title' => 'OPPO',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/OPPO.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=oppo' ),
-                    ),
-                    array(
-                        'item_title' => 'ASUS',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/asus.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=asus' ),
-                    ),
-                    array(
-                        'item_title' => 'FUJITSU',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/fujitsu.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=fujitsu' ),
-                    ),
-                    array(
-                        'item_title' => 'SAMSUNG',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/samsung.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=samsung' ),
-                    ),
-                    array(
-                        'item_title' => 'Google',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/google.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=google' ),
-                    ),
-                    array(
-                        'item_title' => 'HUAWEI',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/huawei.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=huawei' ),
-                    ),
-                    array(
-                        'item_title' => 'KYOCERA',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/kyocera.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=kyocera' ),
-                    ),
-                    array(
-                        'item_title' => 'SHARP',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/sharp.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=sharp' ),
-                    ),
-                    array(
-                        'item_title' => 'Apple',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/apple.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=apple' ),
-                    ),
-                    array(
-                        'item_title' => 'Sony',
-                        'item_image' => array( 'url' => $theme_uri . '/upload/brand/sony.jpg' ),
-                        'item_url'   => array( 'url' => '/devices/?brand=sony' ),
-                    ),
+                    array( 'item_title' => 'Apple', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/apple.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=apple' ) ),
+                    array( 'item_title' => 'Xiaomi', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/20200603/3.png' ), 'item_url' => array( 'url' => '/devices/?brand=xiaomi' ) ),
+                    array( 'item_title' => 'OPPO', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/OPPO.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=oppo' ) ),
+                    array( 'item_title' => 'ASUS', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/asus.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=asus' ) ),
+                    array( 'item_title' => 'FUJITSU', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/fujitsu.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=fujitsu' ) ),
+                    array( 'item_title' => 'SAMSUNG', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/samsung.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=samsung' ) ),
+                    array( 'item_title' => 'Google', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/google.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=google' ) ),
+                    array( 'item_title' => 'HUAWEI', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/huawei.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=huawei' ) ),
+                    array( 'item_title' => 'KYOCERA', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/kyocera.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=kyocera' ) ),
+                    array( 'item_title' => 'MOTOROLA', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/motorola.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=motorola' ) ),
+                    array( 'item_title' => 'SHARP', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/sharp.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=sharp' ) ),
+                    array( 'item_title' => 'SONY', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/sony.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=sony' ) ),
+                    array( 'item_title' => 'ZTE', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/zte.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=zte' ) ),
+                    array( 'item_title' => 'FREETEL', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/freetel.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=freetel' ) ),
+                    array( 'item_title' => 'Other', 'item_image' => array( 'url' => $theme_uri . '/upload/brand/other.jpg' ), 'item_url' => array( 'url' => '/devices/?brand=other' ) ),
                 ),
                 'title_field' => '{{{ item_title }}}',
-                'condition'   => array( 'data_mode' => 'custom' ),
-            )
-        );
-
-        // =====================================================================
-        // DYNAMIC TAXONOMY CONTROLS
-        // =====================================================================
-        $this->add_control(
-            'taxonomy_type',
-            array(
-                'label'   => __( 'Select Taxonomy', 'kaitoriakiba' ),
-                'type'    => \Elementor\Controls_Manager::SELECT,
-                'default' => 'brand',
-                'options' => array(
-                    'brand'           => __( 'Browse by Brand (ブランドから探す)', 'kaitoriakiba' ),
-                    'carrier'         => __( 'Browse by Carrier (キャリアから探す)', 'kaitoriakiba' ),
-                    'series'          => __( 'Browse by Series (シリーズから探す)', 'kaitoriakiba' ),
-                    'device_category' => __( 'Browse by Category (カテゴリから探す)', 'kaitoriakiba' ),
-                ),
-                'condition' => array( 'data_mode' => 'dynamic' ),
-            )
-        );
-
-        $this->add_control(
-            'number_of_items',
-            array(
-                'label'     => __( 'Number of Items', 'kaitoriakiba' ),
-                'type'      => \Elementor\Controls_Manager::NUMBER,
-                'default'   => 12,
-                'min'       => 1,
-                'max'       => 50,
-                'condition' => array( 'data_mode' => 'dynamic' ),
-            )
-        );
-
-        $this->end_controls_section();
-
-
-        // =====================================================================
-        // STYLING SECTION
-        // =====================================================================
-        $this->start_controls_section(
-            'section_style',
-            array(
-                'label' => __( 'Header Style & Colors', 'kaitoriakiba' ),
-                'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
-            )
-        );
-
-        $this->add_control(
-            'header_bg_color',
-            array(
-                'label'     => __( 'Header Background', 'kaitoriakiba' ),
-                'type'      => \Elementor\Controls_Manager::COLOR,
-                'default'   => '#ef4444',
-                'selectors' => array(
-                    '{{WRAPPER}} .navigation-h2' => 'background: {{VALUE}} !important;',
-                ),
-            )
-        );
-
-        $this->add_control(
-            'card_border_radius',
-            array(
-                'label'      => __( 'Card Border Radius (px)', 'kaitoriakiba' ),
-                'type'       => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => array( 'px' ),
-                'range'      => array(
-                    'px' => array( 'min' => 0, 'max' => 20 ),
-                ),
-                'default'    => array( 'unit' => 'px', 'size' => 6 ),
-                'selectors'  => array(
-                    '{{WRAPPER}} .nav-img-full' => 'border-radius: {{SIZE}}{{UNIT}} !important;',
-                ),
             )
         );
 
@@ -248,72 +156,80 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
         $settings  = $this->get_settings_for_display();
         $theme_uri = get_template_directory_uri();
         $title     = ! empty( $settings['box_title'] ) ? $settings['box_title'] : 'ブランドから探す (Browse by Brand)';
+        $box_url   = ! empty( $settings['box_link']['url'] ) ? $settings['box_link']['url'] : '/brand/';
+        $mode      = ! empty( $settings['display_mode'] ) ? $settings['display_mode'] : 'brand_grid';
+        $items     = ! empty( $settings['custom_items_list'] ) && is_iterable( $settings['custom_items_list'] ) ? $settings['custom_items_list'] : array();
         ?>
-        <div class="navigation-box" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.02);">
-            
-            <div class="navigation-h2" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding:11px 16px; color:#ffffff; font-weight:800; font-size:14px; letter-spacing:0.5px;">
-                <i class="fa fa-circle" style="font-size:8px; vertical-align:middle; margin-right:6px; color:#fef08a;"></i>
-                <span><?php echo esc_html( $title ); ?></span>
+        <div class="navigation-box">
+            <div class="navigation-h2">
+                <a href="<?php echo esc_url( home_url( $box_url ) ); ?>">
+                    <i class="fa fa-circle"><span><?php echo esc_html( $title ); ?></span></i>
+                </a>
             </div>
 
-            <ul style="list-style:none; padding:10px 8px; margin:0;">
-                <?php if ( 'custom' === $settings['data_mode'] && ! empty( $settings['custom_items_list'] ) ) : ?>
-                    
-                    <?php foreach ( $settings['custom_items_list'] as $item ) : 
+            <?php if ( 'brand_grid' === $mode ) : ?>
+                <!-- 3-Column Logo Grid (.quick_side) -->
+                <ul class="quick_side">
+                    <?php foreach ( $items as $item ) : 
                         $img_url  = ! empty( $item['item_image']['url'] ) ? $item['item_image']['url'] : '';
                         $link_url = ! empty( $item['item_url']['url'] ) ? $item['item_url']['url'] : home_url( '/devices/' );
-                        $is_ext   = ! empty( $item['item_url']['is_external'] ) ? ' target="_blank" rel="noopener"' : '';
+                        $ititle   = ! empty( $item['item_title'] ) ? $item['item_title'] : '';
                     ?>
-                        <li style="padding:4px 0; margin-bottom:6px; list-style:none; width:100%;">
-                            <a href="<?php echo esc_url( $link_url ); ?>"<?php echo $is_ext; ?> title="<?php echo esc_attr( $item['item_title'] ); ?>" style="display:block; text-decoration:none;">
+                        <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4 mbtm10">
+                            <a href="<?php echo esc_url( home_url( $link_url ) ); ?>" title="<?php echo esc_attr( $ititle ); ?>">
                                 <?php if ( $img_url ) : ?>
-                                    <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $item['item_title'] ); ?>" class="img-responsive nav-img-full" style="width:100% !important; max-width:100% !important; min-width:100% !important; margin:0 !important; display:block !important; border-radius:6px; border:1px solid #e2e8f0; object-fit:contain; transition:box-shadow 0.2s, transform 0.2s;">
+                                    <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $ititle ); ?>" class="img-responsive mcenter" />
                                 <?php else : ?>
-                                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px; font-weight:700; font-size:13px; color:#1e293b; text-align:center;">
-                                        <?php echo esc_html( $item['item_title'] ); ?>
-                                    </div>
+                                    <span><?php echo esc_html( $ititle ); ?></span>
                                 <?php endif; ?>
                             </a>
                         </li>
                     <?php endforeach; ?>
+                </ul>
+                <?php if ( ! empty( $settings['show_more_button'] ) && 'yes' === $settings['show_more_button'] ) : ?>
+                    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 btn-more">
+                        <a href="<?php echo esc_url( home_url( $box_url ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri . '/assets/images/navigation/more_open.jpg' ); ?>" alt="Open" class="img-responsive">
+                        </a>
+                    </div>
+                <?php endif; ?>
+                <div class="clearfix"></div>
 
-                <?php else : 
-                    // Dynamic mode from WordPress taxonomy
-                    $tax = ! empty( $settings['taxonomy_type'] ) ? $settings['taxonomy_type'] : 'brand';
-                    $num = ! empty( $settings['number_of_items'] ) ? intval( $settings['number_of_items'] ) : 12;
-                    $tax_folder = ( 'carrier' === $tax ) ? 'career' : $tax;
+            <?php elseif ( 'series_list' === $mode ) : ?>
+                <!-- Text Link List (.navigation-h3) -->
+                <ul class="navigation-h3">
+                    <?php foreach ( $items as $item ) : 
+                        $link_url = ! empty( $item['item_url']['url'] ) ? $item['item_url']['url'] : home_url( '/devices/' );
+                        $ititle   = ! empty( $item['item_title'] ) ? $item['item_title'] : '';
+                    ?>
+                        <li class="col-lg-12 col-md-12 col-sm-12 col-xs-6">
+                            <a href="<?php echo esc_url( home_url( $link_url ) ); ?>" title="<?php echo esc_attr( $ititle ); ?>"><?php echo esc_html( $ititle ); ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="clearfix"></div>
 
-                    $terms = get_terms( array(
-                        'taxonomy'   => $tax,
-                        'hide_empty' => false,
-                        'number'     => $num,
-                    ) );
-
-                    if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) :
-                        foreach ( $terms as $term ) :
-                            $term_link = get_term_link( $term );
-                            $img_file  = get_template_directory() . '/upload/' . $tax_folder . '/' . $term->slug . '.jpg';
-                            $img_url   = file_exists( $img_file ) ? $theme_uri . '/upload/' . $tax_folder . '/' . $term->slug . '.jpg' : '';
-                            if ( ! $img_url ) {
-                                $png_file = get_template_directory() . '/upload/' . $tax_folder . '/' . $term->slug . '.png';
-                                $img_url  = file_exists( $png_file ) ? $theme_uri . '/upload/' . $tax_folder . '/' . $term->slug . '.png' : '';
-                            }
-                        ?>
-                            <li style="padding:4px 0; margin-bottom:6px; list-style:none; width:100%;">
-                                <a href="<?php echo esc_url( $term_link ); ?>" title="<?php echo esc_attr( $term->name ); ?>" style="display:block; text-decoration:none;">
-                                    <?php if ( $img_url ) : ?>
-                                        <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" class="img-responsive nav-img-full" style="width:100% !important; max-width:100% !important; min-width:100% !important; margin:0 !important; display:block !important; border-radius:6px; border:1px solid #e2e8f0; object-fit:contain;">
-                                    <?php else : ?>
-                                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px; font-weight:700; font-size:13px; color:#1e293b; text-align:center;">
-                                            <?php echo esc_html( $term->name ); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </a>
-                            </li>
-                        <?php endforeach;
-                    endif;
-                endif; ?>
-            </ul>
+            <?php else : ?>
+                <!-- Full-Width Carrier Banners -->
+                <ul>
+                    <?php foreach ( $items as $item ) : 
+                        $img_url  = ! empty( $item['item_image']['url'] ) ? $item['item_image']['url'] : '';
+                        $link_url = ! empty( $item['item_url']['url'] ) ? $item['item_url']['url'] : home_url( '/devices/' );
+                        $ititle   = ! empty( $item['item_title'] ) ? $item['item_title'] : '';
+                    ?>
+                        <li class="col-lg-12 col-sm-12 col-md-12 col-xs-6">
+                            <a href="<?php echo esc_url( home_url( $link_url ) ); ?>" title="<?php echo esc_attr( $ititle ); ?>">
+                                <?php if ( $img_url ) : ?>
+                                    <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $ititle ); ?>" class="img-responsive">
+                                <?php else : ?>
+                                    <span><?php echo esc_html( $ititle ); ?></span>
+                                <?php endif; ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="clearfix"></div>
+            <?php endif; ?>
         </div>
         <?php
     }
