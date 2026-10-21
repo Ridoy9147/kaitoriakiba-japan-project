@@ -111,21 +111,77 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
 
         $this->end_controls_section();
 
-        // Style Section
+        // Display & Label Options Section
         $this->start_controls_section(
             'section_display_opts',
             array(
-                'label' => __( 'Display Options', 'kaitoriakiba' ),
+                'label' => __( 'Section Header & Labels', 'kaitoriakiba' ),
                 'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'header_image',
+            array(
+                'label'   => __( 'Header Banner Image', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::MEDIA,
+                'default' => array(
+                    'url' => get_template_directory_uri() . '/assets/images/mainpage/sub_box_header02.png',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'promo_badge_text',
+            array(
+                'label'   => __( 'Card Promo Badge Text', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '分割残債あり(△)も減額なし対応',
+            )
+        );
+
+        $this->add_control(
+            'price_label_text',
+            array(
+                'label'   => __( 'Price Label Prefix', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '買取上限価格:',
+            )
+        );
+
+        $this->add_control(
+            'jan_prefix_text',
+            array(
+                'label'   => __( 'JAN Code Prefix', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'JAN：',
             )
         );
 
         $this->add_control(
             'button_text',
             array(
-                'label'   => __( 'Button Text', 'kaitoriakiba' ),
+                'label'   => __( 'Apply Button Text', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::TEXT,
-                'default' => __( 'Apply for Buyback', 'kaitoriakiba' ),
+                'default' => '買取申込',
+            )
+        );
+
+        $this->add_control(
+            'view_all_text',
+            array(
+                'label'   => __( 'Footer View All Text', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'View All / 全機種一覧',
+            )
+        );
+
+        $this->add_control(
+            'view_all_url',
+            array(
+                'label'   => __( 'Footer View All URL', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '/devices/',
             )
         );
 
@@ -139,7 +195,15 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
         $orderby        = ! empty( $settings['orderby'] ) ? $settings['orderby'] : 'date';
         $order          = ! empty( $settings['order'] ) ? $settings['order'] : 'DESC';
         $columns        = ! empty( $settings['columns'] ) ? $settings['columns'] : '4';
-        $btn_text       = ! empty( $settings['button_text'] ) ? $settings['button_text'] : __( 'Apply for Buyback', 'kaitoriakiba' );
+        $btn_text       = ! empty( $settings['button_text'] ) ? $settings['button_text'] : '買取申込';
+        $promo_badge    = ! empty( $settings['promo_badge_text'] ) ? $settings['promo_badge_text'] : '分割残債あり(△)も減額なし対応';
+        $price_label    = ! empty( $settings['price_label_text'] ) ? $settings['price_label_text'] : '買取上限価格:';
+        $jan_prefix     = ! empty( $settings['jan_prefix_text'] ) ? $settings['jan_prefix_text'] : 'JAN：';
+        $view_all_txt   = ! empty( $settings['view_all_text'] ) ? $settings['view_all_text'] : 'View All / 全機種一覧';
+        $view_all_url   = ! empty( $settings['view_all_url'] ) ? home_url( $settings['view_all_url'] ) : home_url( '/devices/' );
+
+        $theme_uri      = get_template_directory_uri();
+        $header_img     = ! empty( $settings['header_image']['url'] ) ? $settings['header_image']['url'] : ( $theme_uri . '/assets/images/mainpage/sub_box_header02.png' );
 
         $args = array(
             'post_type'      => 'kaitori_device',
@@ -187,9 +251,11 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
         ?>
         <div class="mainpage-box xs-pad0 kaitori-device-grid-wrapper">
             <div class="sub-box" id="layout_y">
-                <div class="text-center head_img" style="margin-bottom:15px;">
-                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/sub_box_header02.png" alt="Featured Devices Header" class="img-responsive" style="margin:0 auto;" />
-                </div>
+                <?php if ( ! empty( $header_img ) ) : ?>
+                    <div class="text-center head_img" style="margin-bottom:15px;">
+                        <img src="<?php echo esc_url( $header_img ); ?>" alt="Featured Devices Header" class="img-responsive" style="margin:0 auto;" />
+                    </div>
+                <?php endif; ?>
                 <div class="sub-pro-box">
                     <div class="row">
                         <?php if ( $query->have_posts() ) : ?>
@@ -220,17 +286,21 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                     <li class="sub-pro-name">
                                                         <a title="<?php the_title_attribute(); ?>" href="<?php echo esc_url( $permalink ); ?>"><?php the_title(); ?></a>
                                                     </li>
-                                                    <li class="sub-pro-name" style="font-size: 11px; color: #ec1600;">
-                                                        <span>分割残債あり(△)も減額なし対応</span>
-                                                    </li>
-                                                    <li class="sub-pro-name" style="font-size: 11px; color: #64748b;">JAN：<?php echo esc_html( $jan ); ?></li>
+                                                    <?php if ( ! empty( $promo_badge ) ) : ?>
+                                                        <li class="sub-pro-name" style="font-size: 11px; color: #ec1600;">
+                                                            <span><?php echo esc_html( $promo_badge ); ?></span>
+                                                        </li>
+                                                    <?php endif; ?>
+                                                    <?php if ( ! empty( $jan ) ) : ?>
+                                                        <li class="sub-pro-name" style="font-size: 11px; color: #64748b;"><?php echo esc_html( $jan_prefix ); ?><?php echo esc_html( $jan ); ?></li>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <li class="sub-pro-jia" style="font-size: 13px; font-weight: 700; margin-top: 6px;">
-                                                    <?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span>
+                                                    <?php echo esc_html( $price_label ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span>
                                                 </li>
                                                 <li style="margin-top: 10px;">
                                                     <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) ) ); ?>">
-                                                        <button type="button" class="btn btn-pro" style="width: 100%; font-weight: 700; border-radius: 6px;"><?php echo esc_html( $settings['button_text'] ); ?></button>
+                                                        <button type="button" class="btn btn-pro" style="width: 100%; font-weight: 700; border-radius: 6px;"><?php echo esc_html( $btn_text ); ?></button>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -266,17 +336,21 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                     <li class="sub-pro-name">
                                                         <a title="<?php echo esc_attr( $dev['title'] ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php echo esc_html( $dev['title'] ); ?></a>
                                                     </li>
-                                                    <li class="sub-pro-name" style="font-size: 11px; color: #ec1600;">
-                                                        <span>分割残債あり(△)も減額なし対応</span>
-                                                    </li>
-                                                    <li class="sub-pro-name" style="font-size: 11px; color: #64748b;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
+                                                    <?php if ( ! empty( $promo_badge ) ) : ?>
+                                                        <li class="sub-pro-name" style="font-size: 11px; color: #ec1600;">
+                                                            <span><?php echo esc_html( $promo_badge ); ?></span>
+                                                        </li>
+                                                    <?php endif; ?>
+                                                    <?php if ( ! empty( $dev['jan'] ) ) : ?>
+                                                        <li class="sub-pro-name" style="font-size: 11px; color: #64748b;"><?php echo esc_html( $jan_prefix ); ?><?php echo esc_html( $dev['jan'] ); ?></li>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <li class="sub-pro-jia" style="font-size: 13px; font-weight: 700; margin-top: 6px;">
-                                                    <?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span>
+                                                    <?php echo esc_html( $price_label ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span>
                                                 </li>
                                                 <li style="margin-top: 10px;">
                                                     <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
-                                                        <button type="button" class="btn btn-pro" style="width: 100%; font-weight: 700; border-radius: 6px;"><?php echo esc_html( $settings['button_text'] ); ?></button>
+                                                        <button type="button" class="btn btn-pro" style="width: 100%; font-weight: 700; border-radius: 6px;"><?php echo esc_html( $btn_text ); ?></button>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -290,7 +364,7 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                     </div>
                 </div>
                 <div class="sub-pro-footer" style="text-align: center; margin-top: 15px;">
-                    <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 全機種一覧', 'kaitoriakiba' ); ?></a>
+                    <a class="btn-ys more" href="<?php echo esc_url( $view_all_url ); ?>"><?php echo esc_html( $view_all_txt ); ?></a>
                 </div>
             </div>
         </div>

@@ -2,8 +2,14 @@
 /**
  * Elementor Widget: Buyback Application Multi-Step Form
  * 
- * Allows visual customization of the 6-step online buyback application form
- * directly in Elementor page builder.
+ * 100% Fully Editable in Elementor:
+ * - Form title, subtitle, and stepper indicator
+ * - Step 1: Device model, storage, carrier, color, and IMEI labels & placeholders
+ * - Step 2: Screen, body condition, battery health, and hardware check labels
+ * - Step 3: Installment/network restriction and security clearance checklists
+ * - Step 4: Mail-in and Store visit delivery method titles and descriptions
+ * - Step 5: Full customer info fields & bank account transfer fields
+ * - Step 6: Confirmation, terms of service agreement, and submit button texts
  * 
  * @package KaitoriAkiba
  * @author dev hridoy
@@ -32,10 +38,14 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
     }
 
     protected function register_controls() {
+
+        // =====================================================================
+        // SECTION 1: HEADER & GENERAL SETTINGS
+        // =====================================================================
         $this->start_controls_section(
-            'section_content',
+            'section_general',
             array(
-                'label' => __( 'Form Content & Headings', 'kaitoriakiba' ),
+                'label' => __( '1. Form Title & Stepper', 'kaitoriakiba' ),
                 'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
             )
         );
@@ -53,7 +63,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'form_subtitle',
             array(
-                'label'       => __( 'Subtitle', 'kaitoriakiba' ),
+                'label'       => __( 'Subtitle / Description', 'kaitoriakiba' ),
                 'type'        => \Elementor\Controls_Manager::TEXTAREA,
                 'default'     => 'かんたんステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！',
                 'rows'        => 2,
@@ -63,58 +73,441 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'show_stepper',
             array(
-                'label'        => __( 'Display Stepper Indicator', 'kaitoriakiba' ),
+                'label'        => __( 'Display Stepper Progress Bar', 'kaitoriakiba' ),
                 'type'         => \Elementor\Controls_Manager::SWITCHER,
                 'default'      => 'yes',
                 'return_value' => 'yes',
             )
         );
 
-        $this->add_control(
-            'default_carrier',
+        $this->end_controls_section();
+
+
+        // =====================================================================
+        // SECTION 2: STEP 1 - DEVICE INFORMATION FIELDS
+        // =====================================================================
+        $this->start_controls_section(
+            'section_step1',
             array(
-                'label'   => __( 'Default Selected Carrier', 'kaitoriakiba' ),
-                'type'    => \Elementor\Controls_Manager::SELECT,
-                'options' => array(
-                    'SIMフリー'    => 'SIM FREE (SIMフリー)',
-                    'docomo'        => 'docomo (ドコモ)',
-                    'au'            => 'au (KDDI)',
-                    'SoftBank'      => 'SoftBank (ソフトバンク)',
-                    'RakutenMobile' => 'Rakuten (楽天モバイル)',
-                ),
-                'default' => 'SIMフリー',
+                'label' => __( '2. Step 1: Device Info Fields (端末情報)', 'kaitoriakiba' ),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'step1_heading',
+            array(
+                'label'       => __( 'Step 1 Heading', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '買取希望の端末情報',
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'lbl_model',
+            array(
+                'label'   => __( 'Model Field Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '機種名・モデル (Model)',
+            )
+        );
+
+        $this->add_control(
+            'lbl_storage',
+            array(
+                'label'   => __( 'Storage Field Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '容量 (Storage)',
+            )
+        );
+
+        $this->add_control(
+            'lbl_carrier',
+            array(
+                'label'   => __( 'Carrier Field Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'キャリア / 仕様 (Carrier)',
+            )
+        );
+
+        $this->add_control(
+            'lbl_color',
+            array(
+                'label'   => __( 'Color Field Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '本体カラー (Color)',
+            )
+        );
+
+        $this->add_control(
+            'ph_color',
+            array(
+                'label'   => __( 'Color Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '例: ナチュラルチタニウム、ブラック',
+            )
+        );
+
+        $this->add_control(
+            'lbl_imei',
+            array(
+                'label'   => __( 'IMEI Field Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'IMEI / 製造番号 (15桁)',
+            )
+        );
+
+        $this->add_control(
+            'ph_imei',
+            array(
+                'label'   => __( 'IMEI Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '35xxxxxxxxxxxxx (設定→一般→情報で確認)',
             )
         );
 
         $this->end_controls_section();
 
+
+        // =====================================================================
+        // SECTION 3: STEP 2 - CONDITION CHECK FIELDS
+        // =====================================================================
         $this->start_controls_section(
-            'section_style',
+            'section_step2',
             array(
-                'label' => __( 'Form Container Styling', 'kaitoriakiba' ),
-                'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+                'label' => __( '3. Step 2: Condition Fields (状態確認)', 'kaitoriakiba' ),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
             )
         );
 
         $this->add_control(
-            'max_width',
+            'step2_heading',
             array(
-                'label'      => __( 'Form Max Width (px)', 'kaitoriakiba' ),
-                'type'       => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => array( 'px' ),
-                'range'      => array(
-                    'px' => array(
-                        'min' => 600,
-                        'max' => 1200,
-                    ),
-                ),
-                'default'    => array(
-                    'unit' => 'px',
-                    'size' => 880,
-                ),
-                'selectors'  => array(
-                    '{{WRAPPER}} .apply-container' => 'max-width: {{SIZE}}{{UNIT}};',
-                ),
+                'label'       => __( 'Step 2 Heading', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '外観・動作状態の詳細チェック',
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'lbl_screen',
+            array(
+                'label'   => __( 'Screen Condition Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '液晶画面の状態 (Screen Condition)',
+            )
+        );
+
+        $this->add_control(
+            'lbl_body',
+            array(
+                'label'   => __( 'Body Condition Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '本体外装・フレームの状態 (Body & Frame)',
+            )
+        );
+
+        $this->add_control(
+            'lbl_battery',
+            array(
+                'label'   => __( 'Battery Health Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'バッテリー最大容量 (%)',
+            )
+        );
+
+        $this->add_control(
+            'lbl_hardware',
+            array(
+                'label'   => __( 'Hardware/FaceID Check Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'カメラ・Face ID / Touch ID動作',
+            )
+        );
+
+        $this->end_controls_section();
+
+
+        // =====================================================================
+        // SECTION 4: STEP 3 - DELIVERY METHOD FIELDS
+        // =====================================================================
+        $this->start_controls_section(
+            'section_step3',
+            array(
+                'label' => __( '4. Step 4: Delivery Options (受取方法)', 'kaitoriakiba' ),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'step4_heading',
+            array(
+                'label'       => __( 'Step 4 Heading', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '買取方法（郵送宅配または店頭持込）',
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'title_mail',
+            array(
+                'label'   => __( 'Mail-in Title', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '郵送買取 (全国送料無料)',
+            )
+        );
+
+        $this->add_control(
+            'desc_mail',
+            array(
+                'label'   => __( 'Mail-in Description', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXTAREA,
+                'default' => '自宅にいながらラクラク発送。無料梱包キットのお届けも承ります。端末到着日に即査定・即日振込！',
+                'rows'    => 2,
+            )
+        );
+
+        $this->add_control(
+            'title_store',
+            array(
+                'label'   => __( 'Store Visit Title', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '秋葉原 店頭買取 (即現金化)',
+            )
+        );
+
+        $this->add_control(
+            'desc_store',
+            array(
+                'label'   => __( 'Store Visit Description', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXTAREA,
+                'default' => '秋葉原駅電気街口徒歩2分の実店舗にお持込。最短5分で現物査定＆その場で現金手渡し！',
+                'rows'    => 2,
+            )
+        );
+
+        $this->end_controls_section();
+
+
+        // =====================================================================
+        // SECTION 5: STEP 5 - CUSTOMER & BANK ACCOUNT FIELDS
+        // =====================================================================
+        $this->start_controls_section(
+            'section_step5',
+            array(
+                'label' => __( '5. Step 5: Customer & Bank Info (お客様情報・口座)', 'kaitoriakiba' ),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'step5_heading',
+            array(
+                'label'       => __( 'Step 5 Heading', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => 'お客様情報および買取金お振込口座',
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'lbl_name',
+            array(
+                'label'   => __( 'Name (Kanji) Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '氏名 (漢字) *',
+            )
+        );
+
+        $this->add_control(
+            'ph_name',
+            array(
+                'label'   => __( 'Name (Kanji) Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '山田 太郎',
+            )
+        );
+
+        $this->add_control(
+            'lbl_kana',
+            array(
+                'label'   => __( 'Furigana Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'フリガナ (カタカナ) *',
+            )
+        );
+
+        $this->add_control(
+            'ph_kana',
+            array(
+                'label'   => __( 'Furigana Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'ヤマダ タロウ',
+            )
+        );
+
+        $this->add_control(
+            'lbl_phone',
+            array(
+                'label'   => __( 'Phone Number Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '電話番号 *',
+            )
+        );
+
+        $this->add_control(
+            'ph_phone',
+            array(
+                'label'   => __( 'Phone Number Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '09012345678',
+            )
+        );
+
+        $this->add_control(
+            'lbl_email',
+            array(
+                'label'   => __( 'Email Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'メールアドレス *',
+            )
+        );
+
+        $this->add_control(
+            'ph_email',
+            array(
+                'label'   => __( 'Email Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'example@kaitori-akiba.com',
+            )
+        );
+
+        $this->add_control(
+            'lbl_bank_heading',
+            array(
+                'label'     => __( 'Bank Account Section Heading', 'kaitoriakiba' ),
+                'type'      => \Elementor\Controls_Manager::TEXT,
+                'default'   => '買取代金のお振込先銀行口座 (振込手数料無料)',
+                'separator' => 'before',
+            )
+        );
+
+        $this->add_control(
+            'lbl_bank_name',
+            array(
+                'label'   => __( 'Bank Name Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '金融機関名 (銀行名)',
+            )
+        );
+
+        $this->add_control(
+            'ph_bank_name',
+            array(
+                'label'   => __( 'Bank Name Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '三菱UFJ銀行 / ゆうちょ銀行 / 楽天銀行',
+            )
+        );
+
+        $this->add_control(
+            'lbl_bank_branch',
+            array(
+                'label'   => __( 'Branch Name Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '支店名',
+            )
+        );
+
+        $this->add_control(
+            'ph_bank_branch',
+            array(
+                'label'   => __( 'Branch Name Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '秋葉原支店',
+            )
+        );
+
+        $this->add_control(
+            'lbl_bank_acc_num',
+            array(
+                'label'   => __( 'Account Number Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '口座番号 (7桁)',
+            )
+        );
+
+        $this->add_control(
+            'ph_bank_acc_num',
+            array(
+                'label'   => __( 'Account Number Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '1234567',
+            )
+        );
+
+        $this->add_control(
+            'lbl_bank_holder',
+            array(
+                'label'   => __( 'Account Holder (Kana) Label', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '口座名義 (カタカナ)',
+            )
+        );
+
+        $this->add_control(
+            'ph_bank_holder',
+            array(
+                'label'   => __( 'Account Holder Placeholder', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => 'ヤマダ タロウ',
+            )
+        );
+
+        $this->end_controls_section();
+
+
+        // =====================================================================
+        // SECTION 6: STEP 6 - CONFIRMATION & BUTTONS
+        // =====================================================================
+        $this->start_controls_section(
+            'section_step6',
+            array(
+                'label' => __( '6. Step 6: Confirmation & Submit (同意・送信ボタン)', 'kaitoriakiba' ),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'step6_heading',
+            array(
+                'label'       => __( 'Step 6 Heading', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => 'お申込み内容の確認と同意',
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'lbl_terms',
+            array(
+                'label'       => __( 'Terms Agreement Label', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '利用規約、個人情報の取扱いに同意します (必須)',
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'btn_submit_text',
+            array(
+                'label'       => __( 'Submit Button Text', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => '買取を申し込む (Submit Application)',
+                'label_block' => true,
             )
         );
 
@@ -124,14 +517,13 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
-        $def_carrier   = ! empty( $settings['default_carrier'] ) ? $settings['default_carrier'] : 'SIMフリー';
-        $form_title    = ! empty( $settings['form_title'] ) ? $settings['form_title'] : __( 'iPhone・スマホ買取 査定・オンライン申込', 'kaitoriakiba' );
-        $form_subtitle = ! empty( $settings['form_subtitle'] ) ? $settings['form_subtitle'] : __( 'かんたんステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！', 'kaitoriakiba' );
+        $form_title    = ! empty( $settings['form_title'] ) ? $settings['form_title'] : 'iPhone・スマホ買取 査定・オンライン申込';
+        $form_subtitle = ! empty( $settings['form_subtitle'] ) ? $settings['form_subtitle'] : 'かんたんステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！';
         $show_stepper  = ! empty( $settings['show_stepper'] ) ? $settings['show_stepper'] : 'yes';
 
         $pre_model    = isset( $_GET['model'] ) ? sanitize_text_field( $_GET['model'] ) : '';
         $pre_storage  = isset( $_GET['storage'] ) ? sanitize_text_field( $_GET['storage'] ) : '256GB';
-        $pre_carrier  = isset( $_GET['carrier'] ) ? sanitize_text_field( $_GET['carrier'] ) : $def_carrier;
+        $pre_carrier  = isset( $_GET['carrier'] ) ? sanitize_text_field( $_GET['carrier'] ) : 'SIMフリー';
         $pre_delivery = isset( $_GET['delivery'] ) ? sanitize_text_field( $_GET['delivery'] ) : 'mail';
         ?>
         <div class="apply-container" style="margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
@@ -201,12 +593,12 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 <!-- STEP 1: Device Details -->
                 <div class="form-step active" id="step-1">
                     <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                        <span style="color:#ef4444;">STEP 1</span> 買取希望の端末情報
+                        <span style="color:#ef4444;">STEP 1</span> <?php echo esc_html( ! empty( $settings['step1_heading'] ) ? $settings['step1_heading'] : '買取希望の端末情報' ); ?>
                     </h3>
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                            <span>機種名・モデル (Model)</span>
+                            <span><?php echo esc_html( ! empty( $settings['lbl_model'] ) ? $settings['lbl_model'] : '機種名・モデル (Model)' ); ?></span>
                             <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                         </label>
                         <select name="device_model" id="input_model" class="form-control-custom" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
@@ -226,7 +618,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                     <div class="row">
                         <div class="col-md-6 form-group" style="margin-bottom:20px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>容量 (Storage)</span>
+                                <span><?php echo esc_html( ! empty( $settings['lbl_storage'] ) ? $settings['lbl_storage'] : '容量 (Storage)' ); ?></span>
                                 <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                             </label>
                             <select name="device_storage" id="input_storage" class="form-control-custom" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
@@ -238,7 +630,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:20px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>キャリア / 仕様 (Carrier)</span>
+                                <span><?php echo esc_html( ! empty( $settings['lbl_carrier'] ) ? $settings['lbl_carrier'] : 'キャリア / 仕様 (Carrier)' ); ?></span>
                                 <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                             </label>
                             <select name="device_carrier" id="input_carrier" class="form-control-custom" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
@@ -255,17 +647,17 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                     <div class="row">
                         <div class="col-md-6 form-group" style="margin-bottom:20px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>本体カラー (Color)</span>
+                                <span><?php echo esc_html( ! empty( $settings['lbl_color'] ) ? $settings['lbl_color'] : '本体カラー (Color)' ); ?></span>
                                 <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                             </label>
-                            <input type="text" name="device_color" class="form-control-custom" placeholder="例: ナチュラルチタニウム、ブラック" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="text" name="device_color" class="form-control-custom" placeholder="<?php echo esc_attr( ! empty( $settings['ph_color'] ) ? $settings['ph_color'] : '例: ナチュラルチタニウム、ブラック' ); ?>" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:20px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>IMEI / 製造番号 (15桁)</span>
+                                <span><?php echo esc_html( ! empty( $settings['lbl_imei'] ) ? $settings['lbl_imei'] : 'IMEI / 製造番号 (15桁)' ); ?></span>
                                 <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                             </label>
-                            <input type="text" name="device_imei" maxlength="15" pattern="[0-9]{15}" class="form-control-custom" placeholder="35xxxxxxxxxxxxx (設定→一般→情報で確認)" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="text" name="device_imei" maxlength="15" pattern="[0-9]{15}" class="form-control-custom" placeholder="<?php echo esc_attr( ! empty( $settings['ph_imei'] ) ? $settings['ph_imei'] : '35xxxxxxxxxxxxx (設定→一般→情報で確認)' ); ?>" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                     </div>
 
@@ -279,12 +671,12 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 <!-- STEP 2: Condition -->
                 <div class="form-step" id="step-2" style="display:none;">
                     <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                        <span style="color:#ef4444;">STEP 2</span> 外観・動作状態の詳細チェック
+                        <span style="color:#ef4444;">STEP 2</span> <?php echo esc_html( ! empty( $settings['step2_heading'] ) ? $settings['step2_heading'] : '外観・動作状態の詳細チェック' ); ?>
                     </h3>
 
                     <div class="form-group" style="margin-bottom:20px;">
                         <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                            <span>液晶画面の状態 (Screen Condition)</span>
+                            <span><?php echo esc_html( ! empty( $settings['lbl_screen'] ) ? $settings['lbl_screen'] : '液晶画面の状態 (Screen Condition)' ); ?></span>
                             <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                         </label>
                         <select name="screen_condition" class="form-control-custom" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
@@ -299,7 +691,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
 
                     <div class="form-group" style="margin-bottom:20px;">
                         <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                            <span>本体外装・フレームの状態 (Body & Frame)</span>
+                            <span><?php echo esc_html( ! empty( $settings['lbl_body'] ) ? $settings['lbl_body'] : '本体外装・フレームの状態 (Body & Frame)' ); ?></span>
                             <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                         </label>
                         <select name="body_condition" class="form-control-custom" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
@@ -313,14 +705,14 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                     <div class="row">
                         <div class="col-md-6 form-group" style="margin-bottom:20px;">
                             <label class="form-label" style="font-weight:700; font-size:14px; margin-bottom:6px; display:block;">
-                                バッテリー最大容量 (%)
+                                <?php echo esc_html( ! empty( $settings['lbl_battery'] ) ? $settings['lbl_battery'] : 'バッテリー最大容量 (%)' ); ?>
                             </label>
                             <input type="number" name="battery_health" min="50" max="100" value="92" class="form-control-custom" style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             <small style="color:#64748b;">※iPhoneの「設定→バッテリー→バッテリーの状態」で確認可能</small>
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:20px;">
                             <label class="form-label" style="font-weight:700; font-size:14px; margin-bottom:6px; display:block;">
-                                カメラ・Face ID / Touch ID動作
+                                <?php echo esc_html( ! empty( $settings['lbl_hardware'] ) ? $settings['lbl_hardware'] : 'カメラ・Face ID / Touch ID動作' ); ?>
                             </label>
                             <select name="camera_works" class="form-control-custom" style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                                 <option value="正常作動" selected>すべて正常に作動する</option>
@@ -396,20 +788,20 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 <!-- STEP 4: Delivery -->
                 <div class="form-step" id="step-4" style="display:none;">
                     <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                        <span style="color:#ef4444;">STEP 4</span> 買取方法（郵送宅配または店頭持込）
+                        <span style="color:#ef4444;">STEP 4</span> <?php echo esc_html( ! empty( $settings['step4_heading'] ) ? $settings['step4_heading'] : '買取方法（郵送宅配または店頭持込）' ); ?>
                     </h3>
 
                     <div class="delivery-options" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin-bottom:24px;">
                         <label class="delivery-card selected" id="card_mail" style="border:2px solid #ef4444; border-radius:12px; padding:18px; cursor:pointer; background:#fff5f5; display:block;">
                             <input type="radio" name="delivery_method" value="mail" <?php checked($pre_delivery, 'mail'); ?> onchange="selectDelivery('mail');" style="margin-right:8px;">
-                            <strong style="font-size:15px; color:#0f172a;"><i class="fa fa-truck" style="color:#ef4444;"></i> 郵送買取 (全国送料無料)</strong>
-                            <p style="font-size:12.5px; color:#64748b; margin:8px 0 0 0;">自宅にいながらラクラク発送。無料梱包キットのお届けも承ります。端末到着日に即査定・即日振込！</p>
+                            <strong style="font-size:15px; color:#0f172a;"><i class="fa fa-truck" style="color:#ef4444;"></i> <?php echo esc_html( ! empty( $settings['title_mail'] ) ? $settings['title_mail'] : '郵送買取 (全国送料無料)' ); ?></strong>
+                            <p style="font-size:12.5px; color:#64748b; margin:8px 0 0 0;"><?php echo esc_html( ! empty( $settings['desc_mail'] ) ? $settings['desc_mail'] : '自宅にいながらラクラク発送。無料梱包キットのお届けも承ります。端末到着日に即査定・即日振込！' ); ?></p>
                         </label>
 
                         <label class="delivery-card" id="card_store" style="border:2px solid #e2e8f0; border-radius:12px; padding:18px; cursor:pointer; background:#fff; display:block;">
                             <input type="radio" name="delivery_method" value="store" <?php checked($pre_delivery, 'store'); ?> onchange="selectDelivery('store');" style="margin-right:8px;">
-                            <strong style="font-size:15px; color:#0f172a;"><i class="fa fa-building" style="color:#ef4444;"></i> 秋葉原 店頭買取 (即現金化)</strong>
-                            <p style="font-size:12.5px; color:#64748b; margin:8px 0 0 0;">秋葉原駅電気街口徒歩2分の実店舗にお持込。最短5分で現物査定＆その場で現金手渡し！</p>
+                            <strong style="font-size:15px; color:#0f172a;"><i class="fa fa-building" style="color:#ef4444;"></i> <?php echo esc_html( ! empty( $settings['title_store'] ) ? $settings['title_store'] : '秋葉原 店頭買取 (即現金化)' ); ?></strong>
+                            <p style="font-size:12.5px; color:#64748b; margin:8px 0 0 0;"><?php echo esc_html( ! empty( $settings['desc_store'] ) ? $settings['desc_store'] : '秋葉原駅電気街口徒歩2分の実店舗にお持込。最短5分で現物査定＆その場で現金手渡し！' ); ?></p>
                         </label>
                     </div>
 
@@ -432,43 +824,43 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 <!-- STEP 5: Payment & Customer Info -->
                 <div class="form-step" id="step-5" style="display:none;">
                     <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                        <span style="color:#ef4444;">STEP 5</span> お客様情報および買取金お振込口座
+                        <span style="color:#ef4444;">STEP 5</span> <?php echo esc_html( ! empty( $settings['step5_heading'] ) ? $settings['step5_heading'] : 'お客様情報および買取金お振込口座' ); ?>
                     </h3>
 
                     <div class="row">
                         <div class="col-md-6 form-group" style="margin-bottom:16px;">
-                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;">氏名 (漢字) *</label>
-                            <input type="text" name="applicant_name" placeholder="山田 太郎" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;"><?php echo esc_html( ! empty( $settings['lbl_name'] ) ? $settings['lbl_name'] : '氏名 (漢字) *' ); ?></label>
+                            <input type="text" name="applicant_name" placeholder="<?php echo esc_attr( ! empty( $settings['ph_name'] ) ? $settings['ph_name'] : '山田 太郎' ); ?>" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:16px;">
-                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;">フリガナ (カタカナ) *</label>
-                            <input type="text" name="applicant_kana" placeholder="ヤマダ タロウ" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;"><?php echo esc_html( ! empty( $settings['lbl_kana'] ) ? $settings['lbl_kana'] : 'フリガナ (カタカナ) *' ); ?></label>
+                            <input type="text" name="applicant_kana" placeholder="<?php echo esc_attr( ! empty( $settings['ph_kana'] ) ? $settings['ph_kana'] : 'ヤマダ タロウ' ); ?>" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 form-group" style="margin-bottom:16px;">
-                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;">電話番号 *</label>
-                            <input type="tel" name="applicant_phone" placeholder="09012345678" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;"><?php echo esc_html( ! empty( $settings['lbl_phone'] ) ? $settings['lbl_phone'] : '電話番号 *' ); ?></label>
+                            <input type="tel" name="applicant_phone" placeholder="<?php echo esc_attr( ! empty( $settings['ph_phone'] ) ? $settings['ph_phone'] : '09012345678' ); ?>" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:16px;">
-                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;">メールアドレス *</label>
-                            <input type="email" name="applicant_email" placeholder="example@kaitori-akiba.com" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <label class="form-label" style="font-weight:700; font-size:13.5px; margin-bottom:4px; display:block;"><?php echo esc_html( ! empty( $settings['lbl_email'] ) ? $settings['lbl_email'] : 'メールアドレス *' ); ?></label>
+                            <input type="email" name="applicant_email" placeholder="<?php echo esc_attr( ! empty( $settings['ph_email'] ) ? $settings['ph_email'] : 'example@kaitori-akiba.com' ); ?>" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                     </div>
 
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-top:14px; margin-bottom:20px;">
                         <h4 style="font-size:14px; font-weight:800; color:#1e293b; margin-top:0; margin-bottom:12px;">
-                            <i class="fa fa-university" style="color:#ef4444;"></i> 買取代金のお振込先銀行口座 (振込手数料無料)
+                            <i class="fa fa-university" style="color:#ef4444;"></i> <?php echo esc_html( ! empty( $settings['lbl_bank_heading'] ) ? $settings['lbl_bank_heading'] : '買取代金のお振込先銀行口座 (振込手数料無料)' ); ?>
                         </h4>
                         <div class="row">
                             <div class="col-md-6 form-group" style="margin-bottom:12px;">
-                                <label style="font-size:12.5px; font-weight:700;">金融機関名 (銀行名)</label>
-                                <input type="text" name="bank_name" placeholder="三菱UFJ銀行 / ゆうちょ銀行 / 楽天銀行" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
+                                <label style="font-size:12.5px; font-weight:700;"><?php echo esc_html( ! empty( $settings['lbl_bank_name'] ) ? $settings['lbl_bank_name'] : '金融機関名 (銀行名)' ); ?></label>
+                                <input type="text" name="bank_name" placeholder="<?php echo esc_attr( ! empty( $settings['ph_bank_name'] ) ? $settings['ph_bank_name'] : '三菱UFJ銀行 / ゆうちょ銀行 / 楽天銀行' ); ?>" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
                             </div>
                             <div class="col-md-6 form-group" style="margin-bottom:12px;">
-                                <label style="font-size:12.5px; font-weight:700;">支店名</label>
-                                <input type="text" name="bank_branch" placeholder="秋葉原支店" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
+                                <label style="font-size:12.5px; font-weight:700;"><?php echo esc_html( ! empty( $settings['lbl_bank_branch'] ) ? $settings['lbl_bank_branch'] : '支店名' ); ?></label>
+                                <input type="text" name="bank_branch" placeholder="<?php echo esc_attr( ! empty( $settings['ph_bank_branch'] ) ? $settings['ph_bank_branch'] : '秋葉原支店' ); ?>" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
                             </div>
                         </div>
                         <div class="row">
@@ -480,12 +872,12 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                                 </select>
                             </div>
                             <div class="col-md-4 form-group" style="margin-bottom:12px;">
-                                <label style="font-size:12.5px; font-weight:700;">口座番号 (7桁)</label>
-                                <input type="text" name="bank_account_number" placeholder="1234567" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
+                                <label style="font-size:12.5px; font-weight:700;"><?php echo esc_html( ! empty( $settings['lbl_bank_acc_num'] ) ? $settings['lbl_bank_acc_num'] : '口座番号 (7桁)' ); ?></label>
+                                <input type="text" name="bank_account_number" placeholder="<?php echo esc_attr( ! empty( $settings['ph_bank_acc_num'] ) ? $settings['ph_bank_acc_num'] : '1234567' ); ?>" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
                             </div>
                             <div class="col-md-4 form-group" style="margin-bottom:12px;">
-                                <label style="font-size:12.5px; font-weight:700;">口座名義 (カタカナ)</label>
-                                <input type="text" name="bank_holder_kana" placeholder="ヤマダ タロウ" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
+                                <label style="font-size:12.5px; font-weight:700;"><?php echo esc_html( ! empty( $settings['lbl_bank_holder'] ) ? $settings['lbl_bank_holder'] : '口座名義 (カタカナ)' ); ?></label>
+                                <input type="text" name="bank_holder_kana" placeholder="<?php echo esc_attr( ! empty( $settings['ph_bank_holder'] ) ? $settings['ph_bank_holder'] : 'ヤマダ タロウ' ); ?>" class="form-control-custom" style="height:40px; border-radius:8px; border:1px solid #cbd5e1; width:100%; padding:6px 10px;">
                             </div>
                         </div>
                     </div>
@@ -501,7 +893,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 <!-- STEP 6: Review & Submit -->
                 <div class="form-step" id="step-6" style="display:none;">
                     <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                        <span style="color:#ef4444;">STEP 6</span> お申込み内容の確認と同意
+                        <span style="color:#ef4444;">STEP 6</span> <?php echo esc_html( ! empty( $settings['step6_heading'] ) ? $settings['step6_heading'] : 'お申込み内容の確認と同意' ); ?>
                     </h3>
 
                     <!-- Estimated Summary Box -->
@@ -522,14 +914,14 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                         </div>
                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:700; font-size:14px;">
                             <input type="checkbox" name="agree_terms" value="1" required style="width:18px; height:18px;">
-                            利用規約、個人情報の取扱いに同意します (必須)
+                            <?php echo esc_html( ! empty( $settings['lbl_terms'] ) ? $settings['lbl_terms'] : '利用規約、個人情報の取扱いに同意します (必須)' ); ?>
                         </label>
                     </div>
 
                     <div class="step-nav" style="display:flex; justify-content:space-between; margin-top:24px;">
                         <button type="button" class="btn btn-default" onclick="goToStep(5)" style="font-weight:700; padding:12px 24px; border-radius:10px;">&larr; 前へ戻る</button>
                         <button type="submit" id="btnSubmitSell" class="btn btn-danger" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px 40px; border-radius:10px; font-size:16px;">
-                            <i class="fa fa-paper-plane"></i> 買取を申し込む (Submit Application)
+                            <i class="fa fa-paper-plane"></i> <?php echo esc_html( ! empty( $settings['btn_submit_text'] ) ? $settings['btn_submit_text'] : '買取を申し込む (Submit Application)' ); ?>
                         </button>
                     </div>
                 </div>
@@ -544,18 +936,21 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                     if (stepEl) stepEl.style.display = (i === stepNum) ? 'block' : 'none';
                     if (nodeEl) {
                         var circle = nodeEl.querySelector('.step-circle');
-                        if (i <= stepNum) {
-                            circle.style.background = '#ef4444';
-                            circle.style.borderColor = '#ef4444';
-                            circle.style.color = '#fff';
-                        } else {
-                            circle.style.background = '#f1f5f9';
-                            circle.style.borderColor = '#cbd5e1';
-                            circle.style.color = '#64748b';
+                        if (circle) {
+                            if (i <= stepNum) {
+                                circle.style.background = '#ef4444';
+                                circle.style.borderColor = '#ef4444';
+                                circle.style.color = '#fff';
+                            } else {
+                                circle.style.background = '#f1f5f9';
+                                circle.style.borderColor = '#cbd5e1';
+                                circle.style.color = '#64748b';
+                            }
                         }
                     }
                 }
-                window.scrollTo({ top: document.querySelector('.apply-container').offsetTop - 30, behavior: 'smooth' });
+                var c = document.querySelector('.apply-container');
+                if (c) window.scrollTo({ top: c.offsetTop - 30, behavior: 'smooth' });
             }
 
             function toggleInstallmentDue(show) {

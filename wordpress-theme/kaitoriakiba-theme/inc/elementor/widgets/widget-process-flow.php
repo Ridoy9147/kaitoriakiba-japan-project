@@ -47,6 +47,16 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
             )
         );
         $this->add_control(
+            'btn1_img',
+            array(
+                'label'   => __( 'Button 1 Image', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::MEDIA,
+                'default' => array(
+                    'url' => get_template_directory_uri() . '/assets/images/topmenu/s1.png',
+                ),
+            )
+        );
+        $this->add_control(
             'btn1_url',
             array(
                 'label'   => __( 'Button 1 Link', 'kaitoriakiba' ),
@@ -61,6 +71,16 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
                 'label'   => __( 'Button 2 Text', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::TEXT,
                 'default' => 'Mail-in Buyback / 郵送買取',
+            )
+        );
+        $this->add_control(
+            'btn2_img',
+            array(
+                'label'   => __( 'Button 2 Image', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::MEDIA,
+                'default' => array(
+                    'url' => get_template_directory_uri() . '/assets/images/topmenu/s2.png',
+                ),
             )
         );
         $this->add_control(
@@ -81,6 +101,16 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
             )
         );
         $this->add_control(
+            'btn3_img',
+            array(
+                'label'   => __( 'Button 3 Image', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::MEDIA,
+                'default' => array(
+                    'url' => get_template_directory_uri() . '/assets/images/topmenu/s3.png',
+                ),
+            )
+        );
+        $this->add_control(
             'btn3_url',
             array(
                 'label'   => __( 'Button 3 Link', 'kaitoriakiba' ),
@@ -97,10 +127,15 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
         $theme_uri = get_template_directory_uri();
 
         $b1_txt = ! empty( $settings['btn1_text'] ) ? $settings['btn1_text'] : __( 'In-Store Buyback', 'kaitoriakiba' );
+        $b1_img = ! empty( $settings['btn1_img']['url'] ) ? $settings['btn1_img']['url'] : ( $theme_uri . '/assets/images/topmenu/s1.png' );
         $b1_url = ! empty( $settings['btn1_url'] ) ? esc_url( home_url( $settings['btn1_url'] ) ) : esc_url( home_url( '/sell-apply/?delivery=store' ) );
+
         $b2_txt = ! empty( $settings['btn2_text'] ) ? $settings['btn2_text'] : __( 'Mail-in Buyback', 'kaitoriakiba' );
+        $b2_img = ! empty( $settings['btn2_img']['url'] ) ? $settings['btn2_img']['url'] : ( $theme_uri . '/assets/images/topmenu/s2.png' );
         $b2_url = ! empty( $settings['btn2_url'] ) ? esc_url( home_url( $settings['btn2_url'] ) ) : esc_url( home_url( '/sell-apply/?delivery=mail' ) );
+
         $b3_txt = ! empty( $settings['btn3_text'] ) ? $settings['btn3_text'] : __( 'Corporate Buyback', 'kaitoriakiba' );
+        $b3_img = ! empty( $settings['btn3_img']['url'] ) ? $settings['btn3_img']['url'] : ( $theme_uri . '/assets/images/topmenu/s3.png' );
         $b3_url = ! empty( $settings['btn3_url'] ) ? esc_url( home_url( $settings['btn3_url'] ) ) : esc_url( home_url( '/sell-apply/?type=corporate' ) );
         ?>
         <div class="guid">
@@ -112,19 +147,19 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
                         <div class="col-lg-10 col-xs-12 col-preg-main">
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_1">
                                 <a href="<?php echo esc_url( $b1_url ); ?>" title="<?php echo esc_attr( $b1_txt ); ?>">
-                                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s1.png" class="img-responsive hidden-xs" alt="In-Store Buyback Flow" />
+                                    <img src="<?php echo esc_url( $b1_img ); ?>" class="img-responsive hidden-xs" alt="In-Store Buyback Flow" />
                                     <span class="btn btn-orange"><?php echo esc_html( $b1_txt ); ?></span>
                                 </a>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_2">
                                 <a href="<?php echo esc_url( $b2_url ); ?>" title="<?php echo esc_attr( $b2_txt ); ?>">
-                                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s2.png" class="img-responsive hidden-xs" alt="Mail-in Buyback Flow" />
+                                    <img src="<?php echo esc_url( $b2_img ); ?>" class="img-responsive hidden-xs" alt="Mail-in Buyback Flow" />
                                     <span class="btn btn-green"><?php echo esc_html( $b2_txt ); ?></span>
                                 </a>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_3">
                                 <a href="<?php echo esc_url( $b3_url ); ?>" title="<?php echo esc_attr( $b3_txt ); ?>">
-                                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s3.png" class="img-responsive hidden-xs" alt="Corporate Buyback Flow" />
+                                    <img src="<?php echo esc_url( $b3_img ); ?>" class="img-responsive hidden-xs" alt="Corporate Buyback Flow" />
                                     <span class="btn btn-blue"><?php echo esc_html( $b3_txt ); ?></span>
                                 </a>
                             </div>

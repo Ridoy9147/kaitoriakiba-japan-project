@@ -361,8 +361,14 @@ function kaitoriakiba_get_full_elementor_homepage_schema() {
                         ),
                         array(
                             'id'         => 'wid_checkpoints_' . wp_generate_password( 6, false, false ),
-                            'elType'     => 'widget',
                             'widgetType' => 'kaitori_checkpoints_box',
+                            'elType'     => 'widget',
+                            'settings'   => array(),
+                        ),
+                        array(
+                            'id'         => 'wid_faq_' . wp_generate_password( 6, false, false ),
+                            'widgetType' => 'kaitori_faq',
+                            'elType'     => 'widget',
                             'settings'   => array(),
                         ),
                     ),
