@@ -224,3 +224,219 @@ function kaitoriakiba_get_price( $post_id = null ) {
     $price = get_post_meta( $id, '_max_buyback_price', true );
     return $price ? '¥' . number_format( (int)$price ) : '¥0';
 }
+
+/**
+ * 7. Generate Full Complete Elementor Schema for Homepage
+ */
+function kaitoriakiba_get_full_elementor_homepage_schema() {
+    $theme_uri = get_template_directory_uri();
+    return array(
+        // Section 1: Process Flow 3-Big Buttons
+        array(
+            'id'       => 'sec_flow_buttons_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_flow_buttons_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_flow_buttons_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_process_flow',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 2: Urgent Announcements & Quick Guides
+        array(
+            'id'       => 'sec_announcement_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_announcement_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_announcement_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_announcement_banner',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 3: Dual Search Box & 8 Category Icons
+        array(
+            'id'       => 'sec_search_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                array(
+                    'id'       => 'col_search_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 100 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_search_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_search_box',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        // Section 4: Main 2-Column Section (Sidebar 25% + Main Body 75%)
+        array(
+            'id'       => 'sec_main_two_columns_' . wp_generate_password( 6, false, false ),
+            'elType'   => 'section',
+            'settings' => array(),
+            'elements' => array(
+                // Left Column: Sidebar
+                array(
+                    'id'       => 'col_sidebar_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 25 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_side_carrier_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_taxonomy_browse',
+                            'settings'   => array(
+                                'data_mode' => 'custom',
+                                'box_title' => 'キャリアから探す (Browse by Carrier)',
+                                'custom_items_list' => array(
+                                    array( 'item_title' => 'docomo', 'item_image' => array( 'url' => $theme_uri . '/upload/career/docomo.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=docomo' ) ),
+                                    array( 'item_title' => 'au', 'item_image' => array( 'url' => $theme_uri . '/upload/career/au.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=au' ) ),
+                                    array( 'item_title' => 'SoftBank', 'item_image' => array( 'url' => $theme_uri . '/upload/career/softbank.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=softbank' ) ),
+                                    array( 'item_title' => 'SIM FREE', 'item_image' => array( 'url' => $theme_uri . '/upload/career/simfree.jpg' ), 'item_url' => array( 'url' => '/devices/?carrier=simfree' ) ),
+                                ),
+                            ),
+                        ),
+                        array(
+                            'id'         => 'wid_side_brand_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_taxonomy_browse',
+                            'settings'   => array(
+                                'data_mode' => 'custom',
+                                'box_title' => 'ブランドから探す (Browse by Brand)',
+                            ),
+                        ),
+                    ),
+                ),
+                // Right Column: Main Body
+                array(
+                    'id'       => 'col_main_body_' . wp_generate_password( 6, false, false ),
+                    'elType'   => 'column',
+                    'settings' => array( '_column_size' => 75 ),
+                    'elements' => array(
+                        array(
+                            'id'         => 'wid_hero_slider_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_hero_banner',
+                            'settings'   => array(),
+                        ),
+                        array(
+                            'id'         => 'wid_news_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_news_box',
+                            'settings'   => array(),
+                        ),
+                        array(
+                            'id'         => 'wid_device_grid_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_device_grid',
+                            'settings'   => array(
+                                'section_title' => 'iPhone 高価買取対象機種',
+                                'count'         => 8,
+                            ),
+                        ),
+                        array(
+                            'id'         => 'wid_checkpoints_' . wp_generate_password( 6, false, false ),
+                            'elType'     => 'widget',
+                            'widgetType' => 'kaitori_checkpoints_box',
+                            'settings'   => array(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    );
+}
+
+/**
+ * 8. One-Click Admin Handler & Notice to Populate All Sections into Elementor Homepage
+ */
+function kaitoriakiba_elementor_homepage_admin_handler() {
+    if ( ! current_user_can( 'edit_theme_options' ) ) {
+        return;
+    }
+
+    if ( isset( $_GET['kaitori_action'] ) && 'load_elementor_home' === $_GET['kaitori_action'] && check_admin_referer( 'kaitori_load_elementor_home' ) ) {
+        $home_page = get_page_by_path( 'home' );
+        if ( ! $home_page ) {
+            $front_id = get_option( 'page_on_front' );
+            if ( $front_id ) {
+                $home_page = get_post( $front_id );
+            }
+        }
+        if ( ! $home_page ) {
+            $home_id = wp_insert_post( array(
+                'post_title'     => 'ホーム',
+                'post_name'      => 'home',
+                'post_status'    => 'publish',
+                'post_type'      => 'page',
+                'comment_status' => 'closed',
+            ) );
+            $home_page = get_post( $home_id );
+            update_option( 'show_on_front', 'page' );
+            update_option( 'page_on_front', $home_id );
+        }
+
+        if ( $home_page ) {
+            $el_schema = kaitoriakiba_get_full_elementor_homepage_schema();
+            update_post_meta( $home_page->ID, '_wp_page_template', 'template-elementor-fullwidth.php' );
+            update_post_meta( $home_page->ID, '_elementor_edit_mode', 'builder' );
+            update_post_meta( $home_page->ID, '_elementor_template_type', 'wp-page' );
+            update_post_meta( $home_page->ID, '_elementor_version', '3.20.0' );
+            update_post_meta( $home_page->ID, '_elementor_data', wp_slash( wp_json_encode( $el_schema ) ) );
+            
+            // Redirect with success message
+            wp_safe_redirect( admin_url( 'post.php?post=' . $home_page->ID . '&action=elementor' ) );
+            exit;
+        }
+    }
+}
+add_action( 'admin_init', 'kaitoriakiba_elementor_homepage_admin_handler' );
+
+function kaitoriakiba_admin_elementor_notice() {
+    if ( ! current_user_can( 'edit_theme_options' ) ) {
+        return;
+    }
+
+    $setup_url = wp_nonce_url( admin_url( 'index.php?kaitori_action=load_elementor_home' ), 'kaitori_load_elementor_home' );
+    ?>
+    <div class="notice notice-info" style="border-left: 4px solid #ef4444; background: #fff; padding: 14px 18px; margin: 15px 0; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <p style="font-size: 14.5px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0;">
+            🎨 <strong>Kaitori Akiba: Elementor Full Page Editor Setup (買取アキバ エレメンター一括読み込み)</strong>
+        </p>
+        <p style="font-size: 13px; color: #475569; margin: 0 0 12px 0;">
+            <?php _e( 'Click the button below to load all sections (Sidebar Brands, Key Selling Points, Pre-assessment Checkpoints, Device Grid, News Box, Process Flow) into Elementor. You can edit every title, image, and link directly with Elementor!', 'kaitoriakiba' ); ?>
+        </p>
+        <p style="margin: 0;">
+            <a href="<?php echo esc_url( $setup_url ); ?>" class="button button-primary" style="background:#ef4444; border-color:#dc2626; font-weight:700; padding:4px 16px; height:auto;">
+                <i class="dashicons dashicons-edit" style="vertical-align:middle; margin-right:4px;"></i> <?php _e( 'Load All Sections & Open in Elementor (全セクションを読み込んでElementorで編集)', 'kaitoriakiba' ); ?>
+            </a>
+        </p>
+    </div>
+    <?php
+}
+add_action( 'admin_notices', 'kaitoriakiba_admin_elementor_notice' );
