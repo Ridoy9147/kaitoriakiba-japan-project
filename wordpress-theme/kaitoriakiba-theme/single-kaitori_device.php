@@ -34,7 +34,22 @@ else :
         $installment = get_post_meta( $post_id, '_installment_deduction', true ) ?: '5000';
         $model_num   = get_post_meta( $post_id, '_model_number', true ) ?: 'A3293';
         $jan_code    = get_post_meta( $post_id, '_jan_code', true ) ?: '4549995734140';
-        $thumb_url   = has_post_thumbnail() ? get_the_post_thumbnail_url( $post_id, 'large' ) : get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png';
+        $custom_img  = get_post_meta( $post_id, '_device_primary_image_url', true );
+        $thumb_url   = ! empty( $custom_img ) ? $custom_img : ( has_post_thumbnail() ? get_the_post_thumbnail_url( $post_id, 'large' ) : get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png' );
+
+        // Extract gallery images or fallback
+        $gallery_meta = get_post_meta( $post_id, '_device_gallery_images', true );
+        $gallery_list = array();
+        if ( ! empty( $gallery_meta ) && is_array( $gallery_meta ) ) {
+            $gallery_list = $gallery_meta;
+        } else {
+            $gallery_list = array(
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png', 'label' => 'Black Titanium' ),
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Silver.png', 'label' => 'White Titanium' ),
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png', 'label' => 'Natural Titanium' ),
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Burgundy.png', 'label' => 'Desert Titanium' ),
+            );
+        }
 
         // Extract series & brand
         $brands  = get_the_terms( $post_id, 'brand' );
@@ -63,19 +78,16 @@ else :
                         <span style="position:absolute; top:16px; left:16px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#fff; font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px;">高価買取強化中</span>
                         <img id="mainProductImg" src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" style="max-height:320px; max-width:100%; object-fit:contain;">
                     </div>
-                    <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
-                        <div class="gallery-thumb active" style="width:56px; height:56px; border:2px solid #ef4444; border-radius:8px; padding:3px; cursor:pointer;" onclick="switchDeviceImg('<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Black.png', this)">
-                            <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Black.png" style="width:100%; height:100%; object-fit:contain;">
-                        </div>
-                        <div class="gallery-thumb" style="width:56px; height:56px; border:1px solid #e2e8f0; border-radius:8px; padding:3px; cursor:pointer;" onclick="switchDeviceImg('<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Silver.png', this)">
-                            <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Silver.png" style="width:100%; height:100%; object-fit:contain;">
-                        </div>
-                        <div class="gallery-thumb" style="width:56px; height:56px; border:1px solid #e2e8f0; border-radius:8px; padding:3px; cursor:pointer;" onclick="switchDeviceImg('<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png', this)">
-                            <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png" style="width:100%; height:100%; object-fit:contain;">
-                        </div>
-                        <div class="gallery-thumb" style="width:56px; height:56px; border:1px solid #e2e8f0; border-radius:8px; padding:3px; cursor:pointer;" onclick="switchDeviceImg('<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Burgundy.png', this)">
-                            <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Burgundy.png" style="width:100%; height:100%; object-fit:contain;">
-                        </div>
+                    <div style="display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                        <?php foreach ( $gallery_list as $g_idx => $g_item ) : 
+                            $g_url = is_array( $g_item ) ? $g_item['url'] : $g_item;
+                            $g_label = is_array( $g_item ) && ! empty( $g_item['label'] ) ? $g_item['label'] : '';
+                            if ( empty( $g_url ) ) continue;
+                        ?>
+                            <div class="gallery-thumb <?php echo $g_idx === 0 ? 'active' : ''; ?>" title="<?php echo esc_attr( $g_label ); ?>" style="width:56px; height:56px; border:<?php echo $g_idx === 0 ? '2px solid #ef4444' : '1px solid #e2e8f0'; ?>; border-radius:8px; padding:3px; cursor:pointer;" onclick="switchDeviceImg('<?php echo esc_url( $g_url ); ?>', this)">
+                                <img src="<?php echo esc_url( $g_url ); ?>" alt="<?php echo esc_attr( $g_label ); ?>" style="width:100%; height:100%; object-fit:contain;">
+                            </div>
+                        <?php endforeach; ?>
                     </div>
 
                     <!-- Trust Checklist -->

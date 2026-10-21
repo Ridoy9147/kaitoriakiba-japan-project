@@ -36,6 +36,9 @@ function kaitoriakiba_register_elementor_widgets( $widgets_manager ) {
     require_once __DIR__ . '/widgets/widget-process-flow.php';
     require_once __DIR__ . '/widgets/widget-faq.php';
     require_once __DIR__ . '/widgets/widget-announcement-banner.php';
+    require_once __DIR__ . '/widgets/widget-sell-apply.php';
+    require_once __DIR__ . '/widgets/widget-kyc-verify.php';
+    require_once __DIR__ . '/widgets/widget-auth-form.php';
 
     // Register widget instances
     $widgets_manager->register( new \Kaitori_Search_Widget() );
@@ -45,5 +48,8 @@ function kaitoriakiba_register_elementor_widgets( $widgets_manager ) {
     $widgets_manager->register( new \Kaitori_Process_Flow_Widget() );
     $widgets_manager->register( new \Kaitori_FAQ_Widget() );
     $widgets_manager->register( new \Kaitori_Announcement_Widget() );
+    $widgets_manager->register( new \Kaitori_Sell_Apply_Widget() );
+    $widgets_manager->register( new \Kaitori_KYC_Verify_Widget() );
+    $widgets_manager->register( new \Kaitori_Auth_Form_Widget() );
 }
 add_action( 'elementor/widgets/register', 'kaitoriakiba_register_elementor_widgets' );

@@ -103,7 +103,21 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
         $base_price = $is_device_post ? ( get_post_meta( $post_id, '_max_buyback_price', true ) ?: $settings['default_price'] ) : $settings['default_price'];
         $jan        = $is_device_post ? ( get_post_meta( $post_id, '_jan_code', true ) ?: '4549995734140' ) : '4549995734140';
         $model_num  = $is_device_post ? ( get_post_meta( $post_id, '_model_number', true ) ?: 'A3293' ) : 'A3293';
-        $thumb_url  = ( $is_device_post && has_post_thumbnail( $post_id ) ) ? get_the_post_thumbnail_url( $post_id, 'large' ) : get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png';
+        
+        $custom_img = $is_device_post ? get_post_meta( $post_id, '_device_primary_image_url', true ) : '';
+        $thumb_url  = ! empty( $custom_img ) ? $custom_img : ( ( $is_device_post && has_post_thumbnail( $post_id ) ) ? get_the_post_thumbnail_url( $post_id, 'large' ) : get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png' );
+
+        $gallery_meta = $is_device_post ? get_post_meta( $post_id, '_device_gallery_images', true ) : null;
+        $gallery_list = array();
+        if ( ! empty( $gallery_meta ) && is_array( $gallery_meta ) ) {
+            $gallery_list = $gallery_meta;
+        } else {
+            $gallery_list = array(
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png', 'label' => 'Black Titanium' ),
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Silver.png', 'label' => 'White Titanium' ),
+                array( 'url' => get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png', 'label' => 'Natural Titanium' ),
+            );
+        }
         ?>
         <div class="kaitori-single-calc-widget">
             <div class="product-hero-card" style="background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.04); margin-bottom:30px;">
@@ -112,16 +126,16 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                         <div style="background:#fff; border:1px solid #f1f5f9; border-radius:12px; padding:20px; min-height:340px; display:flex; align-items:center; justify-content:center;">
                             <img id="elMainProductImg" src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" style="max-height:300px; max-width:100%; object-fit:contain;">
                         </div>
-                        <div style="display:flex; justify-content:center; gap:10px; margin-top:14px;">
-                            <div class="gallery-thumb active" style="width:50px; height:50px; border:2px solid #ef4444; border-radius:8px; padding:3px; cursor:pointer;" onclick="document.getElementById('elMainProductImg').src='<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Black.png'">
-                                <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Black.png" style="width:100%; height:100%; object-fit:contain;">
-                            </div>
-                            <div class="gallery-thumb" style="width:50px; height:50px; border:1px solid #e2e8f0; border-radius:8px; padding:3px; cursor:pointer;" onclick="document.getElementById('elMainProductImg').src='<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Silver.png'">
-                                <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Silver.png" style="width:100%; height:100%; object-fit:contain;">
-                            </div>
-                            <div class="gallery-thumb" style="width:50px; height:50px; border:1px solid #e2e8f0; border-radius:8px; padding:3px; cursor:pointer;" onclick="document.getElementById('elMainProductImg').src='<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png'">
-                                <img src="<?php echo get_template_directory_uri(); ?>/upload/goods/20260911/iPhone 18 Pro 256GB Glacier.png" style="width:100%; height:100%; object-fit:contain;">
-                            </div>
+                        <div style="display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
+                            <?php foreach ( $gallery_list as $g_idx => $g_item ) :
+                                $g_url = is_array( $g_item ) ? $g_item['url'] : $g_item;
+                                $g_label = is_array( $g_item ) && ! empty( $g_item['label'] ) ? $g_item['label'] : '';
+                                if ( empty( $g_url ) ) continue;
+                            ?>
+                                <div class="gallery-thumb <?php echo $g_idx === 0 ? 'active' : ''; ?>" title="<?php echo esc_attr( $g_label ); ?>" style="width:50px; height:50px; border:<?php echo $g_idx === 0 ? '2px solid #ef4444' : '1px solid #e2e8f0'; ?>; border-radius:8px; padding:3px; cursor:pointer;" onclick="document.getElementById('elMainProductImg').src='<?php echo esc_url( $g_url ); ?>'">
+                                    <img src="<?php echo esc_url( $g_url ); ?>" alt="<?php echo esc_attr( $g_label ); ?>" style="width:100%; height:100%; object-fit:contain;">
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 

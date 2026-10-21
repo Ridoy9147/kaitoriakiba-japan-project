@@ -87,6 +87,15 @@ function kaitoriakiba_auto_create_pages() {
                 update_post_meta( $page_id, '_wp_page_template', $p_data['template'] );
                 $created_page_ids[$key] = $page_id;
 
+                // Populate Elementor Data so pages are immediately editable via Elementor
+                $el_data = kaitoriakiba_get_elementor_data_for_page( $key );
+                if ( ! empty( $el_data ) ) {
+                    update_post_meta( $page_id, '_elementor_edit_mode', 'builder' );
+                    update_post_meta( $page_id, '_elementor_template_type', 'wp-page' );
+                    update_post_meta( $page_id, '_elementor_version', '3.20.0' );
+                    update_post_meta( $page_id, '_elementor_data', wp_slash( wp_json_encode( $el_data ) ) );
+                }
+
                 // Set static front page if requested
                 if ( ! empty( $p_data['is_front'] ) ) {
                     update_option( 'show_on_front', 'page' );
@@ -99,6 +108,18 @@ function kaitoriakiba_auto_create_pages() {
             if ( $p_data['template'] ) {
                 update_post_meta( $existing->ID, '_wp_page_template', $p_data['template'] );
             }
+
+            // Also populate Elementor data if not already set
+            if ( ! get_post_meta( $existing->ID, '_elementor_edit_mode', true ) ) {
+                $el_data = kaitoriakiba_get_elementor_data_for_page( $key );
+                if ( ! empty( $el_data ) ) {
+                    update_post_meta( $existing->ID, '_elementor_edit_mode', 'builder' );
+                    update_post_meta( $existing->ID, '_elementor_template_type', 'wp-page' );
+                    update_post_meta( $existing->ID, '_elementor_version', '3.20.0' );
+                    update_post_meta( $existing->ID, '_elementor_data', wp_slash( wp_json_encode( $el_data ) ) );
+                }
+            }
+
             if ( ! empty( $p_data['is_front'] ) && get_option( 'show_on_front' ) !== 'page' ) {
                 update_option( 'show_on_front', 'page' );
                 update_option( 'page_on_front', $existing->ID );
@@ -114,6 +135,327 @@ function kaitoriakiba_auto_create_pages() {
 
     // Create & assign Primary Navigation Menu
     kaitoriakiba_setup_default_menu( $created_page_ids );
+}
+
+/**
+ * Helper: Generate initial Elementor section & widget schema for each auto-created page
+ */
+function kaitoriakiba_get_elementor_data_for_page( $key ) {
+    $sections = array();
+
+    switch ( $key ) {
+        case 'home':
+            $sections = array(
+                array(
+                    'id'       => 'sec_announcement',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_announcement',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_announcement',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_announcement',
+                                    'settings'   => array(
+                                        'banner_text' => '【高価買取祭 開催中】iPhone 16 / 15シリーズ特別増額査定実施中！秋葉原店・郵送買取どちらも即日対応！',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'id'       => 'sec_search',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_search',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_search',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_search_box',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'id'       => 'sec_grid',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_grid',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_grid',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_device_grid',
+                                    'settings'   => array(
+                                        'section_title'  => 'iPhone 高価買取対象機種',
+                                        'posts_per_page' => 8,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'id'       => 'sec_tax',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_tax',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_tax',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_taxonomy_browse',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'id'       => 'sec_flow',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_flow',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_flow',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_process_flow',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'id'       => 'sec_faq',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_faq',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_faq',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_faq',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+
+        case 'sell-apply':
+            $sections = array(
+                array(
+                    'id'       => 'sec_sell_apply',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_sell_apply',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_sell_apply',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_sell_apply',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+
+        case 'kyc-verify':
+            $sections = array(
+                array(
+                    'id'       => 'sec_kyc',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_kyc',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_kyc',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_kyc_verify',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+
+        case 'register':
+            $sections = array(
+                array(
+                    'id'       => 'sec_auth_reg',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_auth_reg',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_auth_reg',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_auth_form',
+                                    'settings'   => array(
+                                        'default_tab' => 'register',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+
+        case 'login':
+            $sections = array(
+                array(
+                    'id'       => 'sec_auth_login',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_auth_login',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_auth_login',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_auth_form',
+                                    'settings'   => array(
+                                        'default_tab' => 'login',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+
+        case 'phone-single':
+            $sections = array(
+                array(
+                    'id'       => 'sec_phone_single',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_phone_single',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_phone_single',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_device_calculator',
+                                    'settings'   => array(
+                                        'default_title' => 'iPhone 16 Pro 256GB SIMフリー',
+                                        'default_price' => 168000,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+
+        case 'devices':
+            $sections = array(
+                array(
+                    'id'       => 'sec_dev_search',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_dev_search',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_dev_search',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_search_box',
+                                    'settings'   => array(),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'id'       => 'sec_dev_grid',
+                    'elType'   => 'section',
+                    'settings' => array(),
+                    'elements' => array(
+                        array(
+                            'id'       => 'col_dev_grid',
+                            'elType'   => 'column',
+                            'settings' => array( '_column_size' => 100 ),
+                            'elements' => array(
+                                array(
+                                    'id'         => 'wid_dev_grid',
+                                    'elType'     => 'widget',
+                                    'widgetType' => 'kaitori_device_grid',
+                                    'settings'   => array(
+                                        'section_title'  => '全買取対象機種一覧',
+                                        'posts_per_page' => 16,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            break;
+    }
+
+    return $sections;
 }
 
 /**
