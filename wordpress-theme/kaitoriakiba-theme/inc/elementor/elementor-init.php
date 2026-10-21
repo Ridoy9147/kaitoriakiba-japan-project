@@ -30,47 +30,55 @@ add_action( 'elementor/elements/categories_registered', 'kaitoriakiba_elementor_
  * Register Custom Elementor Widgets
  */
 function kaitoriakiba_register_elementor_widgets( $widgets_manager = null ) {
-    // Determine widgets manager instance
+    static $already_registered = false;
+    if ( $already_registered ) {
+        return;
+    }
+    $already_registered = true;
+
+    // Determine widgets manager instance safely
     if ( ! $widgets_manager ) {
-        if ( class_exists( '\Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance->widgets_manager ) ) {
-            $widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
-        } else {
-            return;
+        if ( class_exists( '\Elementor\Plugin' ) && method_exists( '\Elementor\Plugin', 'instance' ) ) {
+            $plugin = \Elementor\Plugin::instance();
+            if ( isset( $plugin->widgets_manager ) ) {
+                $widgets_manager = $plugin->widgets_manager;
+            }
         }
     }
 
-    // Include widget files safely
-    require_once __DIR__ . '/widgets/widget-search-box.php';
-    require_once __DIR__ . '/widgets/widget-device-grid.php';
-    require_once __DIR__ . '/widgets/widget-device-single.php';
-    require_once __DIR__ . '/widgets/widget-category-sidebar.php';
-    require_once __DIR__ . '/widgets/widget-process-flow.php';
-    require_once __DIR__ . '/widgets/widget-faq.php';
-    require_once __DIR__ . '/widgets/widget-announcement-banner.php';
-    require_once __DIR__ . '/widgets/widget-sell-apply.php';
-    require_once __DIR__ . '/widgets/widget-kyc-verify.php';
-    require_once __DIR__ . '/widgets/widget-auth-form.php';
+    if ( ! $widgets_manager ) {
+        return;
+    }
 
-    $widget_classes = array(
-        'Kaitori_Search_Widget',
-        'Kaitori_Device_Grid_Widget',
-        'Kaitori_Device_Single_Widget',
-        'Kaitori_Taxonomy_Browse_Widget',
-        'Kaitori_Process_Flow_Widget',
-        'Kaitori_FAQ_Widget',
-        'Kaitori_Announcement_Widget',
-        'Kaitori_Sell_Apply_Widget',
-        'Kaitori_KYC_Verify_Widget',
-        'Kaitori_Auth_Form_Widget',
+    // Include widget files safely
+    $widgets_to_load = array(
+        'widget-search-box.php'           => 'Kaitori_Search_Widget',
+        'widget-device-grid.php'          => 'Kaitori_Device_Grid_Widget',
+        'widget-device-single.php'        => 'Kaitori_Device_Single_Widget',
+        'widget-category-sidebar.php'     => 'Kaitori_Taxonomy_Browse_Widget',
+        'widget-process-flow.php'         => 'Kaitori_Process_Flow_Widget',
+        'widget-faq.php'                  => 'Kaitori_FAQ_Widget',
+        'widget-announcement-banner.php'  => 'Kaitori_Announcement_Widget',
+        'widget-sell-apply.php'           => 'Kaitori_Sell_Apply_Widget',
+        'widget-kyc-verify.php'           => 'Kaitori_KYC_Verify_Widget',
+        'widget-auth-form.php'            => 'Kaitori_Auth_Form_Widget',
     );
 
-    foreach ( $widget_classes as $class_name ) {
-        if ( class_exists( $class_name ) ) {
-            $widget_instance = new $class_name();
-            if ( method_exists( $widgets_manager, 'register' ) ) {
-                $widgets_manager->register( $widget_instance );
-            } elseif ( method_exists( $widgets_manager, 'register_widget_type' ) ) {
-                $widgets_manager->register_widget_type( $widget_instance );
+    foreach ( $widgets_to_load as $file => $class_name ) {
+        $file_path = __DIR__ . '/widgets/' . $file;
+        if ( file_exists( $file_path ) ) {
+            require_once $file_path;
+            if ( class_exists( $class_name ) ) {
+                try {
+                    $widget_instance = new $class_name();
+                    if ( method_exists( $widgets_manager, 'register' ) ) {
+                        $widgets_manager->register( $widget_instance );
+                    } elseif ( method_exists( $widgets_manager, 'register_widget_type' ) ) {
+                        $widgets_manager->register_widget_type( $widget_instance );
+                    }
+                } catch ( \Throwable $e ) {
+                    // Fail silently to avoid breaking entire page load
+                }
             }
         }
     }

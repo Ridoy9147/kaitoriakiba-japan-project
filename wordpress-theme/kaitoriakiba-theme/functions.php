@@ -5,16 +5,35 @@
  * Full Elementor Page Builder Support & CPT Integration
  * 
  * @package KaitoriAkiba
- * @version 2.0.0
+ * @version 2.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.0.0' );
+define( 'KAITORIAKIBA_VERSION', '2.0.1' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
+
+/**
+ * 0. Emergency Diagnostics / Error Protection
+ * Catches fatal errors and displays a clear diagnostic box instead of the blank critical error screen.
+ */
+register_shutdown_function( function() {
+    $error = error_get_last();
+    if ( $error && in_array( $error['type'], array( E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR ), true ) ) {
+        if ( ob_get_level() ) {
+            ob_clean();
+        }
+        echo '<div style="background:#fff1f2; border:2px solid #e11d48; color:#881337; padding:24px; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; margin:40px auto; max-width:850px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.08);">';
+        echo '<h3 style="color:#be123c; margin-top:0; font-size:18px;">⚠️ Kaitori Akiba Theme Diagnostic</h3>';
+        echo '<p style="margin:8px 0; font-size:14px;"><strong>Fatal Error:</strong> ' . htmlspecialchars( $error['message'] ) . '</p>';
+        echo '<p style="margin:4px 0; font-size:13px; color:#4c0519;"><strong>File:</strong> <code>' . htmlspecialchars( $error['file'] ) . '</code></p>';
+        echo '<p style="margin:4px 0; font-size:13px; color:#4c0519;"><strong>Line:</strong> <code>' . htmlspecialchars( $error['line'] ) . '</code></p>';
+        echo '</div>';
+    }
+} );
 
 /**
  * 1. Theme Setup
@@ -94,9 +113,6 @@ require_once KAITORIAKIBA_DIR . '/inc/tgmpa/tgmpa-config.php';
  * 4. Safe Helper: Check if a post/page is built with Elementor
  */
 function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
-    if ( ! did_action( 'elementor/loaded' ) || ! class_exists( '\Elementor\Plugin' ) ) {
-        return false;
-    }
     if ( ! $post_id ) {
         $post_id = get_queried_object_id();
     }
@@ -108,15 +124,24 @@ function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
         return false;
     }
 
-    try {
-        if ( isset( \Elementor\Plugin::$instance->documents ) ) {
-            $document = \Elementor\Plugin::$instance->documents->get( $post_id );
-            if ( $document && method_exists( $document, 'is_built_with_elementor' ) ) {
-                return (bool) $document->is_built_with_elementor();
+    // 1. Fastest & 100% safe check: Elementor stores '_elementor_edit_mode' meta on edited posts
+    $edit_mode = get_post_meta( $post_id, '_elementor_edit_mode', true );
+    if ( 'builder' === $edit_mode ) {
+        return true;
+    }
+
+    // 2. Safe check with Elementor plugin instance
+    if ( did_action( 'elementor/loaded' ) && class_exists( '\Elementor\Plugin' ) ) {
+        try {
+            if ( method_exists( '\Elementor\Plugin', 'instance' ) ) {
+                $plugin = \Elementor\Plugin::instance();
+                if ( $plugin && isset( $plugin->db ) && method_exists( $plugin->db, 'is_built_with_elementor' ) ) {
+                    return (bool) $plugin->db->is_built_with_elementor( $post_id );
+                }
             }
+        } catch ( \Throwable $e ) {
+            return false;
         }
-    } catch ( \Throwable $e ) {
-        return false;
     }
 
     return false;
@@ -126,12 +151,16 @@ function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
  * 5. Load Elementor Custom Widgets & Categories
  */
 function kaitoriakiba_init_elementor() {
+    static $elementor_inited = false;
+    if ( $elementor_inited ) {
+        return;
+    }
     if ( did_action( 'elementor/loaded' ) ) {
+        $elementor_inited = true;
         require_once KAITORIAKIBA_DIR . '/inc/elementor/elementor-init.php';
     }
 }
 add_action( 'elementor/init', 'kaitoriakiba_init_elementor' );
-add_action( 'plugins_loaded', 'kaitoriakiba_init_elementor', 25 );
 add_action( 'init', 'kaitoriakiba_init_elementor', 1 );
 
 /**

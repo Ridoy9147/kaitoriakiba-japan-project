@@ -7,7 +7,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
+<?php if ( function_exists( 'wp_body_open' ) ) { wp_body_open(); } ?>
 
 <!-- ================= Top Utility Bar ================= -->
 <div class="top-utility-bar">
@@ -47,17 +47,17 @@
         <div class="header-main-row">
             <!-- Brand Logo -->
             <div class="header-brand">
-                <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="brand-link">
-                    <?php
-                    if ( has_custom_logo() ) {
-                        the_custom_logo();
-                    } else {
-                        ?>
-                        <img src="<?php echo get_template_directory_uri(); ?>/upload/logo/logo.svg" title="<?php bloginfo( 'name' ); ?>" alt="<?php bloginfo( 'name' ); ?>" class="brand-logo-img" />
-                        <?php
-                    }
+                <?php
+                if ( has_custom_logo() ) {
+                    the_custom_logo();
+                } else {
                     ?>
-                </a>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="brand-link">
+                        <img src="<?php echo get_template_directory_uri(); ?>/upload/logo/logo.svg" title="<?php bloginfo( 'name' ); ?>" alt="<?php bloginfo( 'name' ); ?>" class="brand-logo-img" />
+                    </a>
+                    <?php
+                }
+                ?>
             </div>
 
             <!-- Header Quick Actions & Contact -->
