@@ -134,5 +134,18 @@
             <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span>買取価格一覧 (Price List)</span></a></li>
         </ul>
     </div>
+
+    <!-- Authentic Newsletter Box from index.html -->
+    <div class="email" style="margin-bottom: 20px;">
+        <div class="wrapper">
+            <div class="header">
+                <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/email/weekly.jpg" width="100%" alt="Weekly Newsletter" style="width:100% !important; max-width:100% !important; margin:0 !important; display:block !important; border-radius:6px;" />
+            </div>
+            <p class="info" style="font-size:12px; margin:10px 0 6px 0; color:#475569;">最新の高価買取相場や会員限定キャンペーン情報をメールでお届けします。</p>
+            <div style="margin-bottom: 10px;">
+                <a class="btn-ys block-btn btn-ys-cor1" style="background-color: #ef4444; color:#fff; display:block; text-align:center; padding:8px; border-radius:6px; font-weight:700; text-decoration:none;" href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php _e( 'メールマガジン登録', 'kaitoriakiba' ); ?></a>
+            </div>
+        </div>
+    </div>
 </div>
 <!--sidebar-e-->

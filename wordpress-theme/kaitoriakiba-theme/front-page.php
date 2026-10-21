@@ -1,17 +1,39 @@
 <?php
 /**
  * Kaitori Akiba Front Page Template
- * Supports Elementor editing seamlessly while providing full native dynamic fallback.
+ * 
+ * 100% Authentic Original Kaitori Akiba Design from index.html.
+ * Supports Elementor Page Builder seamlessly when customized,
+ * and provides full native dynamic fallback with all original sections:
+ * - Search & Category Icons
+ * - 3 Process Flow Big Buttons (guid)
+ * - Quick Guides Grid (home_liuxiang)
+ * - Expandable Urgent Announcements (qingbao)
+ * - Hero Nav Banners & Swiper Slider (mainbanner)
+ * - Left Sidebar (Carrier, Brand, Series with 100% full-width images)
+ * - What's News tabbed section with trumpet icon
+ * - Sub-box Buyback Product Showcase Grid
+ * - Key Selling Points & Checkpoints
+ * - Step-by-step Buyback Process Flow
  * 
  * @package KaitoriAkiba
+ * @author dev hridoy
  */
 
 get_header();
 
-// Check if page is built with Elementor
-$is_elementor = kaitoriakiba_is_elementor_page();
+// Check if page has custom Elementor content
+global $post;
+$has_custom_elementor = false;
+if ( kaitoriakiba_is_elementor_page() ) {
+    $raw_content = isset( $post->post_content ) ? trim( $post->post_content ) : '';
+    // If not just the empty demo placeholder comment, treat as custom Elementor page
+    if ( ! empty( $raw_content ) && $raw_content !== '<!-- Kaitori Akiba Modern Buyback Portal Homepage -->' ) {
+        $has_custom_elementor = true;
+    }
+}
 
-if ( $is_elementor ) :
+if ( $has_custom_elementor ) :
     ?>
     <main id="primary" class="site-main elementor-content-wrap">
         <?php
@@ -22,13 +44,16 @@ if ( $is_elementor ) :
     </main>
     <?php
 else :
-    // Native Dynamic Homepage Layout
+    // =========================================================================
+    // 100% COMPLETE ORIGINAL KAITORI AKIBA HOMEPAGE DESIGN
+    // =========================================================================
+    $theme_uri = get_template_directory_uri();
     ?>
-    <div class="container main-content-container" style="margin-top: 24px;">
 
-        <!-- 1. Search Box (Dual Search) -->
-        <div class="search" style="margin-bottom: 24px;">
-            <div class="row">
+    <!-- 1. Search Box (Dual Search) & Quick Category Bar -->
+    <div class="container search mtop10" id="top-search-area">
+        <div class="row">
+            <div class="col-lg-12 col-mg-12 col-sm-12">
                 <!-- Col 1: Keyword Search -->
                 <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
                     <div class="search_title">
@@ -36,7 +61,7 @@ else :
                         <div class="search_title_h3"><?php _e( 'Please enter device name, model number, JAN code, etc.', 'kaitoriakiba' ); ?></div>					
                     </div>
                     <div class="search_box">
-                        <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                        <form class="m_fullsearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                             <div class="form-group mbtm0 clearfix">
                                 <div class="keyword_search">
                                     <select class="form-control fw_cat" name="cat">
@@ -47,6 +72,10 @@ else :
                                             foreach ( $cats as $c ) {
                                                 echo '<option value="' . esc_attr( $c->slug ) . '">' . esc_html( $c->name ) . '</option>';
                                             }
+                                        } else {
+                                            echo '<option value="iphone">iPhone</option>';
+                                            echo '<option value="smartphones">Smartphones</option>';
+                                            echo '<option value="tablets">Tablets</option>';
                                         }
                                         ?>
                                     </select>
@@ -55,15 +84,16 @@ else :
                                 </div>
                             </div>
                         </form>
-                        <div class="title" style="margin-top: 14px; font-size: 13px; font-weight: bold; color: #475569;">
-                            <?php _e( 'Popular Search Keywords!', 'kaitoriakiba' ); ?>
-                            <ul class="hotword" style="margin-top: 6px;">
+                        <div class="title"><?php _e( 'Popular Search Keywords!', 'kaitoriakiba' ); ?>
+                            <ul class="hotword">
+                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=iphone' ) ); ?>">iphone</a></li>
+                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=Nintendo+switch' ) ); ?>">Nintendo switch</a></li>
+                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>">Pixel</a></li>
                                 <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+16' ) ); ?>">iPhone 16</a></li>
                                 <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+16+Pro' ) ); ?>">iPhone 16 Pro</a></li>
+                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=OPPO' ) ); ?>">OPPO</a></li>
+                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=airpods' ) ); ?>">airpods</a></li>
                                 <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+15' ) ); ?>">iPhone 15</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>">Pixel</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPad' ) ); ?>">iPad</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=Switch' ) ); ?>">Nintendo switch</a></li>
                             </ul>
                         </div>
                     </div>
@@ -76,7 +106,7 @@ else :
                         <div class="search_title_h3"><?php _e( 'Select one or more categories (Multiple selection supported)', 'kaitoriakiba' ); ?></div>					
                     </div>
                     <div class="search_box">
-                        <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                        <form class="snssearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                             <div class="form-group">
                                 <div class="step_search">
                                     <div class="step_search_filters">
@@ -87,10 +117,12 @@ else :
                                                 foreach ( $cats as $c ) {
                                                     echo '<option value="' . esc_attr( $c->slug ) . '">' . esc_html( $c->name ) . '</option>';
                                                 }
+                                            } else {
+                                                echo '<option value="iphone">iPhone</option>';
+                                                echo '<option value="smartphones">Smartphones</option>';
                                             }
                                             ?>
                                         </select>
-
                                         <select class="form-control s_career" name="s_career">
                                             <option value=""><?php _e( 'By Carrier', 'kaitoriakiba' ); ?></option>
                                             <?php
@@ -99,10 +131,12 @@ else :
                                                 foreach ( $carriers as $car ) {
                                                     echo '<option value="' . esc_attr( $car->slug ) . '">' . esc_html( $car->name ) . '</option>';
                                                 }
+                                            } else {
+                                                $sample_c = array( 'docomo', 'au', 'SoftBank', 'Y!mobile', 'UQ mobile', 'SIM FREE', 'RakutenMobile' );
+                                                foreach ( $sample_c as $sc ) echo '<option value="' . esc_attr($sc) . '">' . esc_html($sc) . '</option>';
                                             }
                                             ?>
                                         </select>
-
                                         <select class="form-control s_brand" name="brand">
                                             <option value=""><?php _e( 'By Brand', 'kaitoriakiba' ); ?></option>
                                             <?php
@@ -111,10 +145,12 @@ else :
                                                 foreach ( $brands as $b ) {
                                                     echo '<option value="' . esc_attr( $b->slug ) . '">' . esc_html( $b->name ) . '</option>';
                                                 }
+                                            } else {
+                                                $sample_b = array( 'Apple', 'Xiaomi', 'OPPO', 'ASUS', 'FUJITSU', 'SAMSUNG', 'Google', 'SONY' );
+                                                foreach ( $sample_b as $sb ) echo '<option value="' . esc_attr($sb) . '">' . esc_html($sb) . '</option>';
                                             }
                                             ?>
                                         </select>
-
                                         <select class="form-control s_series" name="series">
                                             <option value=""><?php _e( 'By Series', 'kaitoriakiba' ); ?></option>
                                             <?php
@@ -123,6 +159,9 @@ else :
                                                 foreach ( $series as $s ) {
                                                     echo '<option value="' . esc_attr( $s->slug ) . '">' . esc_html( $s->name ) . '</option>';
                                                 }
+                                            } else {
+                                                $sample_s = array( 'iPhone', 'Xperia', 'Galaxy', 'arrows', 'AQUOS', 'Pixel' );
+                                                foreach ( $sample_s as $ss ) echo '<option value="' . esc_attr($ss) . '">' . esc_html($ss) . '</option>';
                                             }
                                             ?>
                                         </select>
@@ -135,190 +174,600 @@ else :
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- 2. Announcement Alert Banner -->
-        <div style="background:#fef2f2; border:1.5px solid #fca5a5; border-radius:12px; padding:18px 24px; margin-bottom:28px; display:flex; align-items:flex-start; gap:16px;">
-            <div style="font-size:24px; color:#ef4444; line-height:1;"><i class="fa fa-exclamation-triangle"></i></div>
-            <div>
-                <h4 style="font-size:15px; font-weight:800; color:#0f172a; margin:0 0 6px 0;"><?php _e( '【重要なお知らせ】iPhone 16 / 15 シリーズ買取強化キャンペーン実施中！', 'kaitoriakiba' ); ?></h4>
-                <p style="font-size:13px; color:#475569; margin:0; line-height:1.5;"><?php _e( '秋葉原店持込または送料無料の全国郵送買取にてiPhone 16 Pro / 15 Proの買取価格を強化中。店頭なら最短5分で即現金お渡し可能です。', 'kaitoriakiba' ); ?></p>
+    <!-- Category Icons Row (href_list) -->
+    <div class="bg-white">
+        <div class="href_list">
+            <div class="container">
+                <div class="gutter-10 clearflex">
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/phone.jpg" alt="Smartphones" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/ipad.jpg" alt="Tablets" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=gaming' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/game.jpg" alt="Gaming Consoles" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cosmetics' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/meizhuang.jpg" alt="Cosmetics" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=appliances' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628171113.jpg" alt="Home Appliances" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cameras' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628171104.jpg" alt="Cameras" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=pc' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628170919.jpg" alt="PC & Laptops" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriakiba_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>				
+    </div>
+
+    <!-- 2. Three Main Process Flow Buttons (guid) -->
+    <div class="guid">
+        <div class="container">
+            <div class="row home_index">
+                <div class="col-lg-1 col-md-0 col-sm-0 col-xs-0 col-preg"></div>
+                <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12 center col-preg-main">
+                    <div class="col-lg-1 col-xs-0"></div>
+                    <div class="col-lg-10 col-xs-12 col-preg-main">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_1">
+                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>" title="In-Store Buyback Flow">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s1.png" class="img-responsive hidden-xs" alt="In-Store Buyback Flow" />
+                                <span class="btn btn-orange"><?php _e( 'In-Store Buyback', 'kaitoriakiba' ); ?></span>
+                            </a>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_2">
+                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>" title="Mail-in Buyback Flow">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s2.png" class="img-responsive hidden-xs" alt="Mail-in Buyback Flow" />
+                                <span class="btn btn-green"><?php _e( 'Mail-in Buyback', 'kaitoriakiba' ); ?></span>
+                            </a>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_3">
+                            <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>" title="Corporate Buyback Flow">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s3.png" class="img-responsive hidden-xs" alt="Corporate Buyback Flow" />
+                                <span class="btn btn-blue"><?php _e( 'Corporate Buyback', 'kaitoriakiba' ); ?></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-1 col-xs-0"></div>
+                </div>
+                <div class="col-lg-1 col-md-0 col-sm-0 col-xs-0 col-preg"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Maintop Section (Quick Links, Urgent Announcements, Banner Slider) -->
+    <div class="maintop">
+        <!-- Quick Help Bar (home_liuxiang) -->
+        <div class="home_liuxiang">
+            <div class="container">
+                <div class="row home_lx_box">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php _e( 'How to Register', 'kaitoriakiba' ); ?></a></div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><?php _e( 'How to Apply for Buyback', 'kaitoriakiba' ); ?></a></div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><?php _e( 'Identity Verification (eKYC)', 'kaitoriakiba' ); ?></a></div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'Price Guarantee Policy', 'kaitoriakiba' ); ?></a></div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/register/#login' ) ); ?>"><?php _e( 'Member Dashboard', 'kaitoriakiba' ); ?></a></div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/faq/' ) ); ?>"><?php _e( 'Frequently Asked Questions (FAQ)', 'kaitoriakiba' ); ?></a></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 3. Process Flow 3-Cards -->
-        <div class="row" style="margin-bottom: 30px;">
-            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 15px;">
-                <div style="background:#ffffff; border:1px solid #fed7aa; border-radius:14px; padding:22px; height:100%; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-                        <div style="width:38px; height:38px; border-radius:10px; background:#fff7ed; color:#ea580c; display:flex; align-items:center; justify-content:center; font-size:18px;"><i class="fa fa-building"></i></div>
-                        <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;">店頭買取 (In-Store)</h3>
-                    </div>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.5;">秋葉原店へ直接お持込。最短5分で即時現金手渡し！事前予約不要。</p>
-                    <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>" class="btn btn-default" style="margin-top:14px; width:100%; font-weight:700;">店頭買取を申込む &rarr;</a>
+        <!-- Expandable Urgent Announcements (qingbao) -->
+        <div class="container pding0">
+            <div style="background:#feecec; padding:20px; margin-bottom:10px; border-radius:8px;">
+                <div style="border-bottom:1px solid #fca5a5; padding-bottom:10px; font-weight:800; color:#b91c1c; font-size:15px;">
+                    <i class="fa fa-bullhorn" style="margin-right:6px;"></i> <?php _e( '【重要】買取アキバからのお知らせ (Urgent Announcements)', 'kaitoriakiba' ); ?>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 15px;">
-                <div style="background:#ffffff; border:1px solid #bbf7d0; border-radius:14px; padding:22px; height:100%; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-                        <div style="width:38px; height:38px; border-radius:10px; background:#f0fdf4; color:#16a34a; display:flex; align-items:center; justify-content:center; font-size:18px;"><i class="fa fa-truck"></i></div>
-                        <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;">郵送買取 (Mail-In)</h3>
-                    </div>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.5;">送料無料の宅配キット完備。到着当日に即日査定＆指定口座へ即日振込！</p>
-                    <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>" class="btn btn-success" style="margin-top:14px; width:100%; font-weight:700; background:#16a34a; border-color:#16a34a;">郵送買取を申込む &rarr;</a>
+                <div style="padding-top:15px;" class="qingbao" id="qb">
+                    <p><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><span style="font-size:15px; color:#003399;"><strong><u>【重要】古物営業法に基づく本人確認書類（eKYC）および購入証明書の提出について</u></strong></span></a></p>
+                    <p><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><span style="font-size:15px; color:#003399;"><strong><u>【郵送買取】送料無料キャンペーン実施中！到着当日にスピード本査定＆最短即日入金</u></strong></span></a></p>
+                    <p><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>"><span style="font-size:15px; color:#003399;"><strong><u>【店舗情報】秋葉原店は年中無休で営業中 (営業時間: 10:00 〜 19:30)</u></strong></span></a></p>
+                    <p><span style="background-color:#FFE500; color:#E53333; font-size:14px; padding:3px 6px;"><strong>★ 重要: ご来店・ご郵送の前にWEBページより事前査定申込をお願いいたします (事前予約制) ★</strong></span></p>
+                    <p style="margin-top:10px; font-size:13px; color:#334155;">■ 分割残債あり（利用制限△）の端末も減額査定なしでお買取り可能です。</p>
+                    <p style="font-size:13px; color:#334155;">■ 法人様の大量端末お買取り・データ消去証明書の発行にも対応しております。</p>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 15px;">
-                <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:14px; padding:22px; height:100%; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-                        <div style="width:38px; height:38px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:18px;"><i class="fa fa-briefcase"></i></div>
-                        <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;">法人買取 (Corporate)</h3>
-                    </div>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.5;">社用端末の大量買取・データ消去証明書の発行や請求書払い対応。</p>
-                    <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>" class="btn btn-primary" style="margin-top:14px; width:100%; font-weight:700; background:#2563eb; border-color:#2563eb;">法人見積・相談 &rarr;</a>
+                <div class="dropdownbutton" style="text-align:center; margin-top:10px;">
+                    <button id="moreless" class="dropdown" onclick="qbopen();" style="cursor:pointer;"><?php _e( 'Show More / 詳細を見る', 'kaitoriakiba' ); ?></button>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Main Two-Column Layout (Sidebar + Products) -->
-        <div class="row">
-            <!-- Left Sidebar (Browse by Carrier, Brand, Series) -->
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-                <!-- Carrier Box -->
-                <div class="navigation-box" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:20px;">
-                    <div class="navigation-h2" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding:10px 14px; color:#ffffff; font-weight:800; font-size:14px;">
-                        <i class="fa fa-circle" style="font-size:8px; vertical-align:middle; margin-right:6px;"></i>
-                        <span>Browse by Carrier</span>
-                    </div>
-                    <ul style="list-style:none; padding:8px; margin:0;">
-                        <?php
-                        $sample_careers = array(
-                            'docomo' => 'upload/career/docomo.jpg',
-                            'au' => 'upload/career/au.jpg',
-                            'softbank' => 'upload/career/softbank.jpg',
-                            'simfree' => 'upload/career/simfree.jpg',
-                            'Y!mobile' => 'upload/career/Y!mobile.jpg',
-                            'uqmobile' => 'upload/career/uqmobile.jpg',
-                        );
-                        foreach ( $sample_careers as $slug => $path ) :
-                        ?>
-                            <li style="padding:4px 0; margin-bottom:6px; list-style:none; width:100%;">
-                                <a href="<?php echo esc_url( home_url( '/devices/?s_career=' . $slug ) ); ?>" style="display:block;">
-                                    <img src="<?php echo get_template_directory_uri() . '/' . $path; ?>" alt="<?php echo esc_attr( $slug ); ?>" class="img-responsive nav-img-full" style="width:100% !important; max-width:100% !important; margin:0 !important; display:block !important; border-radius:6px; border:1px solid #e2e8f0;">
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
+        <script>
+            function qbopen() {
+                var qb = document.getElementById('qb');
+                var btn = document.getElementById('moreless');
+                if (qb.classList.contains('qingbao')) {
+                    qb.classList.remove('qingbao');
+                    btn.innerText = 'Show Less / 閉じる';
+                } else {
+                    qb.classList.add('qingbao');
+                    btn.innerText = 'Show More / 詳細を見る';
+                }
+            }
+        </script>
 
-                <!-- Brand Box -->
-                <div class="navigation-box" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:20px;">
-                    <div class="navigation-h2" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding:10px 14px; color:#ffffff; font-weight:800; font-size:14px;">
-                        <i class="fa fa-circle" style="font-size:8px; vertical-align:middle; margin-right:6px;"></i>
-                        <span>Browse by Brand</span>
-                    </div>
-                    <ul style="list-style:none; padding:8px; margin:0;">
-                        <?php
-                        $sample_brands = array(
-                            'apple' => 'upload/brand/apple.jpg',
-                            'google' => 'upload/brand/google.jpg',
-                            'sony' => 'upload/brand/sony.jpg',
-                            'samsung' => 'upload/brand/samsung.jpg',
-                            'oppo' => 'upload/brand/OPPO.jpg',
-                        );
-                        foreach ( $sample_brands as $slug => $path ) :
-                        ?>
-                            <li style="padding:4px 0; margin-bottom:6px; list-style:none; width:100%;">
-                                <a href="<?php echo esc_url( home_url( '/devices/?brand=' . $slug ) ); ?>" style="display:block;">
-                                    <img src="<?php echo get_template_directory_uri() . '/' . $path; ?>" alt="<?php echo esc_attr( $slug ); ?>" class="img-responsive nav-img-full" style="width:100% !important; max-width:100% !important; margin:0 !important; display:block !important; border-radius:6px; border:1px solid #e2e8f0;">
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+        <!-- Hero Nav Banners -->
+        <div class="container">
+            <div class="row">
+                <div class="m-img-nav col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                    <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/maintop/nav_img_1.jpg" class="img-responsive mbtm15" alt="iPhone Buyback Price List"></a>
+                    <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/maintop/nav_btn_1.png" class="img-responsive" alt="iPhone Buyback Chart"></a>
                 </div>
-
-                <!-- Series Box -->
-                <div class="navigation-box" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:20px;">
-                    <div class="navigation-h2" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding:10px 14px; color:#ffffff; font-weight:800; font-size:14px;">
-                        <i class="fa fa-circle" style="font-size:8px; vertical-align:middle; margin-right:6px;"></i>
-                        <span>Browse by Series</span>
-                    </div>
-                    <ul style="list-style:none; padding:8px; margin:0;">
-                        <?php
-                        $sample_series = array(
-                            'iphone' => 'upload/series/iphone.jpg',
-                            'xperia' => 'upload/series/xperia.jpg',
-                            'galaxy' => 'upload/series/galaxy.jpg',
-                            'aquos'  => 'upload/series/aquos.jpg',
-                        );
-                        foreach ( $sample_series as $slug => $path ) :
-                        ?>
-                            <li style="padding:4px 0; margin-bottom:6px; list-style:none; width:100%;">
-                                <a href="<?php echo esc_url( home_url( '/devices/?series=' . $slug ) ); ?>" style="display:block;">
-                                    <img src="<?php echo get_template_directory_uri() . '/' . $path; ?>" alt="<?php echo esc_attr( $slug ); ?>" class="img-responsive nav-img-full" style="width:100% !important; max-width:100% !important; margin:0 !important; display:block !important; border-radius:6px; border:1px solid #e2e8f0;">
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+                <div class="m-img-nav col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                    <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/maintop/nav_img_2.jpg" class="img-responsive mbtm15" alt="Smartphone Buyback List by Brand"></a>
+                    <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/maintop/nav_btn_2.png" class="img-responsive" alt="Smartphone Buyback Rates"></a>
                 </div>
+                <div class="clearfix"></div>
             </div>
+        </div>
 
-            <!-- Right Main Area: Products Grid -->
-            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
-                <div class="section-title-wrap" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #e2e8f0; padding-bottom:12px;">
-                    <h2 style="font-size:20px; font-weight:900; color:#0f172a; margin:0;">
-                        <i class="fa fa-mobile" style="color:#ef4444;"></i> <?php _e( 'iPhone・スマホ高価買取対象機種', 'kaitoriakiba' ); ?>
-                    </h2>
-                    <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>" style="font-size:13px; font-weight:700; color:#ef4444; text-decoration:none;">
-                        <?php _e( 'すべての買取機種を見る', 'kaitoriakiba' ); ?> &rarr;
+        <!-- Promo Banner Posters -->
+        <div class="container pding0">
+            <ul style="list-style:none; padding:0; margin:0 0 10px 0;">
+                <li style="margin-bottom:8px;">
+                    <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>">
+                        <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20251229/63a58246c446bf1710aa78f25c4b2619.png" alt="Free Shipping Mail-in Buyback Terms" class="img-responsive col-center poster" style="width:100%; max-width:100%; border-radius:6px;"/>
                     </a>
+                </li>
+                <li style="margin-bottom:8px;">
+                    <a href="<?php echo esc_url( home_url( '/register/' ) ); ?>">
+                        <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20210621/member_rank.png" alt="Kaitori Akiba - Member Benefits & Rewards" class="img-responsive col-center poster" style="width:100%; max-width:100%; border-radius:6px;"/>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Banner Swiper Slider -->
+        <div class="container pding0">
+            <div class="mainbanner visible-lg visible-md" style="margin-bottom:20px;">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180508/mainbanner-1.jpg" alt="iPad High Buyback Rate Chart" class="img-responsive" style="width:100%; border-radius:8px;">
+                            </a>
+                        </div>
+                        <div class="swiper-slide">
+                            <a href="<?php echo esc_url( home_url( '/devices/?cat=gaming' ) ); ?>">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180508/mainbanner-3.jpg" alt="Gaming Consoles Enhanced Buyback Rates" class="img-responsive" style="width:100%; border-radius:8px;">
+                            </a>
+                        </div>
+                        <div class="swiper-slide">
+                            <a href="https://lin.ee/5wvtHzl" target="_blank">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20220222/450216 Kaitori Akibaスライドバナー.png" alt="LINE Official Support" class="img-responsive" style="width:100%; border-radius:8px;">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination-md"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Homepage Main Two-Column Container (home-contenter) -->
+    <div class="home-contenter">
+        <div class="container">
+            <div class="row">
+                <!-- ================= LEFT SIDEBAR ================= -->
+                <div id="js_agn_lft" class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <?php get_sidebar(); ?>
                 </div>
 
-                <div class="row">
-                    <?php
-                    $devices_query = new WP_Query( array(
-                        'post_type'      => 'kaitori_device',
-                        'posts_per_page' => 12,
-                        'post_status'    => 'publish',
-                    ) );
+                <!-- ================= RIGHT CONTENT AREA ================= -->
+                <div id="js_agn_rgt" class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                    
+                    <!-- 4.1 What's News Tab Box -->
+                    <div class="topicInner home">
+                        <div class="topicHeader">
+                            <p class="topicTtl">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/subpage/trumpet_icon.png" width="32px" style="margin-right: 16px" alt="News Icon" />
+                                <?php _e( "What's News (新着情報・お知らせ)", 'kaitoriakiba' ); ?>
+                            </p>
+                            <ul class="topicCategory">
+                                <li class="tc01 cur"><span class="all" data-id="all"><?php _e( 'All', 'kaitoriakiba' ); ?></span></li>
+                                <li class="tc02" data-id="1"><span class="blogTopic"><?php _e( 'Topics', 'kaitoriakiba' ); ?></span></li>
+                                <li class="tc02" data-id="2"><span class="blogTopic"><?php _e( 'Information', 'kaitoriakiba' ); ?></span></li>
+                            </ul>
+                        </div>
+                        <div class="topicList">
+                            <div class="topicWrap">
+                                <ul class="clearflex show">
+                                    <li class="col-xs-12 col-md-6">
+                                        <div class="mThumbnail">
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>">
+                                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/article/20260916/message_yoroshiku_casual.png" class="img-responsive" alt="News" />
+                                            </a>
+                                        </div>
+                                        <div class="layout_cell">
+                                            <p class="date">2026.09.16</p>
+                                            <p class="title"><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>">【秋葉原店】通常営業時間のご案内 (10:00〜19:30)</a></p>
+                                            <p class="msg"><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>">いつも買取アキバをご利用いただきありがとうございます。秋葉原店は年中無休で店頭買取を実施しております。</a></p>
+                                        </div>
+                                    </li>
+                                    <li class="col-xs-12 col-md-6">
+                                        <div class="mThumbnail">
+                                            <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">
+                                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/article/20260707/スクリーンショット 2026-07-07 172258.png" class="img-responsive" alt="eKYC" />
+                                            </a>
+                                        </div>
+                                        <div class="layout_cell">
+                                            <p class="date">2026.07.07</p>
+                                            <p class="title"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">【本人確認】オンラインeKYCスピード認証システム導入</a></p>
+                                            <p class="msg"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">古物営業法に基づく本人確認手続きがスマホひとつで完了。運転免許証・マイナンバーカードのアップロードに対応。</a></p>
+                                        </div>
+                                    </li>
+                                    <li class="col-xs-12 col-md-6">
+                                        <div class="mThumbnail">
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>">
+                                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/article/20260609/5f270b7f-2361-4448-9981-f16c42ea9875.png" class="img-responsive" alt="Mail In" />
+                                            </a>
+                                        </div>
+                                        <div class="layout_cell">
+                                            <p class="date">2026.06.09</p>
+                                            <p class="title"><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>">【郵送買取】安全な梱包と無料発送キットのご案内</a></p>
+                                            <p class="msg"><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>">輸送中の箱潰れを防ぐため、端末を気泡緩衝材（プチプチ）で丁寧に保護して発送してください。</a></p>
+                                        </div>
+                                    </li>
+                                    <li class="col-xs-12 col-md-6">
+                                        <div class="mThumbnail">
+                                            <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">
+                                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/article/20260317/123456.png" class="img-responsive" alt="Price Guarantee" />
+                                            </a>
+                                        </div>
+                                        <div class="layout_cell">
+                                            <p class="date">2026.03.17</p>
+                                            <p class="title"><a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">【相場更新】iPhone 16 / 15 シリーズ高価買取価格改定のお知らせ</a></p>
+                                            <p class="msg"><a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">最新相場に基づきiPhone各シリーズの最高買取上限価格を更新いたしました。分割中(△)も同額買取対応！</a></p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="topicFooter">
+                            <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 一覧を見る', 'kaitoriakiba' ); ?></a>
+                        </div>
+                    </div>
 
-                    if ( $devices_query->have_posts() ) :
-                        while ( $devices_query->have_posts() ) : $devices_query->the_post();
-                            $dev_id    = get_the_ID();
-                            $price     = get_post_meta( $dev_id, '_max_buyback_price', true ) ?: '168000';
-                            $jan       = get_post_meta( $dev_id, '_jan_code', true ) ?: '4549995734140';
-                            $brands    = get_the_terms( $dev_id, 'brand' );
-                            $brand_str = ( ! empty( $brands ) && ! is_wp_error( $brands ) ) ? $brands[0]->name : 'Apple';
-                            $thumb_url = has_post_thumbnail() ? get_the_post_thumbnail_url( $dev_id, 'medium' ) : get_template_directory_uri() . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png';
-                            ?>
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                <div class="pro-border gutter-10 row pro_list" style="margin-bottom:20px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; padding:15px; transition:all 0.2s;">
-                                    <div class="col-xs-12 text-center" style="margin-bottom:12px;">
-                                        <a href="<?php the_permalink(); ?>">
-                                            <img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" style="max-height:160px; max-width:100%; object-fit:contain;">
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-12">
-                                        <div style="font-size:11px; font-weight:700; color:#ef4444; margin-bottom:4px;"><?php echo esc_html( $brand_str ); ?></div>
-                                        <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:6px; min-height:40px;">
-                                            <a href="<?php the_permalink(); ?>" style="color:inherit; text-decoration:none;"><?php the_title(); ?></a>
+                    <!-- 4.2 Member Favorites Notice Banner -->
+                    <div class="mainpage-box xs-pad0">
+                        <div class="sub-box" id="layout_x">
+                            <div class="text-center head_img">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/sub_box_header05.png" alt="Favorites Header" class="img-responsive" style="margin:0 auto;" />
+                            </div>
+                            <p style="text-indent: 10%; margin-top:12px;"><?php _e( '商品一覧の「★」ボタンをクリックすると、お気に入りリストへ登録できます。', 'kaitoriakiba' ); ?></p>
+                            <p style="text-indent: 10%;"><?php _e( '気になる機種の買取価格の変動をいつでもスムーズにチェック可能！', 'kaitoriakiba' ); ?></p>
+                            <p style="text-align: center; color:red; font-weight:bold;"><?php _e( '※ 会員限定機能です。会員登録・ログイン後にご利用いただけます。', 'kaitoriakiba' ); ?></p>
+                        </div>
+                    </div>
+
+                    <!-- 4.3 Featured Buyback Devices Showcase Grid -->
+                    <div class="mainpage-box xs-pad0">
+                        <div class="sub-box" id="layout_y">
+                            <div class="text-center head_img">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/sub_box_header02.png" alt="Featured Devices Header" class="img-responsive" style="margin:0 auto;" />
+                            </div>
+                            <div class="sub-pro-box">
+                                <?php
+                                $args = array(
+                                    'post_type'      => 'kaitori_device',
+                                    'posts_per_page' => 12,
+                                    'post_status'    => 'publish',
+                                    'orderby'        => 'date',
+                                    'order'          => 'DESC',
+                                );
+                                $device_query = new WP_Query( $args );
+
+                                if ( $device_query->have_posts() ) :
+                                    while ( $device_query->have_posts() ) : $device_query->the_post();
+                                        $p_id      = get_the_ID();
+                                        $price     = get_post_meta( $p_id, '_max_buyback_price', true ) ?: '195000';
+                                        $jan       = get_post_meta( $p_id, '_jan_code', true ) ?: '4549995734140';
+                                        $brands    = get_the_terms( $p_id, 'brand' );
+                                        $brand_str = ( ! empty( $brands ) && ! is_wp_error( $brands ) ) ? $brands[0]->name : 'Apple';
+                                        $custom_img= get_post_meta( $p_id, '_device_primary_image_url', true );
+                                        $img_url   = ! empty( $custom_img ) ? $custom_img : ( has_post_thumbnail( $p_id ) ? get_the_post_thumbnail_url( $p_id, 'medium' ) : $theme_uri . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png' );
+                                        ?>
+                                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                                            <div class="pro-border gutter-10 row pro_list">
+                                                <div data-isok="false" data-value="<?php echo esc_attr( $p_id ); ?>" class="collect"></div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center" style="padding:10px 0;">
+                                                    <a href="<?php the_permalink(); ?>">
+                                                        <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php the_title_attribute(); ?>" class="img-responsive" style="max-height:160px; margin:0 auto; object-fit:contain;">
+                                                    </a>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7">
+                                                    <ul style="list-style:none; padding:0; margin:0;">
+                                                        <div class="sub-pro">
+                                                            <li class="sub-pro-career">
+                                                                <a href="<?php echo esc_url( home_url( '/devices/?brand=' . urlencode( $brand_str ) ) ); ?>"><?php echo esc_html( $brand_str ); ?></a>
+                                                            </li>
+                                                            <li class="sub-pro-name">
+                                                                <a title="<?php the_title_attribute(); ?>" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                                            </li>
+                                                            <li class="sub-pro-name">
+                                                                <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php the_permalink(); ?>">分割残債あり(△)も減額なし対応</a>
+                                                            </li>
+                                                            <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $jan ); ?></li>
+                                                        </div>
+                                                        <li class="sub-pro-jia"><?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span></li>
+                                                        <li>
+                                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) ) ); ?>">
+                                                                <button type="button" class="btn btn-pro"><?php _e( 'Apply for Buyback', 'kaitoriakiba' ); ?></button>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div style="font-size:11px; color:#ec1600; margin-bottom:4px;">分割残債あり(△)も減額査定なし対応</div>
-                                        <div style="font-size:12px; font-weight:700; color:#475569; margin-top:8px;">
-                                            最高買取: <strong style="font-size:18px; color:#dc2626;">¥<?php echo number_format((int)$price); ?></strong>
+                                        <?php
+                                    endwhile;
+                                    wp_reset_postdata();
+                                else :
+                                    // 12 Fallback Cards matching index.html perfectly
+                                    $sample_devices = array(
+                                        array( 'title' => 'iPhone 16 Pro 256GB Black', 'price' => 195000, 'jan' => '4549995734140', 'img' => 'iPhone 18 Pro 256GB Black.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 256GB Silver', 'price' => 195000, 'jan' => '4549995734157', 'img' => 'iPhone 18 Pro 256GB Silver.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 256GB Natural', 'price' => 195000, 'jan' => '4549995734171', 'img' => 'iPhone 18 Pro 256GB Glacier.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 256GB Desert', 'price' => 208000, 'jan' => '4549995734164', 'img' => 'iPhone 18 Pro 256GB Burgundy.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 512GB Black', 'price' => 228000, 'jan' => '4549995734188', 'img' => 'iPhone 18 Pro 256GB Black.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 512GB Silver', 'price' => 223000, 'jan' => '4549995734195', 'img' => 'iPhone 18 Pro 256GB Silver.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 512GB Natural', 'price' => 228000, 'jan' => '4549995734218', 'img' => 'iPhone 18 Pro 256GB Glacier.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 512GB Desert', 'price' => 238000, 'jan' => '4549995734201', 'img' => 'iPhone 18 Pro 256GB Burgundy.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 1TB Black', 'price' => 305000, 'jan' => '4549995734225', 'img' => 'iPhone 18 Pro 256GB Black.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 1TB Silver', 'price' => 305000, 'jan' => '4549995734232', 'img' => 'iPhone 18 Pro 256GB Silver.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 1TB Natural', 'price' => 305000, 'jan' => '4549995734256', 'img' => 'iPhone 18 Pro 256GB Glacier.png' ),
+                                        array( 'title' => 'iPhone 16 Pro 1TB Desert', 'price' => 308000, 'jan' => '4549995734249', 'img' => 'iPhone 18 Pro 256GB Burgundy.png' ),
+                                    );
+                                    foreach ( $sample_devices as $dev ) :
+                                        ?>
+                                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                                            <div class="pro-border gutter-10 row pro_list">
+                                                <div data-isok="false" class="collect"></div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center" style="padding:10px 0;">
+                                                    <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
+                                                        <img src="<?php echo esc_url( $theme_uri . '/upload/goods/20260911/' . $dev['img'] ); ?>" alt="<?php echo esc_attr( $dev['title'] ); ?>" class="img-responsive" style="max-height:160px; margin:0 auto; object-fit:contain;">
+                                                    </a>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7">
+                                                    <ul style="list-style:none; padding:0; margin:0;">
+                                                        <div class="sub-pro">
+                                                            <li class="sub-pro-career">
+                                                                <a href="<?php echo esc_url( home_url( '/devices/?brand=apple' ) ); ?>">Apple</a>
+                                                            </li>
+                                                            <li class="sub-pro-name">
+                                                                <a title="<?php echo esc_attr( $dev['title'] ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php echo esc_html( $dev['title'] ); ?></a>
+                                                            </li>
+                                                            <li class="sub-pro-name">
+                                                                <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">分割残債あり(△)も減額なし対応</a>
+                                                            </li>
+                                                            <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
+                                                        </div>
+                                                        <li class="sub-pro-jia"><?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span></li>
+                                                        <li>
+                                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
+                                                                <button type="button" class="btn btn-pro"><?php _e( 'Apply for Buyback', 'kaitoriakiba' ); ?></button>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <a href="<?php the_permalink(); ?>" class="btn btn-pro" style="display:block; text-align:center; width:100%; margin-top:12px; font-weight:700; border-radius:6px; padding:8px;">
-                                            <?php _e( '査定・買取を申込む', 'kaitoriakiba' ); ?>
-                                        </a>
-                                    </div>
+                                        <?php
+                                    endforeach;
+                                endif;
+                                ?>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="sub-pro-footer">
+                                <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 全機種一覧', 'kaitoriakiba' ); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4.4 Key Selling Points -->
+                    <div class="mainpage-box">
+                        <div class="mainpage-title col-center">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_title_1.jpg" alt="Key Checkpoints to Sell Your Phone at the Highest Price" class="img-responsive" /> 
+                            <h2><?php _e( 'Key Selling Points', 'kaitoriakiba' ); ?></h2>
+                        </div>
+                        <ul class="gutter-0" style="list-style:none; padding:0; margin:0;">
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/gaojia_1.jpg" alt="1. Erase all personal data & restore factory settings" class="img-responsive" /></a> 
+                            </li>
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/gaojia_2.jpg" alt="2. Include original box, cables, and accessories" class="img-responsive" /></a> 
+                            </li>
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/gaojia_3.jpg" alt="3. Clean the device exterior thoroughly" class="img-responsive" /></a> 
+                            </li>
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/gaojia_4.jpg" alt="4. Unlock SIM carrier restrictions (SIM-Free)" class="img-responsive" /></a> 
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <!-- 4.5 Checkpoints Before Applying -->
+                    <div class="mainpage-box">
+                        <div class="mainpage-title col-center">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_title_2.jpg" alt="Please check before applying for buyback!" class="img-responsive" /> 
+                        </div>
+                        <ul class="gutter-10" style="list-style:none; padding:0; margin:0;">
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_img_2_1.jpg" alt="1. Check list of non-purchasable items" class="img-responsive" /></a> 
+                            </li>
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_img_2_2.jpg" alt="2. Check network usage restriction status" class="img-responsive" /></a> 
+                            </li>
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_img_2_3.jpg" alt="3. Please ensure SIM and memory cards are removed" class="img-responsive" /> 
+                            </li>
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_img_2_4.jpg" alt="4. Charge battery to at least 50% before sending" class="img-responsive" /> 
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <!-- 4.6 Identity Verification Secondhand Dealer Act Banner -->
+                    <div class="mainpage-box">
+                        <div class="mainpage-title col-center">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_title_3.jpg" alt="Identity verification documents required by Japanese Secondhand Dealer Act" class="img-responsive" /> 
+                        </div>
+                        <div class="mainpage-content col-center text-center">
+                            <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_img_3.jpg" alt="Identity verification documents required by Japanese Secondhand Dealer Act" class="img-responsive" style="margin:0 auto; border-radius:8px;" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 4.7 Complete Buyback Flow Infographic -->
+                    <div class="mainpage-box" style="margin:0; padding-bottom:20px;">
+                        <div class="mainpage-title col-center">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_title_4.jpg" alt="Buyback Process" class="img-responsive" /> 
+                        </div>
+                        <div class="liucheng-box gutter-25 img-margin">
+                            <!-- In-Store Flow -->
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_title_1.jpg" alt="In-Store Buyback" class="img-responsive" /></a> 
+                                <div class="liucheng-dian-box">
+                                    <ul class="col-center" style="list-style:none; padding:0;">
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_dian_img_1.jpg" alt="1. Check buyback price on our website" class="img-responsive" /></a> 
+                                        </li>
+                                        <li><i class="fa fa-2x fa-sort-desc col-center"></i></li>
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_dian_img_2.jpg" alt="2. Book your visit online (Walk-ins welcome)" class="img-responsive" /></a> 
+                                        </li>
+                                        <li><i class="fa fa-2x fa-sort-desc col-center"></i></li>
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/access/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_dian_img_3.jpg" alt="3. Visit our store in Akihabara, Tokyo" class="img-responsive" /></a> 
+                                        </li>
+                                        <li><i class="fa fa-2x fa-sort-desc col-center"></i></li>
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_dian_img_4.jpg" alt="4. Appraisal completed & instant cash payout" class="img-responsive" /></a> 
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <?php
-                        endwhile;
-                        wp_reset_postdata();
-                    else :
-                        echo '<div class="col-xs-12"><div class="alert alert-info">管理画面の「買取機種」より機種を登録してください。</div></div>';
-                    endif;
-                    ?>
+                            <!-- Mail-in Flow -->
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_title_2.jpg" alt="Mail-in Buyback" class="img-responsive" /></a> 
+                                <div class="liucheng-youji-box">
+                                    <ul class="col-center" style="list-style:none; padding:0;">
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_youji_img_1.jpg" alt="1. Check current rates on website" class="img-responsive" /></a> 
+                                        </li>
+                                        <li><i class="fa fa-2x fa-sort-down col-center"></i></li>
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_youji_img_2.jpg" alt="2. Ship device with required documents" class="img-responsive" /></a> 
+                                        </li>
+                                        <li><i class="fa fa-2x fa-sort-down col-center"></i></li>
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_youji_img_3.jpg" alt="3. Receive assessment report by email" class="img-responsive" /></a> 
+                                        </li>
+                                        <li><i class="fa fa-2x fa-sort-down col-center"></i></li>
+                                        <li>
+                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/liucheng_youji_img_4.jpg" alt="4. Same-day bank transfer payout" class="img-responsive" /></a> 
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div style="text-align:center; margin-top:20px;">
+                            <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>">
+                                <button type="button" class="btn btn-faren col-center"><?php _e( 'Corporate Clients Click Here (法人様買取相談)', 'kaitoriakiba' ); ?></button>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Bottom Category Links Bar (href_list) -->
+    <div class="bg-white">
+        <div class="href_list">
+            <div class="container">
+                <div class="gutter-10 clearflex">
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/phone.jpg" alt="Smartphones" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/ipad.jpg" alt="Tablets" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=gaming' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/game.jpg" alt="Gaming Consoles" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cosmetics' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/meizhuang.jpg" alt="Cosmetics" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=appliances' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628171113.jpg" alt="Home Appliances" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cameras' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628171104.jpg" alt="Cameras" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=pc' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628170919.jpg" alt="PC & Laptops" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriakiba_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

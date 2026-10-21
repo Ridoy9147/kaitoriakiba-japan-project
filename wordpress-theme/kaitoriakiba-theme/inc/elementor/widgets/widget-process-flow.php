@@ -2,6 +2,8 @@
 /**
  * Elementor Service Process Flow Widget
  * 
+ * Renders the authentic Kaitori Akiba 3-button flow bar (guid) with s1.png, s2.png, s3.png
+ * 
  * @package KaitoriAkiba
  */
 
@@ -16,7 +18,7 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
     }
 
     public function get_title() {
-        return __( 'Buyback Flow Steps (買取の流れ)', 'kaitoriakiba' );
+        return __( 'Process Flow Buttons (買取の流れバナー)', 'kaitoriakiba' );
     }
 
     public function get_icon() {
@@ -31,59 +33,59 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
         $this->start_controls_section(
             'section_content',
             array(
-                'label' => __( 'Process Cards', 'kaitoriakiba' ),
+                'label' => __( 'Buttons Settings', 'kaitoriakiba' ),
                 'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
             )
         );
 
         $this->add_control(
-            'card1_title',
+            'btn1_text',
             array(
-                'label'   => __( 'Card 1 Title', 'kaitoriakiba' ),
+                'label'   => __( 'Button 1 Text', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::TEXT,
-                'default' => '店頭買取 (In-Store Buyback)',
+                'default' => 'In-Store Buyback / 店頭買取',
             )
         );
         $this->add_control(
-            'card1_desc',
+            'btn1_url',
             array(
-                'label'   => __( 'Card 1 Description', 'kaitoriakiba' ),
-                'type'    => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => '秋葉原店へ直接端末をお持ち込み。最短5分で動作確認・査定完了、その場で現金手渡し！',
+                'label'   => __( 'Button 1 Link', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '/sell-apply/?delivery=store',
             )
         );
 
         $this->add_control(
-            'card2_title',
+            'btn2_text',
             array(
-                'label'   => __( 'Card 2 Title', 'kaitoriakiba' ),
+                'label'   => __( 'Button 2 Text', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::TEXT,
-                'default' => '郵送買取 (Mail-In Buyback)',
+                'default' => 'Mail-in Buyback / 郵送買取',
             )
         );
         $this->add_control(
-            'card2_desc',
+            'btn2_url',
             array(
-                'label'   => __( 'Card 2 Description', 'kaitoriakiba' ),
-                'type'    => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => '送料無料の宅配買取キットをお届け。端末到着当日に即日査定＆ご指定口座へ即日お振込み！',
+                'label'   => __( 'Button 2 Link', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '/sell-apply/?delivery=mail',
             )
         );
 
         $this->add_control(
-            'card3_title',
+            'btn3_text',
             array(
-                'label'   => __( 'Card 3 Title', 'kaitoriakiba' ),
+                'label'   => __( 'Button 3 Text', 'kaitoriakiba' ),
                 'type'    => \Elementor\Controls_Manager::TEXT,
-                'default' => '法人買取 (Corporate Buyback)',
+                'default' => 'Corporate Buyback / 法人買取',
             )
         );
         $this->add_control(
-            'card3_desc',
+            'btn3_url',
             array(
-                'label'   => __( 'Card 3 Description', 'kaitoriakiba' ),
-                'type'    => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => '社用スマホ・タブレットの大量台数一括買取。データ完全消去証明書の発行や請求書払い対応。',
+                'label'   => __( 'Button 3 Link', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::TEXT,
+                'default' => '/sell-apply/?type=corporate',
             )
         );
 
@@ -92,53 +94,44 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
+        $theme_uri = get_template_directory_uri();
 
-        $card1_title = ! empty( $settings['card1_title'] ) ? $settings['card1_title'] : '店頭買取 (In-Store Buyback)';
-        $card1_desc  = ! empty( $settings['card1_desc'] ) ? $settings['card1_desc'] : '秋葉原店へ直接端末をお持ち込み。最短5分で動作確認・査定完了、その場で現金手渡し！';
-        $card2_title = ! empty( $settings['card2_title'] ) ? $settings['card2_title'] : '郵送買取 (Mail-In Buyback)';
-        $card2_desc  = ! empty( $settings['card2_desc'] ) ? $settings['card2_desc'] : '送料無料の宅配キット完備。到着当日に即日査定＆指定口座へ即日振込！';
-        $card3_title = ! empty( $settings['card3_title'] ) ? $settings['card3_title'] : '法人買取 (Corporate Buyback)';
-        $card3_desc  = ! empty( $settings['card3_desc'] ) ? $settings['card3_desc'] : '社用スマホ・タブレットの大量台数一括買取。データ完全消去証明書の発行や請求書払い対応。';
+        $b1_txt = ! empty( $settings['btn1_text'] ) ? $settings['btn1_text'] : __( 'In-Store Buyback', 'kaitoriakiba' );
+        $b1_url = ! empty( $settings['btn1_url'] ) ? esc_url( home_url( $settings['btn1_url'] ) ) : esc_url( home_url( '/sell-apply/?delivery=store' ) );
+        $b2_txt = ! empty( $settings['btn2_text'] ) ? $settings['btn2_text'] : __( 'Mail-in Buyback', 'kaitoriakiba' );
+        $b2_url = ! empty( $settings['btn2_url'] ) ? esc_url( home_url( $settings['btn2_url'] ) ) : esc_url( home_url( '/sell-apply/?delivery=mail' ) );
+        $b3_txt = ! empty( $settings['btn3_text'] ) ? $settings['btn3_text'] : __( 'Corporate Buyback', 'kaitoriakiba' );
+        $b3_url = ! empty( $settings['btn3_url'] ) ? esc_url( home_url( $settings['btn3_url'] ) ) : esc_url( home_url( '/sell-apply/?type=corporate' ) );
         ?>
-        <div class="kaitori-process-flow-widget" style="margin: 30px 0;">
-            <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 20px;">
-                    <div style="background:#ffffff; border:1px solid #fed7aa; border-radius:14px; padding:24px; height:100%; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                            <div style="width:42px; height:42px; border-radius:10px; background:#fff7ed; color:#ea580c; display:flex; align-items:center; justify-content:center; font-size:20px;">
-                                <i class="fa fa-building"></i>
+        <div class="guid">
+            <div class="container">
+                <div class="row home_index">
+                    <div class="col-lg-1 col-md-0 col-sm-0 col-xs-0 col-preg"></div>
+                    <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12 center col-preg-main">
+                        <div class="col-lg-1 col-xs-0"></div>
+                        <div class="col-lg-10 col-xs-12 col-preg-main">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_1">
+                                <a href="<?php echo esc_url( $b1_url ); ?>" title="<?php echo esc_attr( $b1_txt ); ?>">
+                                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s1.png" class="img-responsive hidden-xs" alt="In-Store Buyback Flow" />
+                                    <span class="btn btn-orange"><?php echo esc_html( $b1_txt ); ?></span>
+                                </a>
                             </div>
-                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $card1_title ); ?></h3>
-                        </div>
-                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $card1_desc ); ?></p>
-                        <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>" class="btn btn-default" style="margin-top:16px; width:100%; font-weight:700; border-radius:6px; border-color:#cbd5e1;">店頭買取を申込む &rarr;</a>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 20px;">
-                    <div style="background:#ffffff; border:1px solid #bbf7d0; border-radius:14px; padding:24px; height:100%; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                            <div style="width:42px; height:42px; border-radius:10px; background:#f0fdf4; color:#16a34a; display:flex; align-items:center; justify-content:center; font-size:20px;">
-                                <i class="fa fa-truck"></i>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_2">
+                                <a href="<?php echo esc_url( $b2_url ); ?>" title="<?php echo esc_attr( $b2_txt ); ?>">
+                                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s2.png" class="img-responsive hidden-xs" alt="Mail-in Buyback Flow" />
+                                    <span class="btn btn-green"><?php echo esc_html( $b2_txt ); ?></span>
+                                </a>
                             </div>
-                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $card2_title ); ?></h3>
-                        </div>
-                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $card2_desc ); ?></p>
-                        <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>" class="btn btn-success" style="margin-top:16px; width:100%; font-weight:700; border-radius:6px; background:#16a34a; border-color:#16a34a;">郵送買取を申込む &rarr;</a>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 20px;">
-                    <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:14px; padding:24px; height:100%; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                            <div style="width:42px; height:42px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:20px;">
-                                <i class="fa fa-briefcase"></i>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_3">
+                                <a href="<?php echo esc_url( $b3_url ); ?>" title="<?php echo esc_attr( $b3_txt ); ?>">
+                                    <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s3.png" class="img-responsive hidden-xs" alt="Corporate Buyback Flow" />
+                                    <span class="btn btn-blue"><?php echo esc_html( $b3_txt ); ?></span>
+                                </a>
                             </div>
-                            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0;"><?php echo esc_html( $card3_title ); ?></h3>
                         </div>
-                        <p style="font-size:13px; color:#475569; line-height:1.6; margin:0;"><?php echo esc_html( $card3_desc ); ?></p>
-                        <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>" class="btn btn-primary" style="margin-top:16px; width:100%; font-weight:700; border-radius:6px; background:#2563eb; border-color:#2563eb;">法人見積・相談 &rarr;</a>
+                        <div class="col-lg-1 col-xs-0"></div>
                     </div>
+                    <div class="col-lg-1 col-md-0 col-sm-0 col-xs-0 col-preg"></div>
                 </div>
             </div>
         </div>

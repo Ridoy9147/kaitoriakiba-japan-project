@@ -289,6 +289,54 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                 </div>
             </div>
         </div>
+
+        <!-- 3. Category Icons Row (href_list) matching index.html -->
+        <div class="bg-white" style="margin-top: 15px;">
+            <div class="href_list">
+                <div class="gutter-10 clearflex">
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/phone.jpg" alt="Smartphones" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/ipad.jpg" alt="Tablets" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=gaming' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/game.jpg" alt="Gaming Consoles" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cosmetics' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/meizhuang.jpg" alt="Cosmetics" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=appliances' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180702/20180628171113.jpg" alt="Home Appliances" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cameras' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180702/20180628171104.jpg" alt="Cameras" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=pc' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180702/20180628170919.jpg" alt="PC & Laptops" class="img-responsive" />
+                        </a>
+                    </div>
+                    <div class="href_item mtop10 col-xs-6 col-sm-3">
+                        <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180712/kaitoriakiba_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php
     }
 }

@@ -53,15 +53,18 @@ function kaitoriakiba_register_elementor_widgets( $widgets_manager = null ) {
     // Include widget files safely
     $widgets_to_load = array(
         'widget-search-box.php'           => 'Kaitori_Search_Widget',
-        'widget-device-grid.php'          => 'Kaitori_Device_Grid_Widget',
-        'widget-device-single.php'        => 'Kaitori_Device_Single_Widget',
-        'widget-category-sidebar.php'     => 'Kaitori_Taxonomy_Browse_Widget',
         'widget-process-flow.php'         => 'Kaitori_Process_Flow_Widget',
-        'widget-faq.php'                  => 'Kaitori_FAQ_Widget',
         'widget-announcement-banner.php'  => 'Kaitori_Announcement_Widget',
+        'widget-hero-banner.php'          => 'Kaitori_Hero_Banner_Widget',
+        'widget-news-box.php'             => 'Kaitori_News_Widget',
+        'widget-device-grid.php'          => 'Kaitori_Device_Grid_Widget',
+        'widget-checkpoints.php'          => 'Kaitori_Checkpoints_Widget',
+        'widget-category-sidebar.php'     => 'Kaitori_Taxonomy_Browse_Widget',
+        'widget-device-single.php'        => 'Kaitori_Device_Single_Widget',
         'widget-sell-apply.php'           => 'Kaitori_Sell_Apply_Widget',
         'widget-kyc-verify.php'           => 'Kaitori_KYC_Verify_Widget',
         'widget-auth-form.php'            => 'Kaitori_Auth_Form_Widget',
+        'widget-faq.php'                  => 'Kaitori_FAQ_Widget',
     );
 
     foreach ( $widgets_to_load as $file => $class_name ) {
