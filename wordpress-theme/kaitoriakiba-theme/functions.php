@@ -88,6 +88,7 @@ require_once KAITORIAKIBA_DIR . '/inc/cpt.php';
 require_once KAITORIAKIBA_DIR . '/inc/meta-boxes.php';
 require_once KAITORIAKIBA_DIR . '/inc/ajax-handlers.php';
 require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
+require_once KAITORIAKIBA_DIR . '/inc/tgmpa/tgmpa-config.php';
 
 /**
  * 4. Load Elementor Custom Widgets when Elementor is active
@@ -108,6 +109,7 @@ function kaitoriakiba_add_page_templates( $templates ) {
     $templates['page-sell-apply.php']              = __( 'Buyback Application Form (買取申込)', 'kaitoriakiba' );
     $templates['page-kyc-verify.php']              = __( 'eKYC Verification (本人確認)', 'kaitoriakiba' );
     $templates['page-register.php']                = __( 'Register & Login (会員登録)', 'kaitoriakiba' );
+    $templates['page-phone-single.php']            = __( 'Phone Single Showcase (端末詳細・買取価格)', 'kaitoriakiba' );
     return $templates;
 }
 add_filter( 'theme_page_templates', 'kaitoriakiba_add_page_templates' );

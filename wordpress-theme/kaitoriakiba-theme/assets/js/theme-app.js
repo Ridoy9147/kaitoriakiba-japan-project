@@ -132,6 +132,46 @@
             });
         });
 
+        // 3.1 AJAX Member Login Form Submission
+        $('#loginForm, #kaitori-login-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var $form = $(this);
+            var $submitBtn = $form.find('button[type="submit"], .btn-submit-login');
+            var originalText = $submitBtn.html();
+
+            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ログイン中...');
+
+            var formData = new FormData(this);
+            formData.append('action', 'kaitori_login_user');
+            formData.append('security', kaitori_ajax.security);
+
+            $.ajax({
+                url: kaitori_ajax.ajax_url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $submitBtn.prop('disabled', false).html(originalText);
+                    if (response.success) {
+                        alert(response.data.message || 'ログインしました。');
+                        if (response.data.redirect_url) {
+                            window.location.href = response.data.redirect_url;
+                        } else {
+                            window.location.reload();
+                        }
+                    } else {
+                        alert(response.data.message || kaitori_ajax.i18n_error);
+                    }
+                },
+                error: function() {
+                    $submitBtn.prop('disabled', false).html(originalText);
+                    alert(kaitori_ajax.i18n_error);
+                }
+            });
+        });
+
         // 4. Step Search / Filter Auto-Submit or AJAX
         $('.step_search select, .keyword_search select').on('change', function() {
             var $form = $(this).closest('form');

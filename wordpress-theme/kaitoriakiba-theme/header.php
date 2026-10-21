@@ -31,7 +31,7 @@
                     <li><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>" class="link-highlight"><i class="fa fa-shopping-cart"></i> <?php _e( 'iPhone Buyback', 'kaitoriakiba' ); ?></a></li>
                     <li><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><i class="fa fa-id-card-o"></i> <?php _e( 'eKYC Verify', 'kaitoriakiba' ); ?></a></li>
                     <li><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><i class="fa fa-user-plus"></i> <?php _e( 'Register', 'kaitoriakiba' ); ?></a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/register/#login' ) ); ?>"><i class="fa fa-sign-in"></i> <?php _e( 'Login', 'kaitoriakiba' ); ?></a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/login/' ) ); ?>"><i class="fa fa-sign-in"></i> <?php _e( 'Login', 'kaitoriakiba' ); ?></a></li>
                     <?php
                 }
                 ?>

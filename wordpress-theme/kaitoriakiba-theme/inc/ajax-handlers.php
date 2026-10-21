@@ -339,3 +339,38 @@ function kaitoriakiba_ajax_register_user() {
 add_action( 'wp_ajax_kaitori_register_user', 'kaitoriakiba_ajax_register_user' );
 add_action( 'wp_ajax_nopriv_kaitori_register_user', 'kaitoriakiba_ajax_register_user' );
 
+/**
+ * Handle Member Login via AJAX
+ */
+function kaitoriakiba_ajax_login_user() {
+    check_ajax_referer( 'kaitori_nonce', 'security' );
+
+    $user_login = isset( $_POST['log'] ) ? sanitize_text_field( $_POST['log'] ) : '';
+    $user_pass  = isset( $_POST['pwd'] ) ? $_POST['pwd'] : '';
+    $remember   = ! empty( $_POST['rememberme'] );
+
+    if ( empty( $user_login ) || empty( $user_pass ) ) {
+        wp_send_json_error( array( 'message' => __( 'メールアドレス（またはユーザー名）とパスワードを入力してください。', 'kaitoriakiba' ) ) );
+    }
+
+    $creds = array(
+        'user_login'    => $user_login,
+        'user_password' => $user_pass,
+        'remember'      => $remember,
+    );
+
+    $user = wp_signon( $creds, is_ssl() );
+
+    if ( is_wp_error( $user ) ) {
+        wp_send_json_error( array( 'message' => __( 'ログイン情報が正しくありません。パスワードまたはメールアドレスをご確認ください。', 'kaitoriakiba' ) ) );
+    }
+
+    wp_send_json_success( array(
+        'message'      => __( 'ログインに成功しました！マイページへ移動します。', 'kaitoriakiba' ),
+        'redirect_url' => home_url( '/sell-apply/' ),
+    ) );
+}
+add_action( 'wp_ajax_kaitori_login_user', 'kaitoriakiba_ajax_login_user' );
+add_action( 'wp_ajax_nopriv_kaitori_login_user', 'kaitoriakiba_ajax_login_user' );
+
+
