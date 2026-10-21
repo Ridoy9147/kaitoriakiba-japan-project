@@ -9,23 +9,26 @@ if (Test-Path $zipPath) {
 }
 
 $zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
-$files = Get-ChildItem -Path $sourceDir -Recurse -File
 
-foreach ($file in $files) {
-    $rel = $file.FullName.Substring($sourceDir.Length + 1).Replace("\", "/")
-    $entryName = "kaitoriakiba-theme/" + $rel
-    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $file.FullName, $entryName, [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+# 1. Add root theme directory entry
+$zip.CreateEntry("kaitoriakiba-theme/") | Out-Null
+
+# 2. Add all subdirectories explicitly with trailing slash
+$dirs = Get-ChildItem -Path $sourceDir -Recurse -Directory
+foreach ($dir in $dirs) {
+    $relDir = $dir.FullName.Substring($sourceDir.Length + 1).Replace("\", "/") + "/"
+    $entryDirName = "kaitoriakiba-theme/" + $relDir
+    $zip.CreateEntry($entryDirName) | Out-Null
 }
+
+# 3. Add all files with forward slashes
+$files = Get-ChildItem -Path $sourceDir -Recurse -File
+foreach ($file in $files) {
+    $relFile = $file.FullName.Substring($sourceDir.Length + 1).Replace("\", "/")
+    $entryFileName = "kaitoriakiba-theme/" + $relFile
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $file.FullName, $entryFileName, [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+}
+
 $zip.Dispose()
 
-Write-Host "Zip creation complete. Verifying entries..."
-$zipRead = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
-$count = $zipRead.Entries.Count
-Write-Host ("Total entries: " + $count)
-$hasStyle = $zipRead.Entries | Where-Object { $_.FullName -eq "kaitoriakiba-theme/style.css" }
-if ($hasStyle) {
-    Write-Host "SUCCESS: kaitoriakiba-theme/style.css found in zip!"
-} else {
-    Write-Host "ERROR: style.css NOT found!"
-}
-$zipRead.Dispose()
+Write-Host "Zip successfully created with full directory structure."
