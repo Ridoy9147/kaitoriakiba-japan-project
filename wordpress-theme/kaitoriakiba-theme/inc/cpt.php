@@ -289,11 +289,14 @@ add_action( 'manage_kaitori_device_posts_custom_column', 'kaitoriakiba_device_cu
 function kaitoriakiba_kyc_columns( $columns ) {
     return array(
         'cb'            => $columns['cb'],
-        'title'         => __( 'Record ID / Title', 'kaitoriakiba' ),
+        'title'         => __( 'Record ID', 'kaitoriakiba' ),
         'kyc_name'      => __( 'Applicant Name', 'kaitoriakiba' ),
+        'kyc_contact'   => __( 'Email & Phone', 'kaitoriakiba' ),
+        'kyc_user'      => __( 'Customer Account', 'kaitoriakiba' ),
+        'kyc_order'     => __( 'Linked Order', 'kaitoriakiba' ),
         'kyc_doc'       => __( 'Document Type', 'kaitoriakiba' ),
+        'kyc_uploads'   => __( 'ID Photos', 'kaitoriakiba' ),
         'kyc_status'    => __( 'Verification Status', 'kaitoriakiba' ),
-        'kyc_uploads'   => __( 'Uploaded IDs', 'kaitoriakiba' ),
         'date'          => __( 'Submission Date', 'kaitoriakiba' ),
     );
 }
@@ -305,32 +308,126 @@ function kaitoriakiba_kyc_custom_column( $column, $post_id ) {
             $name = get_post_meta( $post_id, '_kyc_name', true );
             $kana = get_post_meta( $post_id, '_kyc_kana', true );
             echo '<strong>' . esc_html( $name ?: '—' ) . '</strong>';
-            if ( $kana ) echo '<br><small>' . esc_html( $kana ) . '</small>';
+            if ( $kana ) echo '<br><small style="color:#64748b;">' . esc_html( $kana ) . '</small>';
             break;
+
+        case 'kyc_contact':
+            $email = get_post_meta( $post_id, '_kyc_email', true );
+            $phone = get_post_meta( $post_id, '_kyc_phone', true );
+            if ( $email ) echo '<a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a><br>';
+            if ( $phone ) echo '<small><a href="tel:' . esc_attr($phone) . '">' . esc_html($phone) . '</a></small>';
+            if ( ! $email && ! $phone ) echo '—';
+            break;
+
+        case 'kyc_user':
+            $user_id = get_post_meta( $post_id, '_kyc_user_id', true );
+            if ( ! $user_id ) {
+                $email = get_post_meta( $post_id, '_kyc_email', true );
+                if ( $email ) {
+                    $u = get_user_by( 'email', $email );
+                    if ( $u ) $user_id = $u->ID;
+                }
+            }
+            if ( $user_id ) {
+                $u_data = get_userdata( $user_id );
+                if ( $u_data ) {
+                    echo '<a href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_id ) ) . '" style="font-weight:bold; color:#2563eb;">';
+                    echo '<span class="dashicons dashicons-admin-users" style="font-size:16px; vertical-align:middle;"></span> ';
+                    echo esc_html( $u_data->display_name ?: $u_data->user_login );
+                    echo '</a>';
+                } else {
+                    echo 'User #' . esc_html($user_id);
+                }
+            } else {
+                echo '<span style="color:#94a3b8;">' . __( 'Guest', 'kaitoriakiba' ) . '</span>';
+            }
+            break;
+
+        case 'kyc_order':
+            $order_code = get_post_meta( $post_id, '_kyc_order_code', true );
+            $order_id   = get_post_meta( $post_id, '_kyc_order_id', true );
+            if ( ! $order_id && $order_code ) {
+                $orders = get_posts( array(
+                    'post_type'   => 'buyback_order',
+                    'title'       => $order_code,
+                    'numberposts' => 1,
+                    'post_status' => 'any',
+                ) );
+                if ( ! empty( $orders ) ) $order_id = $orders[0]->ID;
+            }
+            if ( $order_id ) {
+                echo '<a href="' . esc_url( admin_url( 'post.php?post=' . $order_id . '&action=edit' ) ) . '" style="font-weight:bold; color:#dc2626;">';
+                echo '<span class="dashicons dashicons-clipboard" style="font-size:16px; vertical-align:middle;"></span> ';
+                echo esc_html( $order_code ?: 'Order #' . $order_id );
+                echo '</a>';
+            } elseif ( $order_code ) {
+                echo '<code>' . esc_html( $order_code ) . '</code>';
+            } else {
+                echo '<span style="color:#94a3b8;">—</span>';
+            }
+            break;
+
         case 'kyc_doc':
             echo esc_html( get_post_meta( $post_id, '_kyc_doc_type', true ) ?: '—' );
             break;
-        case 'kyc_status':
-            $status = get_post_meta( $post_id, '_kyc_status', true ) ?: 'pending';
-            if ( $status === 'verified' ) {
-                echo '<span style="color:#16a34a; font-weight:700;"><span class="dashicons dashicons-yes-alt"></span> ' . __( 'Verified (Approved)', 'kaitoriakiba' ) . '</span>';
-            } elseif ( $status === 'rejected' ) {
-                echo '<span style="color:#dc2626; font-weight:700;"><span class="dashicons dashicons-dismiss"></span> ' . __( 'Rejected (Invalid ID)', 'kaitoriakiba' ) . '</span>';
-            } else {
-                echo '<span style="color:#f59e0b; font-weight:700;"><span class="dashicons dashicons-clock"></span> ' . __( 'Pending Review', 'kaitoriakiba' ) . '</span>';
-            }
-            break;
+
         case 'kyc_uploads':
             $front_id = get_post_meta( $post_id, '_kyc_id_front_attach', true );
             $back_id  = get_post_meta( $post_id, '_kyc_id_back_attach', true );
-            if ( $front_id ) {
-                echo '<a href="' . esc_url( wp_get_attachment_url( $front_id ) ) . '" target="_blank" class="button button-small">' . __( 'View Front', 'kaitoriakiba' ) . '</a> ';
+            $front_url = $front_id ? ( is_numeric($front_id) ? wp_get_attachment_url($front_id) : $front_id ) : '';
+            $back_url  = $back_id ? ( is_numeric($back_id) ? wp_get_attachment_url($back_id) : $back_id ) : '';
+            
+            if ( $front_url ) {
+                echo '<a href="' . esc_url($front_url) . '" target="_blank" title="Front Photo">';
+                echo '<img src="' . esc_url($front_url) . '" style="width:36px; height:26px; object-fit:cover; border-radius:3px; border:1px solid #cbd5e1; margin-right:4px; vertical-align:middle;" />';
+                echo '</a>';
             }
-            if ( $back_id ) {
-                echo '<a href="' . esc_url( wp_get_attachment_url( $back_id ) ) . '" target="_blank" class="button button-small">' . __( 'View Back', 'kaitoriakiba' ) . '</a>';
+            if ( $back_url ) {
+                echo '<a href="' . esc_url($back_url) . '" target="_blank" title="Back Photo">';
+                echo '<img src="' . esc_url($back_url) . '" style="width:36px; height:26px; object-fit:cover; border-radius:3px; border:1px solid #cbd5e1; vertical-align:middle;" />';
+                echo '</a>';
             }
-            if ( ! $front_id && ! $back_id ) echo '—';
+            if ( ! $front_url && ! $back_url ) echo '<span style="color:#94a3b8;">No Image</span>';
+            break;
+
+        case 'kyc_status':
+            $status = get_post_meta( $post_id, '_kyc_status', true ) ?: 'pending';
+            if ( $status === 'verified' ) {
+                echo '<span style="color:#16a34a; font-weight:800; background:#dcfce7; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-yes-alt" style="font-size:14px; vertical-align:middle;"></span> ' . __( 'Verified', 'kaitoriakiba' ) . '</span>';
+            } elseif ( $status === 'rejected' ) {
+                echo '<span style="color:#dc2626; font-weight:800; background:#fee2e2; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-dismiss" style="font-size:14px; vertical-align:middle;"></span> ' . __( 'Rejected', 'kaitoriakiba' ) . '</span>';
+            } else {
+                echo '<span style="color:#b45309; font-weight:800; background:#fef3c7; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-clock" style="font-size:14px; vertical-align:middle;"></span> ' . __( 'Pending', 'kaitoriakiba' ) . '</span>';
+            }
             break;
     }
 }
 add_action( 'manage_kyc_record_posts_custom_column', 'kaitoriakiba_kyc_custom_column', 10, 2 );
+
+/**
+ * Enable Full-Text Search in eKYC Records (Search by Name, Furigana, Email, Phone, Order Code)
+ */
+function kaitoriakiba_kyc_search_query( $query ) {
+    global $pagenow, $wpdb;
+    if ( is_admin() && $pagenow === 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] === 'kyc_record' && ! empty( $_GET['s'] ) ) {
+        $search = sanitize_text_field( $_GET['s'] );
+        // Custom search across meta fields
+        add_filter( 'posts_search', function( $search_sql, $wp_query ) use ( $search, $wpdb ) {
+            global $wpdb;
+            if ( ! is_admin() || ! $wp_query->is_main_query() ) {
+                return $search_sql;
+            }
+            $term = '%' . $wpdb->esc_like( $search ) . '%';
+            $meta_sql = $wpdb->prepare( "
+                OR {$wpdb->posts}.ID IN (
+                    SELECT post_id FROM {$wpdb->postmeta} 
+                    WHERE meta_key IN ('_kyc_name', '_kyc_kana', '_kyc_email', '_kyc_phone', '_kyc_address', '_kyc_order_code')
+                    AND meta_value LIKE %s
+                )
+            ", $term );
+
+            return preg_replace( '/\)\s*$/', $meta_sql . ')', $search_sql );
+        }, 10, 2 );
+    }
+}
+add_action( 'pre_get_posts', 'kaitoriakiba_kyc_search_query' );

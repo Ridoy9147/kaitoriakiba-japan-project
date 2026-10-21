@@ -108,6 +108,34 @@ function kaitoriakiba_ajax_submit_application() {
     update_post_meta( $order_id, '_bank_holder_kana', $holder_kana );
     update_post_meta( $order_id, '_estimated_price', $est_price );
 
+    // Link WordPress User Profile
+    $user_id = is_user_logged_in() ? get_current_user_id() : 0;
+    if ( ! $user_id && ! empty( $email ) ) {
+        $found_user = get_user_by( 'email', $email );
+        if ( $found_user ) {
+            $user_id = $found_user->ID;
+        }
+    }
+    update_post_meta( $order_id, '_customer_user_id', $user_id );
+
+    // Check if customer already has a submitted or verified eKYC record
+    $existing_kyc = get_posts( array(
+        'post_type'   => 'kyc_record',
+        'meta_key'    => '_kyc_email',
+        'meta_value'  => $email,
+        'numberposts' => 1,
+        'post_status' => 'any',
+    ) );
+    if ( ! empty( $existing_kyc ) ) {
+        $kyc_st = get_post_meta( $existing_kyc[0]->ID, '_kyc_status', true ) ?: 'pending';
+        update_post_meta( $order_id, '_order_kyc_status', $kyc_st );
+        update_post_meta( $order_id, '_order_kyc_record_id', $existing_kyc[0]->ID );
+        update_post_meta( $existing_kyc[0]->ID, '_kyc_order_id', $order_id );
+        update_post_meta( $existing_kyc[0]->ID, '_kyc_order_code', $order_title );
+    } else {
+        update_post_meta( $order_id, '_order_kyc_status', 'unverified' );
+    }
+
     // Send admin notification
     $admin_email = get_option( 'admin_email' );
     $subject = '【Kaitori Akiba】新規買取申込を受付いたしました: ' . $order_title;
@@ -133,22 +161,63 @@ add_action( 'wp_ajax_kaitori_submit_application', 'kaitoriakiba_ajax_submit_appl
 add_action( 'wp_ajax_nopriv_kaitori_submit_application', 'kaitoriakiba_ajax_submit_application' );
 
 /**
- * Handle eKYC ID Submission
+ * Handle eKYC ID Submission & Connect with Customer Profile + Orders
  */
 function kaitoriakiba_ajax_submit_kyc() {
     check_ajax_referer( 'kaitori_nonce', 'security' );
 
-    $name       = isset( $_POST['kyc_name'] ) ? sanitize_text_field( $_POST['kyc_name'] ) : '';
+    $name       = isset( $_POST['kyc_name'] ) ? sanitize_text_field( $_POST['kyc_name'] ) : ( isset( $_POST['customer_name'] ) ? sanitize_text_field( $_POST['customer_name'] ) : '' );
     $kana       = isset( $_POST['kyc_kana'] ) ? sanitize_text_field( $_POST['kyc_kana'] ) : '';
+    $email      = isset( $_POST['kyc_email'] ) ? sanitize_email( $_POST['kyc_email'] ) : ( isset( $_POST['customer_email'] ) ? sanitize_email( $_POST['customer_email'] ) : '' );
+    $phone      = isset( $_POST['kyc_phone'] ) ? sanitize_text_field( $_POST['kyc_phone'] ) : '';
     $dob        = isset( $_POST['kyc_dob'] ) ? sanitize_text_field( $_POST['kyc_dob'] ) : '';
     $postal     = isset( $_POST['kyc_postal'] ) ? sanitize_text_field( $_POST['kyc_postal'] ) : '';
     $pref       = isset( $_POST['kyc_prefecture'] ) ? sanitize_text_field( $_POST['kyc_prefecture'] ) : '';
     $city       = isset( $_POST['kyc_city'] ) ? sanitize_text_field( $_POST['kyc_city'] ) : '';
     $address    = isset( $_POST['kyc_address'] ) ? sanitize_text_field( $_POST['kyc_address'] ) : '';
     $job        = isset( $_POST['kyc_job'] ) ? sanitize_text_field( $_POST['kyc_job'] ) : '';
-    $doc_type   = isset( $_POST['kyc_doc_type'] ) ? sanitize_text_field( $_POST['kyc_doc_type'] ) : '';
+    $doc_type   = isset( $_POST['kyc_doc_type'] ) ? sanitize_text_field( $_POST['kyc_doc_type'] ) : ( isset( $_POST['id_type'] ) ? sanitize_text_field( $_POST['id_type'] ) : 'Driver License (運転免許証)' );
+    $order_code = isset( $_POST['kyc_order_code'] ) ? sanitize_text_field( $_POST['kyc_order_code'] ) : '';
 
-    $kyc_title = 'KYC-' . date('Ymd') . '-' . wp_rand(1000, 9999) . ' [' . $name . ']';
+    // 1. Connect with WordPress User Profile
+    $user_id = is_user_logged_in() ? get_current_user_id() : 0;
+    if ( ! $user_id && ! empty( $email ) ) {
+        $found_user = get_user_by( 'email', $email );
+        if ( $found_user ) {
+            $user_id = $found_user->ID;
+        }
+    }
+
+    // 2. Connect with Buyback Order
+    $linked_order_id = 0;
+    if ( ! empty( $order_code ) ) {
+        $orders = get_posts( array(
+            'post_type'   => 'buyback_order',
+            'title'       => $order_code,
+            'numberposts' => 1,
+            'post_status' => 'any',
+        ) );
+        if ( ! empty( $orders ) ) {
+            $linked_order_id = $orders[0]->ID;
+        }
+    }
+    if ( ! $linked_order_id && ! empty( $email ) ) {
+        $orders_by_email = get_posts( array(
+            'post_type'   => 'buyback_order',
+            'meta_key'    => '_applicant_email',
+            'meta_value'  => $email,
+            'numberposts' => 1,
+            'post_status' => 'any',
+        ) );
+        if ( ! empty( $orders_by_email ) ) {
+            $linked_order_id = $orders_by_email[0]->ID;
+            if ( empty( $order_code ) ) {
+                $order_code = $orders_by_email[0]->post_title;
+            }
+        }
+    }
+
+    $kyc_title = 'KYC-' . date('Ymd') . '-' . wp_rand(1000, 9999) . ' [' . ( $name ?: ( $email ?: 'Applicant' ) ) . ']';
     $kyc_id = wp_insert_post( array(
         'post_title'  => $kyc_title,
         'post_status' => 'publish',
@@ -162,6 +231,8 @@ function kaitoriakiba_ajax_submit_kyc() {
     update_post_meta( $kyc_id, '_kyc_status', 'pending' );
     update_post_meta( $kyc_id, '_kyc_name', $name );
     update_post_meta( $kyc_id, '_kyc_kana', $kana );
+    update_post_meta( $kyc_id, '_kyc_email', $email );
+    update_post_meta( $kyc_id, '_kyc_phone', $phone );
     update_post_meta( $kyc_id, '_kyc_dob', $dob );
     update_post_meta( $kyc_id, '_kyc_postal', $postal );
     update_post_meta( $kyc_id, '_kyc_prefecture', $pref );
@@ -169,20 +240,37 @@ function kaitoriakiba_ajax_submit_kyc() {
     update_post_meta( $kyc_id, '_kyc_address', $address );
     update_post_meta( $kyc_id, '_kyc_job', $job );
     update_post_meta( $kyc_id, '_kyc_doc_type', $doc_type );
+    update_post_meta( $kyc_id, '_kyc_order_code', $order_code );
+    update_post_meta( $kyc_id, '_kyc_order_id', $linked_order_id );
+    update_post_meta( $kyc_id, '_kyc_user_id', $user_id );
+
+    // Link customer user profile
+    if ( $user_id ) {
+        update_user_meta( $user_id, '_kaitori_kyc_status', 'pending' );
+        update_user_meta( $user_id, '_kaitori_kyc_record_id', $kyc_id );
+    }
+
+    // Link order
+    if ( $linked_order_id ) {
+        update_post_meta( $linked_order_id, '_order_kyc_status', 'pending' );
+        update_post_meta( $linked_order_id, '_order_kyc_record_id', $kyc_id );
+    }
 
     // Handle Uploaded ID Files
     require_once( ABSPATH . 'wp-admin/includes/image.php' );
     require_once( ABSPATH . 'wp-admin/includes/file.php' );
     require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
-    if ( ! empty( $_FILES['kyc_id_front'] ) ) {
-        $front_id = media_handle_upload( 'kyc_id_front', $kyc_id );
+    $front_key = ! empty( $_FILES['kyc_id_front'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front'] ) ? 'kyc_front' : '' );
+    if ( $front_key ) {
+        $front_id = media_handle_upload( $front_key, $kyc_id );
         if ( ! is_wp_error( $front_id ) ) {
             update_post_meta( $kyc_id, '_kyc_id_front_attach', $front_id );
         }
     }
-    if ( ! empty( $_FILES['kyc_id_back'] ) ) {
-        $back_id = media_handle_upload( 'kyc_id_back', $kyc_id );
+    $back_key = ! empty( $_FILES['kyc_id_back'] ) ? 'kyc_id_back' : ( ! empty( $_FILES['kyc_back'] ) ? 'kyc_back' : '' );
+    if ( $back_key ) {
+        $back_id = media_handle_upload( $back_key, $kyc_id );
         if ( ! is_wp_error( $back_id ) ) {
             update_post_meta( $kyc_id, '_kyc_id_back_attach', $back_id );
         }

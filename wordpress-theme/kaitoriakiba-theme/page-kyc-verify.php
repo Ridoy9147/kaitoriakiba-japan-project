@@ -30,6 +30,17 @@ if ( $is_elementor ) :
     </main>
     <?php
 else :
+    // Pre-populate values from URL query string or logged-in user
+    $pre_order = isset( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : '';
+    $pre_name  = isset( $_GET['name'] ) ? sanitize_text_field( $_GET['name'] ) : '';
+    $pre_email = isset( $_GET['email'] ) ? sanitize_email( $_GET['email'] ) : '';
+    $pre_phone = isset( $_GET['phone'] ) ? sanitize_text_field( $_GET['phone'] ) : '';
+
+    if ( is_user_logged_in() ) {
+        $cur_user = wp_get_current_user();
+        if ( empty( $pre_name ) ) $pre_name = $cur_user->display_name;
+        if ( empty( $pre_email ) ) $pre_email = $cur_user->user_email;
+    }
     ?>
     <div class="container" style="margin-top: 36px; margin-bottom: 60px;">
         <div class="kyc-container" style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
@@ -110,12 +121,27 @@ else :
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label class="form-label" style="font-weight:700; font-size:13px;">氏名 (Full Name) <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 6px; border-radius:4px;">必須</span></label>
-                            <input type="text" name="kyc_name" class="form-control-custom" placeholder="山田 太郎" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="text" name="kyc_name" value="<?php echo esc_attr($pre_name); ?>" class="form-control-custom" placeholder="山田 太郎" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                         <div class="col-md-6 form-group">
                             <label class="form-label" style="font-weight:700; font-size:13px;">フリガナ (Katakana) <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 6px; border-radius:4px;">必須</span></label>
                             <input type="text" name="kyc_kana" class="form-control-custom" placeholder="ヤマダ タロウ" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="form-label" style="font-weight:700; font-size:13px;">メールアドレス (Email) <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 6px; border-radius:4px;">必須</span></label>
+                            <input type="email" name="kyc_email" value="<?php echo esc_attr($pre_email); ?>" class="form-control-custom" placeholder="example@email.com" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <small style="color:#64748b; font-size:11.5px;">※申込時と同じメールアドレスを入力してください</small>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label" style="font-weight:700; font-size:13px;">電話番号 (Phone Number) <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 6px; border-radius:4px;">必須</span></label>
+                            <input type="tel" name="kyc_phone" value="<?php echo esc_attr($pre_phone); ?>" class="form-control-custom" placeholder="09012345678" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6 form-group">
                             <label class="form-label" style="font-weight:700; font-size:13px;">生年月日 (Date of Birth) <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 6px; border-radius:4px;">必須</span></label>
                             <input type="date" name="kyc_dob" class="form-control-custom" required style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
@@ -131,6 +157,13 @@ else :
                                 <option value="その他">その他 (Other)</option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Linked Order Code -->
+                    <div class="form-group" style="margin-top:4px;">
+                        <label class="form-label" style="font-weight:700; font-size:13px;">買取受付番号 (Linked Order Reference)</label>
+                        <input type="text" name="kyc_order_code" value="<?php echo esc_attr($pre_order); ?>" class="form-control-custom" placeholder="例: KB-20261021-1234 (お申込完了時に発行された受付番号)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                        <small style="color:#64748b; font-size:11.5px;">※すでに買取申込がお済みの場合、受付番号を入力すると注文と自動で紐付けされます。</small>
                     </div>
 
                     <div class="form-group" style="margin-top:8px;">

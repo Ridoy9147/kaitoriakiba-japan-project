@@ -43,6 +43,14 @@
                         if (document.getElementById('displayOrderCode')) {
                             document.getElementById('displayOrderCode').innerText = response.data.order_code;
                         }
+                        // Update KYC button with order tracking & customer parameters
+                        if (response.data.order_code) {
+                            var appName  = $('input[name="applicant_name"]').val() || '';
+                            var appEmail = $('input[name="applicant_email"]').val() || '';
+                            var appPhone = $('input[name="applicant_phone"]').val() || '';
+                            var kycUrl = kaitori_ajax.home_url + 'kyc-verify/?order=' + encodeURIComponent(response.data.order_code) + '&name=' + encodeURIComponent(appName) + '&email=' + encodeURIComponent(appEmail) + '&phone=' + encodeURIComponent(appPhone);
+                            $('#btnGoToKyc, .btn-goto-kyc').attr('href', kycUrl);
+                        }
                         alert(response.data.message || '買取申込が完了いたしました！');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {

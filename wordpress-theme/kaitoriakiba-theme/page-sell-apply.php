@@ -90,7 +90,7 @@ else :
                     <h4 style="font-weight:800; margin-bottom:8px; color:#1e293b;"><i class="fa fa-id-card-o" style="color:#ef4444;"></i> 次のステップ：本人確認 (eKYC)</h4>
                     <p style="font-size:13px; color:#64748b; margin:0;">古物営業法により、初回のご利用には身分証明書の提出が必要です。オンラインで運転免許証またはマイナンバーカードの撮影・アップロードを行ってください。</p>
                 </div>
-                <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>" class="btn btn-primary" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:12px 32px; border-radius:10px; font-size:16px;">
+                <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>" id="btnGoToKyc" class="btn btn-primary" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:12px 32px; border-radius:10px; font-size:16px;">
                     本人確認 (eKYC) に進む &rarr;
                 </a>
             </div>

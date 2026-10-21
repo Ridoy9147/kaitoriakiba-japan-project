@@ -444,6 +444,77 @@ function kaitoriakiba_order_meta_box_render( $post ) {
                 <strong><?php _e( 'Full Name:', 'kaitoriakiba' ); ?></strong> <?php echo esc_html($name); ?> (<?php echo esc_html($kana); ?>)<br>
                 <strong><?php _e( 'Phone Number:', 'kaitoriakiba' ); ?></strong> <a href="tel:<?php echo esc_attr($phone); ?>"><?php echo esc_html($phone); ?></a><br>
                 <strong><?php _e( 'Email Address:', 'kaitoriakiba' ); ?></strong> <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
+                <?php
+                // Check connected WP User
+                $customer_user_id = get_post_meta( $post->ID, '_customer_user_id', true );
+                if ( ! $customer_user_id && $email ) {
+                    $u = get_user_by( 'email', $email );
+                    if ( $u ) {
+                        $customer_user_id = $u->ID;
+                    }
+                }
+                if ( $customer_user_id ) :
+                    $u_data = get_userdata( $customer_user_id );
+                    if ( $u_data ) :
+                    ?>
+                    <div style="margin-top:6px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 10px; display:inline-block;">
+                        <i class="dashicons dashicons-admin-users" style="color:#2563eb; vertical-align:middle;"></i>
+                        <strong><?php _e( 'Linked Customer Account:', 'kaitoriakiba' ); ?></strong>
+                        <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $customer_user_id ) ); ?>" target="_blank" style="font-weight:bold; color:#1d4ed8; text-decoration:underline;">
+                            <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html( $customer_user_id ); ?>)
+                        </a>
+                    </div>
+                    <?php
+                    endif;
+                endif;
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <th><label><?php _e( 'Identity Verification (eKYC) Status', 'kaitoriakiba' ); ?></label></th>
+            <td>
+                <?php
+                // Check linked eKYC
+                $kyc_id = get_post_meta( $post->ID, '_order_kyc_record_id', true );
+                if ( ! $kyc_id && $email ) {
+                    $found_kyc = get_posts( array(
+                        'post_type'   => 'kyc_record',
+                        'meta_key'    => '_kyc_email',
+                        'meta_value'  => $email,
+                        'numberposts' => 1,
+                        'post_status' => 'any',
+                    ) );
+                    if ( ! empty( $found_kyc ) ) {
+                        $kyc_id = $found_kyc[0]->ID;
+                    }
+                }
+
+                if ( $kyc_id ) :
+                    $k_status = get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending';
+                    $k_doc    = get_post_meta( $kyc_id, '_kyc_doc_type', true );
+                    if ( $k_status === 'verified' ) {
+                        $badge_bg = '#dcfce7'; $badge_col = '#15803d'; $badge_txt = __( '✓ Verified & Approved', 'kaitoriakiba' );
+                    } elseif ( $k_status === 'rejected' ) {
+                        $badge_bg = '#fee2e2'; $badge_col = '#b91c1c'; $badge_txt = __( '✗ Rejected (Invalid ID)', 'kaitoriakiba' );
+                    } else {
+                        $badge_bg = '#fef3c7'; $badge_col = '#b45309'; $badge_txt = __( '⏳ Pending Verification', 'kaitoriakiba' );
+                    }
+                ?>
+                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                        <span style="background:<?php echo esc_attr( $badge_bg ); ?>; color:<?php echo esc_attr( $badge_col ); ?>; font-weight:800; padding:4px 12px; border-radius:12px; font-size:12.5px;">
+                            <?php echo esc_html( $badge_txt ); ?>
+                        </span>
+                        <span style="color:#64748b; font-size:13px;">(<?php echo esc_html( $k_doc ?: 'ID Document' ); ?>)</span>
+                        <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $kyc_id . '&action=edit' ) ); ?>" class="button button-primary" target="_blank" style="font-weight:700;">
+                            <i class="dashicons dashicons-id-alt" style="vertical-align:middle;"></i> <?php _e( 'Review / Inspect Customer\'s eKYC Document &rarr;', 'kaitoriakiba' ); ?>
+                        </a>
+                    </div>
+                <?php else : ?>
+                    <span style="background:#f1f5f9; color:#64748b; font-weight:700; padding:4px 12px; border-radius:12px; font-size:12.5px;">
+                        <?php _e( '⚠ No eKYC Submitted Yet', 'kaitoriakiba' ); ?>
+                    </span>
+                    <small style="color:#94a3b8; margin-left:8px;"><?php _e( 'Customer has not yet uploaded identification documents for this order.', 'kaitoriakiba' ); ?></small>
+                <?php endif; ?>
             </td>
         </tr>
         <tr>
@@ -517,80 +588,392 @@ function kaitoriakiba_save_order_meta( $post_id ) {
 add_action( 'save_post_buyback_order', 'kaitoriakiba_save_order_meta' );
 
 /**
- * Render eKYC Verification Meta Box (100% English Admin)
+ * Render eKYC Verification Meta Box (100% English Admin with Full Customer & Order Linking)
  */
 function kaitoriakiba_kyc_meta_box_render( $post ) {
     $kyc_status   = get_post_meta( $post->ID, '_kyc_status', true ) ?: 'pending';
-    $doc_type     = get_post_meta( $post->ID, '_id_document_type', true );
-    $front_url    = get_post_meta( $post->ID, '_front_photo_url', true );
-    $back_url     = get_post_meta( $post->ID, '_back_photo_url', true );
-    $cust_name    = get_post_meta( $post->ID, '_customer_name', true );
-    $cust_email   = get_post_meta( $post->ID, '_customer_email', true );
-    $cust_phone   = get_post_meta( $post->ID, '_customer_phone', true );
+    $name         = get_post_meta( $post->ID, '_kyc_name', true );
+    $kana         = get_post_meta( $post->ID, '_kyc_kana', true );
+    $email        = get_post_meta( $post->ID, '_kyc_email', true );
+    $phone        = get_post_meta( $post->ID, '_kyc_phone', true );
+    $dob          = get_post_meta( $post->ID, '_kyc_dob', true );
+    $job          = get_post_meta( $post->ID, '_kyc_job', true );
+    $postal       = get_post_meta( $post->ID, '_kyc_postal', true );
+    $pref         = get_post_meta( $post->ID, '_kyc_prefecture', true );
+    $city         = get_post_meta( $post->ID, '_kyc_city', true );
+    $address      = get_post_meta( $post->ID, '_kyc_address', true );
+    $doc_type     = get_post_meta( $post->ID, '_kyc_doc_type', true ) ?: 'Driver License (運転免許証)';
+    $order_code   = get_post_meta( $post->ID, '_kyc_order_code', true );
+    $order_id     = get_post_meta( $post->ID, '_kyc_order_id', true );
+    $user_id      = get_post_meta( $post->ID, '_kyc_user_id', true );
+    $front_id     = get_post_meta( $post->ID, '_kyc_id_front_attach', true );
+    $back_id      = get_post_meta( $post->ID, '_kyc_id_back_attach', true );
+    $selfie_id    = get_post_meta( $post->ID, '_kyc_selfie_attach', true );
     $admin_notes  = get_post_meta( $post->ID, '_kyc_admin_notes', true );
+
+    // Resolve Front URL
+    $front_url = '';
+    if ( $front_id ) {
+        $front_url = is_numeric( $front_id ) ? wp_get_attachment_url( (int)$front_id ) : $front_id;
+    }
+    // Resolve Back URL
+    $back_url = '';
+    if ( $back_id ) {
+        $back_url = is_numeric( $back_id ) ? wp_get_attachment_url( (int)$back_id ) : $back_id;
+    }
+    // Resolve Selfie URL
+    $selfie_url = '';
+    if ( $selfie_id ) {
+        $selfie_url = is_numeric( $selfie_id ) ? wp_get_attachment_url( (int)$selfie_id ) : $selfie_id;
+    }
+
+    // Auto-detect matching user if not explicitly linked
+    if ( ! $user_id && ! empty( $email ) ) {
+        $u = get_user_by( 'email', $email );
+        if ( $u ) {
+            $user_id = $u->ID;
+            update_post_meta( $post->ID, '_kyc_user_id', $user_id );
+        }
+    }
+
+    // Auto-detect matching order if not explicitly linked
+    if ( ! $order_id && ! empty( $email ) ) {
+        $orders = get_posts( array(
+            'post_type'   => 'buyback_order',
+            'meta_key'    => '_applicant_email',
+            'meta_value'  => $email,
+            'numberposts' => 1,
+            'post_status' => 'any',
+        ) );
+        if ( ! empty( $orders ) ) {
+            $order_id   = $orders[0]->ID;
+            $order_code = $orders[0]->post_title;
+            update_post_meta( $post->ID, '_kyc_order_id', $order_id );
+            update_post_meta( $post->ID, '_kyc_order_code', $order_code );
+        }
+    }
     ?>
-    <table class="form-table">
-        <tr>
-            <th style="width:200px;"><label><?php _e( 'Verification Status', 'kaitoriakiba' ); ?></label></th>
+    <style>
+        .kyc-meta-table th { width: 220px; font-size: 13.5px; color: #1e293b; padding: 14px 10px; vertical-align: top; }
+        .kyc-meta-table td { font-size: 13.5px; padding: 14px 10px; vertical-align: top; }
+        .kyc-box-panel { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 6px; }
+        .kyc-doc-card { display: inline-block; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-right: 14px; margin-bottom: 10px; text-align: center; }
+        .kyc-doc-card img { max-width: 260px; max-height: 180px; object-fit: contain; border-radius: 6px; display: block; margin-bottom: 8px; background: #f1f5f9; }
+    </style>
+
+    <table class="form-table kyc-meta-table">
+        <!-- 1. Status Selection -->
+        <tr style="background:#f8fafc;">
+            <th><label><?php _e( 'Verification Status (審査判定)', 'kaitoriakiba' ); ?></label></th>
             <td>
-                <select name="_kyc_status" style="padding:6px 14px; font-weight:bold; font-size:13px; border-radius:6px; border:1.5px solid #cbd5e1;">
-                    <option value="pending" <?php selected($kyc_status, 'pending'); ?>><?php _e( 'Pending Verification', 'kaitoriakiba' ); ?></option>
-                    <option value="verified" <?php selected($kyc_status, 'verified'); ?>><?php _e( 'Verified & Approved', 'kaitoriakiba' ); ?></option>
-                    <option value="rejected" <?php selected($kyc_status, 'rejected'); ?>><?php _e( 'Rejected (Blurry / Expired)', 'kaitoriakiba' ); ?></option>
+                <select name="_kyc_status" style="padding:8px 16px; font-weight:800; font-size:14px; border-radius:8px; border:2px solid <?php echo $kyc_status === 'verified' ? '#16a34a' : ( $kyc_status === 'rejected' ? '#dc2626' : '#f59e0b' ); ?>;">
+                    <option value="pending" <?php selected($kyc_status, 'pending'); ?>><?php _e( '⏳ Pending Review (確認中・未承認)', 'kaitoriakiba' ); ?></option>
+                    <option value="verified" <?php selected($kyc_status, 'verified'); ?>><?php _e( '✓ Verified & Approved (承認完了・本人確認済)', 'kaitoriakiba' ); ?></option>
+                    <option value="rejected" <?php selected($kyc_status, 'rejected'); ?>><?php _e( '✗ Rejected (不備・再提出要請)', 'kaitoriakiba' ); ?></option>
                 </select>
+                <span style="margin-left: 10px; font-size: 12px; color: #64748b;">
+                    <?php _e( 'When "Verified", customer and linked orders are automatically marked as verified.', 'kaitoriakiba' ); ?>
+                </span>
             </td>
         </tr>
+
+        <!-- 2. Customer User Account Link -->
         <tr>
-            <th><label><?php _e( 'Applicant Details', 'kaitoriakiba' ); ?></label></th>
+            <th><label><?php _e( 'Connected Customer Account (会員)', 'kaitoriakiba' ); ?></label></th>
             <td>
-                <strong><?php _e( 'Name:', 'kaitoriakiba' ); ?></strong> <?php echo esc_html($cust_name); ?><br>
-                <strong><?php _e( 'Email:', 'kaitoriakiba' ); ?></strong> <a href="mailto:<?php echo esc_attr($cust_email); ?>"><?php echo esc_html($cust_email); ?></a><br>
-                <strong><?php _e( 'Phone:', 'kaitoriakiba' ); ?></strong> <?php echo esc_html($cust_phone); ?>
+                <?php if ( $user_id ) : 
+                    $u_data = get_userdata( $user_id );
+                ?>
+                    <div class="kyc-box-panel" style="background:#eff6ff; border-color:#bfdbfe;">
+                        <i class="dashicons dashicons-admin-users" style="color:#2563eb; font-size:20px; vertical-align:middle;"></i>
+                        <strong><?php _e( 'Registered WordPress User:', 'kaitoriakiba' ); ?></strong>
+                        <span style="font-weight:700; color:#1e40af; margin-left:4px;">
+                            <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html($user_id); ?>)
+                        </span>
+                        <div style="margin-top:6px; font-size:12.5px; color:#475569;">
+                            Email: <code><?php echo esc_html( $u_data->user_email ); ?></code> | Registered: <?php echo esc_html( $u_data->user_registered ); ?>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $user_id ) ); ?>" target="_blank" class="button button-secondary" style="font-weight:700;">
+                                <i class="dashicons dashicons-external" style="vertical-align:middle;"></i> <?php _e( 'Open Customer User Profile &rarr;', 'kaitoriakiba' ); ?>
+                            </a>
+                        </div>
+                    </div>
+                <?php else : ?>
+                    <div class="kyc-box-panel" style="color:#64748b;">
+                        <em><?php _e( 'Guest Customer (No WordPress account created yet with this email).', 'kaitoriakiba' ); ?></em>
+                    </div>
+                <?php endif; ?>
             </td>
         </tr>
+
+        <!-- 3. Connected Buyback Order(s) -->
         <tr>
-            <th><label><?php _e( 'ID Document Type', 'kaitoriakiba' ); ?></label></th>
-            <td><strong style="font-size:14px; color:#1e293b;"><?php echo esc_html($doc_type ?: 'Driver License'); ?></strong></td>
-        </tr>
-        <tr>
-            <th><label><?php _e( 'Uploaded ID Photos', 'kaitoriakiba' ); ?></label></th>
+            <th><label><?php _e( 'Connected Buyback Order (申込)', 'kaitoriakiba' ); ?></label></th>
             <td>
-                <div style="display:flex; gap:20px; margin-top:6px;">
+                <?php if ( $order_id ) : 
+                    $order_post = get_post( $order_id );
+                    $order_model = get_post_meta( $order_id, '_device_model', true );
+                    $order_quote = get_post_meta( $order_id, '_estimated_price', true );
+                    $order_st    = get_post_meta( $order_id, '_order_status', true ) ?: 'pending';
+                ?>
+                    <div class="kyc-box-panel" style="background:#fef2f2; border-color:#fecaca;">
+                        <i class="dashicons dashicons-clipboard" style="color:#ef4444; font-size:20px; vertical-align:middle;"></i>
+                        <strong><?php _e( 'Application Order ID:', 'kaitoriakiba' ); ?></strong>
+                        <span style="font-weight:800; color:#dc2626; margin-left:4px; font-size:14px;">
+                            <?php echo esc_html( $order_code ?: ( $order_post ? $order_post->post_title : 'KB-Order' ) ); ?>
+                        </span>
+                        <div style="margin-top:4px; font-size:12.5px; color:#475569;">
+                            Device: <strong><?php echo esc_html( $order_model ?: '—' ); ?></strong> | Quote: <strong style="color:#dc2626;">¥<?php echo number_format((int)$order_quote); ?></strong> | Status: <strong><?php echo esc_html( ucfirst($order_st) ); ?></strong>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $order_id . '&action=edit' ) ); ?>" target="_blank" class="button button-primary" style="background:#ef4444; border-color:#ef4444; font-weight:700;">
+                                <i class="dashicons dashicons-visibility" style="vertical-align:middle;"></i> <?php _e( 'View Full Buyback Order Details &rarr;', 'kaitoriakiba' ); ?>
+                            </a>
+                        </div>
+                    </div>
+                <?php elseif ( ! empty( $order_code ) ) : ?>
+                    <div class="kyc-box-panel">
+                        <strong>Order Reference:</strong> <code><?php echo esc_html( $order_code ); ?></code>
+                    </div>
+                <?php else : ?>
+                    <div class="kyc-box-panel" style="color:#64748b;">
+                        <em><?php _e( 'Direct / In-store eKYC submission (no order code attached).', 'kaitoriakiba' ); ?></em>
+                    </div>
+                <?php endif; ?>
+            </td>
+        </tr>
+
+        <!-- 4. Applicant Identity Details -->
+        <tr>
+            <th><label><?php _e( 'Applicant Personal Details', 'kaitoriakiba' ); ?></label></th>
+            <td>
+                <div style="line-height:1.8;">
+                    <strong><?php _e( 'Full Name (氏名):', 'kaitoriakiba' ); ?></strong> <span style="font-size:15px; font-weight:800; color:#0f172a;"><?php echo esc_html( $name ?: '—' ); ?></span>
+                    <?php if ( $kana ) : ?>
+                        <span style="color:#64748b; font-size:13px;">(<?php echo esc_html( $kana ); ?>)</span>
+                    <?php endif; ?><br>
+                    <strong><?php _e( 'Email Address:', 'kaitoriakiba' ); ?></strong> <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email ?: '—'); ?></a><br>
+                    <strong><?php _e( 'Phone Number:', 'kaitoriakiba' ); ?></strong> <a href="tel:<?php echo esc_attr($phone); ?>"><?php echo esc_html($phone ?: '—'); ?></a><br>
+                    <strong><?php _e( 'Date of Birth (生年月日):', 'kaitoriakiba' ); ?></strong> <?php echo esc_html($dob ?: '—'); ?><br>
+                    <strong><?php _e( 'Occupation (ご職業):', 'kaitoriakiba' ); ?></strong> <?php echo esc_html($job ?: '—'); ?>
+                </div>
+            </td>
+        </tr>
+
+        <!-- 5. Current Residential Address -->
+        <tr>
+            <th><label><?php _e( 'Current Residential Address (現住所)', 'kaitoriakiba' ); ?></label></th>
+            <td>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; line-height:1.7;">
+                    <strong><?php _e( 'Postal Code (郵便番号):', 'kaitoriakiba' ); ?></strong> <?php echo esc_html($postal ? '〒' . $postal : '—'); ?><br>
+                    <strong><?php _e( 'Address (住所):', 'kaitoriakiba' ); ?></strong> 
+                    <span style="font-weight:700; color:#1e293b;">
+                        <?php echo esc_html( $pref . ' ' . $city . ' ' . $address ); ?>
+                    </span>
+                    <div style="margin-top:6px;">
+                        <a href="https://www.google.com/maps/search/<?php echo urlencode( $pref . ' ' . $city . ' ' . $address ); ?>" target="_blank" class="button button-small">
+                            <i class="dashicons dashicons-location-alt" style="vertical-align:middle;"></i> <?php _e( 'Verify Address on Google Maps', 'kaitoriakiba' ); ?>
+                        </a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <!-- 6. Uploaded ID Photos -->
+        <tr>
+            <th><label><?php _e( 'Document Photos & Evidence', 'kaitoriakiba' ); ?></label></th>
+            <td>
+                <div style="margin-bottom:10px;">
+                    <strong><?php _e( 'Document Type Submitted:', 'kaitoriakiba' ); ?></strong> 
+                    <span style="display:inline-block; font-weight:800; color:#ef4444; background:#fef2f2; padding:3px 10px; border-radius:6px; font-size:13px;">
+                        <i class="dashicons dashicons-id" style="vertical-align:middle;"></i> <?php echo esc_html( $doc_type ); ?>
+                    </span>
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:16px;">
                     <?php if ( $front_url ) : ?>
-                        <div>
-                            <div style="font-weight:700; margin-bottom:4px; font-size:12px;"><?php _e( 'Front Side Photo:', 'kaitoriakiba' ); ?></div>
-                            <a href="<?php echo esc_url($front_url); ?>" target="_blank">
-                                <img src="<?php echo esc_url($front_url); ?>" style="max-width:240px; max-height:160px; border-radius:8px; border:1.5px solid #cbd5e1; object-fit:cover;">
+                        <div class="kyc-doc-card">
+                            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php _e( 'Front Side Photo (表面)', 'kaitoriakiba' ); ?></div>
+                            <a href="<?php echo esc_url($front_url); ?>" target="_blank" title="Click to view full size">
+                                <img src="<?php echo esc_url($front_url); ?>" alt="Front ID">
+                            </a>
+                            <a href="<?php echo esc_url($front_url); ?>" target="_blank" class="button button-small" style="width:100%;">
+                                <i class="dashicons dashicons-search"></i> <?php _e( 'Open Full Image', 'kaitoriakiba' ); ?>
                             </a>
                         </div>
                     <?php endif; ?>
+
                     <?php if ( $back_url ) : ?>
-                        <div>
-                            <div style="font-weight:700; margin-bottom:4px; font-size:12px;"><?php _e( 'Back Side Photo:', 'kaitoriakiba' ); ?></div>
-                            <a href="<?php echo esc_url($back_url); ?>" target="_blank">
-                                <img src="<?php echo esc_url($back_url); ?>" style="max-width:240px; max-height:160px; border-radius:8px; border:1.5px solid #cbd5e1; object-fit:cover;">
+                        <div class="kyc-doc-card">
+                            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php _e( 'Back Side Photo (裏面)', 'kaitoriakiba' ); ?></div>
+                            <a href="<?php echo esc_url($back_url); ?>" target="_blank" title="Click to view full size">
+                                <img src="<?php echo esc_url($back_url); ?>" alt="Back ID">
                             </a>
+                            <a href="<?php echo esc_url($back_url); ?>" target="_blank" class="button button-small" style="width:100%;">
+                                <i class="dashicons dashicons-search"></i> <?php _e( 'Open Full Image', 'kaitoriakiba' ); ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ( $selfie_url ) : ?>
+                        <div class="kyc-doc-card">
+                            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php _e( 'Selfie / Face Photo (本人顔写真)', 'kaitoriakiba' ); ?></div>
+                            <a href="<?php echo esc_url($selfie_url); ?>" target="_blank" title="Click to view full size">
+                                <img src="<?php echo esc_url($selfie_url); ?>" alt="Selfie">
+                            </a>
+                            <a href="<?php echo esc_url($selfie_url); ?>" target="_blank" class="button button-small" style="width:100%;">
+                                <i class="dashicons dashicons-search"></i> <?php _e( 'Open Full Image', 'kaitoriakiba' ); ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ( ! $front_url && ! $back_url && ! $selfie_url ) : ?>
+                        <div style="color:#dc2626; font-style:italic;">
+                            <?php _e( 'No photo attachments found for this submission.', 'kaitoriakiba' ); ?>
                         </div>
                     <?php endif; ?>
                 </div>
             </td>
         </tr>
+
+        <!-- 7. Reviewer Notes -->
         <tr>
-            <th><label><?php _e( 'Reviewer Internal Notes', 'kaitoriakiba' ); ?></label></th>
+            <th><label><?php _e( 'Reviewer Internal Notes (社内メモ)', 'kaitoriakiba' ); ?></label></th>
             <td>
-                <textarea name="_kyc_admin_notes" rows="3" style="width:100%; border:1.5px solid #cbd5e1; border-radius:6px; padding:8px;" placeholder="<?php esc_attr_e( 'Enter verification remarks or rejection reason...', 'kaitoriakiba' ); ?>"><?php echo esc_textarea($admin_notes); ?></textarea>
+                <textarea name="_kyc_admin_notes" rows="4" style="width:100%; border:1.5px solid #cbd5e1; border-radius:6px; padding:8px;" placeholder="<?php esc_attr_e( 'Enter verification remarks, reason for rejection, or compliance notes...', 'kaitoriakiba' ); ?>"><?php echo esc_textarea($admin_notes); ?></textarea>
+                <small style="color:#64748b;"><?php _e( 'Only visible to administrators and staff.', 'kaitoriakiba' ); ?></small>
             </td>
         </tr>
     </table>
     <?php
 }
 
+/**
+ * Save eKYC Meta and Synchronize with Connected User & Order
+ */
 function kaitoriakiba_save_kyc_meta( $post_id ) {
-    if ( isset( $_POST['_kyc_status'] ) ) {
-        update_post_meta( $post_id, '_kyc_status', sanitize_text_field( $_POST['_kyc_status'] ) );
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
     }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+
+    if ( isset( $_POST['_kyc_status'] ) ) {
+        $status = sanitize_text_field( $_POST['_kyc_status'] );
+        update_post_meta( $post_id, '_kyc_status', $status );
+
+        // Synchronize with User Account
+        $user_id = get_post_meta( $post_id, '_kyc_user_id', true );
+        if ( $user_id ) {
+            update_user_meta( $user_id, '_kaitori_kyc_status', $status );
+            update_user_meta( $user_id, '_kaitori_kyc_verified', $status === 'verified' ? 'yes' : 'no' );
+        }
+
+        // Synchronize with Buyback Order
+        $order_id = get_post_meta( $post_id, '_kyc_order_id', true );
+        if ( $order_id ) {
+            update_post_meta( $order_id, '_order_kyc_status', $status );
+        }
+    }
+
     if ( isset( $_POST['_kyc_admin_notes'] ) ) {
         update_post_meta( $post_id, '_kyc_admin_notes', sanitize_textarea_field( $_POST['_kyc_admin_notes'] ) );
     }
 }
 add_action( 'save_post_kyc_record', 'kaitoriakiba_save_kyc_meta' );
+
+/**
+ * Add Kaitori Akiba eKYC & Order Info Section in WordPress User Profile (user-edit.php)
+ */
+function kaitoriakiba_user_profile_kyc_section( $user ) {
+    $kyc_status    = get_user_meta( $user->ID, '_kaitori_kyc_status', true ) ?: 'unverified';
+    $kyc_record_id = get_user_meta( $user->ID, '_kaitori_kyc_record_id', true );
+
+    // If not directly saved in user meta, look up by user email
+    if ( ! $kyc_record_id && $user->user_email ) {
+        $found = get_posts( array(
+            'post_type'   => 'kyc_record',
+            'meta_key'    => '_kyc_email',
+            'meta_value'  => $user->user_email,
+            'numberposts' => 1,
+            'post_status' => 'any',
+        ) );
+        if ( ! empty( $found ) ) {
+            $kyc_record_id = $found[0]->ID;
+            $kyc_status    = get_post_meta( $kyc_record_id, '_kyc_status', true ) ?: 'pending';
+        }
+    }
+
+    // Look up user's buyback orders
+    $user_orders = get_posts( array(
+        'post_type'   => 'buyback_order',
+        'meta_key'    => '_applicant_email',
+        'meta_value'  => $user->user_email,
+        'numberposts' => 10,
+        'post_status' => 'any',
+    ) );
+    ?>
+    <hr style="margin: 30px 0;">
+    <h2><i class="dashicons dashicons-shield" style="color:#ef4444; vertical-align:middle;"></i> <?php _e( 'Kaitori Akiba Buyback Customer Profile & eKYC Verification', 'kaitoriakiba' ); ?></h2>
+    
+    <table class="form-table">
+        <tr>
+            <th><label><?php _e( 'eKYC Identity Verification Status', 'kaitoriakiba' ); ?></label></th>
+            <td>
+                <?php if ( $kyc_status === 'verified' ) : ?>
+                    <span style="background:#dcfce7; color:#15803d; font-weight:800; padding:6px 14px; border-radius:12px; font-size:13px;">
+                        ✓ <?php _e( 'Verified (Identity Document Approved)', 'kaitoriakiba' ); ?>
+                    </span>
+                <?php elseif ( $kyc_status === 'pending' ) : ?>
+                    <span style="background:#fef3c7; color:#b45309; font-weight:800; padding:6px 14px; border-radius:12px; font-size:13px;">
+                        ⏳ <?php _e( 'Pending Review (Documents Uploaded)', 'kaitoriakiba' ); ?>
+                    </span>
+                <?php elseif ( $kyc_status === 'rejected' ) : ?>
+                    <span style="background:#fee2e2; color:#b91c1c; font-weight:800; padding:6px 14px; border-radius:12px; font-size:13px;">
+                        ✗ <?php _e( 'Rejected (Re-submission Required)', 'kaitoriakiba' ); ?>
+                    </span>
+                <?php else : ?>
+                    <span style="background:#f1f5f9; color:#64748b; font-weight:700; padding:6px 14px; border-radius:12px; font-size:13px;">
+                        <?php _e( 'Not Submitted Yet', 'kaitoriakiba' ); ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ( $kyc_record_id ) : ?>
+                    <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $kyc_record_id . '&action=edit' ) ); ?>" class="button button-primary" target="_blank" style="margin-left:14px; font-weight:700;">
+                        <i class="dashicons dashicons-id-alt" style="vertical-align:middle;"></i> <?php _e( 'View / Inspect Customer\'s eKYC Document &rarr;', 'kaitoriakiba' ); ?>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <th><label><?php _e( 'Customer\'s Buyback Orders', 'kaitoriakiba' ); ?></label></th>
+            <td>
+                <?php if ( ! empty( $user_orders ) ) : ?>
+                    <ul style="margin:0; padding-left:18px;">
+                        <?php foreach ( $user_orders as $o ) :
+                            $o_model = get_post_meta( $o->ID, '_device_model', true );
+                            $o_price = get_post_meta( $o->ID, '_estimated_price', true );
+                            $o_st    = get_post_meta( $o->ID, '_order_status', true ) ?: 'pending';
+                        ?>
+                            <li style="margin-bottom:8px;">
+                                <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $o->ID . '&action=edit' ) ); ?>" target="_blank" style="font-weight:700; font-size:13.5px;">
+                                    <?php echo esc_html( $o->post_title ); ?>
+                                </a>
+                                — <?php echo esc_html( $o_model ); ?> (¥<?php echo number_format((int)$o_price); ?>) [Status: <strong><?php echo esc_html( ucfirst($o_st) ); ?></strong>]
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else : ?>
+                    <span style="color:#64748b;"><?php _e( 'No buyback orders found for this customer email.', 'kaitoriakiba' ); ?></span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+add_action( 'show_user_profile', 'kaitoriakiba_user_profile_kyc_section' );
+add_action( 'edit_user_profile', 'kaitoriakiba_user_profile_kyc_section' );
+
