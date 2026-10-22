@@ -2,27 +2,44 @@
 /**
  * Kaitori Akiba Theme Functions & Definitions
  * 
- * 100% Native WordPress Theme Architecture
- * All layout and sections render directly from theme templates matching index.html.
- * Zero external page builder dependencies.
+ * Full Elementor Page Builder Support & CPT Integration
  * 
  * @package KaitoriAkiba
- * @version 2.1.0
+ * @version 2.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.1.0' );
+define( 'KAITORIAKIBA_VERSION', '2.0.1' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
+
+/**
+ * 0. Emergency Diagnostics / Error Protection
+ * Catches fatal errors and displays a clear diagnostic box instead of the blank critical error screen.
+ */
+register_shutdown_function( function() {
+    $error = error_get_last();
+    if ( $error && in_array( $error['type'], array( E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR ), true ) ) {
+        if ( ob_get_level() ) {
+            ob_clean();
+        }
+        echo '<div style="background:#fff1f2; border:2px solid #e11d48; color:#881337; padding:24px; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; margin:40px auto; max-width:850px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.08);">';
+        echo '<h3 style="color:#be123c; margin-top:0; font-size:18px;">⚠️ Kaitori Akiba Theme Diagnostic</h3>';
+        echo '<p style="margin:8px 0; font-size:14px;"><strong>Fatal Error:</strong> ' . htmlspecialchars( $error['message'] ) . '</p>';
+        echo '<p style="margin:4px 0; font-size:13px; color:#4c0519;"><strong>File:</strong> <code>' . htmlspecialchars( $error['file'] ) . '</code></p>';
+        echo '<p style="margin:4px 0; font-size:13px; color:#4c0519;"><strong>Line:</strong> <code>' . htmlspecialchars( $error['line'] ) . '</code></p>';
+        echo '</div>';
+    }
+} );
 
 /**
  * 1. Theme Setup
  */
 function kaitoriakiba_theme_setup() {
-    // Add theme support
+    // Standard WordPress Features
     add_theme_support( 'title-tag' );
     add_theme_support( 'post-thumbnails' );
     add_theme_support( 'custom-logo', array(
@@ -35,7 +52,10 @@ function kaitoriakiba_theme_setup() {
     add_theme_support( 'responsive-embeds' );
     add_theme_support( 'align-wide' );
 
-    // Register navigation menus
+    // Elementor Support
+    add_theme_support( 'elementor' );
+
+    // Navigation Menus
     register_nav_menus( array(
         'primary'     => __( 'Main Header Navigation', 'kaitoriakiba' ),
         'top_utility' => __( 'Top Utility Bar Links', 'kaitoriakiba' ),
@@ -54,7 +74,6 @@ function kaitoriakiba_enqueue_scripts() {
 
     // Core Stylesheets
     wp_enqueue_style( 'bootstrap', $uri . '/assets/css/bootstrap.min.css', array(), '3.3.6' );
-    wp_enqueue_style( 'jquery-ui-css', $uri . '/assets/css/jquery-ui.min.css', array(), '1.11.4' );
     wp_enqueue_style( 'font-awesome', $uri . '/assets/css/font-awesome.min.css', array(), '4.7.0' );
     wp_enqueue_style( 'base-style', $uri . '/assets/css/base.css', array( 'bootstrap' ), $ver );
     wp_enqueue_style( 'main-style', $uri . '/assets/css/style.css', array( 'base-style' ), $ver );
@@ -62,17 +81,12 @@ function kaitoriakiba_enqueue_scripts() {
     wp_enqueue_style( 'custom-modern', $uri . '/assets/css/custom-modern.css', array( 'main-style' ), $ver );
     wp_enqueue_style( 'theme-style', get_stylesheet_uri(), array( 'custom-modern' ), $ver );
 
-    // Core Scripts
+    // Scripts
     wp_enqueue_script( 'jquery' );
     wp_enqueue_script( 'jquery-ui-core' );
     wp_enqueue_script( 'jquery-ui-autocomplete' );
     wp_enqueue_script( 'bootstrap-js', $uri . '/assets/js/bootstrap.min.js', array( 'jquery' ), '3.3.6', true );
     wp_enqueue_script( 'swiper-js', $uri . '/assets/js/swiper3.1.0.jquery.min.js', array( 'jquery' ), '3.1.0', true );
-    wp_enqueue_script( 'layer-js', $uri . '/assets/js/layer/layer-min.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'global-js', $uri . '/assets/js/global.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'common-js', $uri . '/assets/js/common.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'response-layout-js', $uri . '/assets/js/response-layout.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'scroller-js', $uri . '/assets/js/scroller.js', array( 'jquery' ), '1.0', true );
 
     // Theme JS with AJAX Localization
     wp_enqueue_script( 'kaitori-theme-app', $uri . '/assets/js/theme-app.js', array( 'jquery' ), $ver, true );
@@ -87,36 +101,126 @@ function kaitoriakiba_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'kaitoriakiba_enqueue_scripts' );
 
 /**
- * 3. Load Modules & Custom Post Types (Buyback Devices, Orders, eKYC)
+ * 3. Load Modules & Custom Post Types
  */
-if ( file_exists( KAITORIAKIBA_DIR . '/inc/cpt.php' ) ) {
-    require_once KAITORIAKIBA_DIR . '/inc/cpt.php';
-}
-if ( file_exists( KAITORIAKIBA_DIR . '/inc/meta-boxes.php' ) ) {
-    require_once KAITORIAKIBA_DIR . '/inc/meta-boxes.php';
-}
-if ( file_exists( KAITORIAKIBA_DIR . '/inc/ajax-handlers.php' ) ) {
-    require_once KAITORIAKIBA_DIR . '/inc/ajax-handlers.php';
-}
-if ( file_exists( KAITORIAKIBA_DIR . '/inc/demo-data.php' ) ) {
-    require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
-}
+require_once KAITORIAKIBA_DIR . '/inc/cpt.php';
+require_once KAITORIAKIBA_DIR . '/inc/meta-boxes.php';
+require_once KAITORIAKIBA_DIR . '/inc/ajax-handlers.php';
+require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
+require_once KAITORIAKIBA_DIR . '/inc/tgmpa/tgmpa-config.php';
 
 /**
- * 4. Safe Helper: Check if a post/page is built with Elementor
+ * 4. Safe Helper: Check if Elementor Editor or Preview is currently active
  */
-function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
-    if ( class_exists( '\Elementor\Plugin' ) ) {
-        if ( ! $post_id ) {
-            $post_id = get_the_ID();
-        }
-        if ( $post_id ) {
-            $doc = \Elementor\Plugin::$instance->documents->get( $post_id );
-            if ( $doc && method_exists( $doc, 'is_built_with_elementor' ) ) {
-                return $doc->is_built_with_elementor();
+function kaitoriakiba_is_elementor_active() {
+    // Check GET query parameters commonly used by Elementor Editor & Preview iframe
+    if ( isset( $_GET['elementor-preview'] ) || ( isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ) ) {
+        return true;
+    }
+
+    if ( did_action( 'elementor/loaded' ) && class_exists( '\Elementor\Plugin' ) ) {
+        try {
+            $plugin = \Elementor\Plugin::$instance;
+            if ( $plugin ) {
+                if ( isset( $plugin->preview ) && method_exists( $plugin->preview, 'is_preview_mode' ) && $plugin->preview->is_preview_mode() ) {
+                    return true;
+                }
+                if ( isset( $plugin->editor ) && method_exists( $plugin->editor, 'is_edit_mode' ) && $plugin->editor->is_edit_mode() ) {
+                    return true;
+                }
             }
+        } catch ( \Throwable $e ) {
+            // Ignore
         }
     }
+
     return false;
 }
 
+/**
+ * Check if a post/page is built with Elementor
+ */
+function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
+    // If currently editing or previewing in Elementor, always return true
+    if ( kaitoriakiba_is_elementor_active() ) {
+        return true;
+    }
+
+    if ( ! $post_id ) {
+        $post_id = get_queried_object_id();
+    }
+    if ( ! $post_id ) {
+        global $post;
+        $post_id = isset( $post->ID ) ? $post->ID : 0;
+    }
+    if ( ! $post_id || $post_id <= 0 ) {
+        return false;
+    }
+
+    // 1. Fastest & 100% safe check: Elementor stores '_elementor_edit_mode' meta on edited posts
+    $edit_mode = get_post_meta( $post_id, '_elementor_edit_mode', true );
+    if ( 'builder' === $edit_mode ) {
+        $data = get_post_meta( $post_id, '_elementor_data', true );
+        if ( ! empty( $data ) && $data !== '[]' ) {
+            return true;
+        }
+    }
+
+    // 2. Safe check with Elementor plugin instance
+    if ( did_action( 'elementor/loaded' ) && class_exists( '\Elementor\Plugin' ) ) {
+        try {
+            $plugin = \Elementor\Plugin::$instance;
+            if ( $plugin && isset( $plugin->db ) && method_exists( $plugin->db, 'is_built_with_elementor' ) ) {
+                if ( $plugin->db->is_built_with_elementor( $post_id ) ) {
+                    $data = get_post_meta( $post_id, '_elementor_data', true );
+                    if ( ! empty( $data ) && $data !== '[]' ) {
+                        return true;
+                    }
+                }
+            }
+        } catch ( \Throwable $e ) {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * 5. Load Elementor Custom Widgets & Categories
+ */
+function kaitoriakiba_init_elementor() {
+    static $elementor_inited = false;
+    if ( $elementor_inited ) {
+        return;
+    }
+    if ( did_action( 'elementor/loaded' ) ) {
+        $elementor_inited = true;
+        require_once KAITORIAKIBA_DIR . '/inc/elementor/elementor-init.php';
+    }
+}
+add_action( 'elementor/init', 'kaitoriakiba_init_elementor' );
+add_action( 'init', 'kaitoriakiba_init_elementor', 1 );
+
+/**
+ * 5. Register Elementor Page Templates
+ */
+function kaitoriakiba_add_page_templates( $templates ) {
+    $templates['template-elementor-fullwidth.php'] = __( 'Elementor Full Width (Kaitori Akiba)', 'kaitoriakiba' );
+    $templates['template-elementor-canvas.php']    = __( 'Elementor Canvas (No Header/Footer)', 'kaitoriakiba' );
+    $templates['page-sell-apply.php']              = __( 'Buyback Application Form (買取申込)', 'kaitoriakiba' );
+    $templates['page-kyc-verify.php']              = __( 'eKYC Verification (本人確認)', 'kaitoriakiba' );
+    $templates['page-register.php']                = __( 'Register & Login (会員登録)', 'kaitoriakiba' );
+    $templates['page-phone-single.php']            = __( 'Phone Single Showcase (端末詳細・買取価格)', 'kaitoriakiba' );
+    return $templates;
+}
+add_filter( 'theme_page_templates', 'kaitoriakiba_add_page_templates' );
+
+/**
+ * 6. Helper: Get Device Formatted Price
+ */
+function kaitoriakiba_get_price( $post_id = null ) {
+    $id = $post_id ?: get_the_ID();
+    $price = get_post_meta( $id, '_max_buyback_price', true );
+    return $price ? '¥' . number_format( (int)$price ) : '¥0';
+}
