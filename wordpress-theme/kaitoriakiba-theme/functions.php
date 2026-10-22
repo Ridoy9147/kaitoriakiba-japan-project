@@ -101,3 +101,22 @@ if ( file_exists( KAITORIAKIBA_DIR . '/inc/ajax-handlers.php' ) ) {
 if ( file_exists( KAITORIAKIBA_DIR . '/inc/demo-data.php' ) ) {
     require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
 }
+
+/**
+ * 4. Safe Helper: Check if a post/page is built with Elementor
+ */
+function kaitoriakiba_is_elementor_page( $post_id = 0 ) {
+    if ( class_exists( '\Elementor\Plugin' ) ) {
+        if ( ! $post_id ) {
+            $post_id = get_the_ID();
+        }
+        if ( $post_id ) {
+            $doc = \Elementor\Plugin::$instance->documents->get( $post_id );
+            if ( $doc && method_exists( $doc, 'is_built_with_elementor' ) ) {
+                return $doc->is_built_with_elementor();
+            }
+        }
+    }
+    return false;
+}
+
