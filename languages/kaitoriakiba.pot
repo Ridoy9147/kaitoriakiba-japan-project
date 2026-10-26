@@ -1,0 +1,1513 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Kaitori Akiba 2.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"X-Domain: kaitoriakiba\n"
+
+msgid "\"Find My\" (Activation Lock) Disabled:"
+msgstr ""
+
+msgid "%s 様"
+msgstr ""
+
+msgid "%s 様のマイページ"
+msgstr ""
+
+msgid "10:00 〜 19:30"
+msgstr ""
+
+msgid "2 Columns"
+msgstr ""
+
+msgid "3 Columns"
+msgstr ""
+
+msgid "4 Columns (Recommended)"
+msgstr ""
+
+msgid "6 Columns"
+msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Account Holder (Katakana):"
+msgstr ""
+
+msgid "Account Number:"
+msgstr ""
+
+msgid "Account Type:"
+msgstr ""
+
+msgid "Activated for testing, pristine condition"
+msgstr ""
+
+msgid "Add Gallery Image (+)"
+msgstr ""
+
+msgid "Add New Application"
+msgstr ""
+
+msgid "Add New Category"
+msgstr ""
+
+msgid "Add New Device"
+msgstr ""
+
+msgid "Address (住所):"
+msgstr ""
+
+msgid "Akihabara Store"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "All Applications"
+msgstr ""
+
+msgid "All Categories"
+msgstr ""
+
+msgid "All Devices"
+msgstr ""
+
+msgid "All Submissions"
+msgstr ""
+
+msgid "Amount deducted if device has remaining carrier payments (triangle mark)"
+msgstr ""
+
+msgid "Announcement Content"
+msgstr ""
+
+msgid "Announcements & Quick Guides (お知らせ・案内)"
+msgstr ""
+
+msgid "Answer"
+msgstr ""
+
+msgid "Apple ID Signed Out:"
+msgstr ""
+
+msgid "Applicant Name"
+msgstr ""
+
+msgid "Applicant Personal Details"
+msgstr ""
+
+msgid "Application Details & Customer Information"
+msgstr ""
+
+msgid "Application ID / Title"
+msgstr ""
+
+msgid "Application Order ID:"
+msgstr ""
+
+msgid "Apply for Buyback"
+msgstr ""
+
+msgid "Ascending (ASC)"
+msgstr ""
+
+msgid "Available Colors / Variants (Comma-separated)"
+msgstr ""
+
+msgid "Back Side Photo (裏面)"
+msgstr ""
+
+msgid "Bank Name:"
+msgstr ""
+
+msgid "Battery Maximum Health:"
+msgstr ""
+
+msgid "Biometrics (Face ID / Touch ID):"
+msgstr ""
+
+msgid "Body / Frame Condition:"
+msgstr ""
+
+msgid "Branch Name:"
+msgstr ""
+
+msgid "Brand"
+msgstr ""
+
+msgid "Brand new, unopened box with security seal"
+msgstr ""
+
+msgid "Brands"
+msgstr ""
+
+msgid "Browse Devices"
+msgstr ""
+
+msgid "Browse by Brand"
+msgstr ""
+
+msgid "Browse by Brand (ブランドから探す)"
+msgstr ""
+
+msgid "Browse by Carrier"
+msgstr ""
+
+msgid "Browse by Carrier (キャリアから探す)"
+msgstr ""
+
+msgid "Browse by Category"
+msgstr ""
+
+msgid "Browse by Category (カテゴリから探す)"
+msgstr ""
+
+msgid "Browse by Series"
+msgstr ""
+
+msgid "Browse by Series (シリーズから探す)"
+msgstr ""
+
+msgid "Browse by Taxonomy (キャリア・ブランド別一覧)"
+msgstr ""
+
+msgid "Button 1 Link"
+msgstr ""
+
+msgid "Button 1 Text"
+msgstr ""
+
+msgid "Button 2 Link"
+msgstr ""
+
+msgid "Button 2 Text"
+msgstr ""
+
+msgid "Button 3 Link"
+msgstr ""
+
+msgid "Button 3 Text"
+msgstr ""
+
+msgid "Button Text"
+msgstr ""
+
+msgid "Buttons Settings"
+msgstr ""
+
+msgid "Buyback Application Form (買取申込)"
+msgstr ""
+
+msgid "Buyback Application Form (買取申込フォーム)"
+msgstr ""
+
+msgid "Buyback Device"
+msgstr ""
+
+msgid "Buyback Devices"
+msgstr ""
+
+msgid "Buyback FAQ (よくある質問)"
+msgstr ""
+
+msgid "Buyback Order"
+msgstr ""
+
+msgid "Buyback Orders"
+msgstr ""
+
+msgid "Buyback Price:"
+msgstr ""
+
+msgid "Buyback Pricing & Technical Specifications"
+msgstr ""
+
+msgid "By Brand"
+msgstr ""
+
+msgid "By Carrier"
+msgstr ""
+
+msgid "By Series"
+msgstr ""
+
+msgid "Camera Operation:"
+msgstr ""
+
+msgid "Capacity & Color:"
+msgstr ""
+
+msgid "Carrier"
+msgstr ""
+
+msgid "Carrier Installment Status"
+msgstr ""
+
+msgid "Carrier:"
+msgstr ""
+
+msgid "Carriers"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Color Variants & Multi-Angle Gallery"
+msgstr ""
+
+msgid "Columns"
+msgstr ""
+
+msgid "Condition Checklist Reported"
+msgstr ""
+
+msgid "Connected Buyback Order (申込)"
+msgstr ""
+
+msgid "Connected Customer Account (会員)"
+msgstr ""
+
+msgid "Container Style"
+msgstr ""
+
+msgid "Corporate Buyback"
+msgstr ""
+
+msgid "Corporate Clients Click Here (法人様買取相談)"
+msgstr ""
+
+msgid "Could not save the uploaded file."
+msgstr ""
+
+msgid "Cracked glass, heavy wear, or battery below 80%"
+msgstr ""
+
+msgid "Current Residential Address (現住所)"
+msgstr ""
+
+msgid "Custom Box Title"
+msgstr ""
+
+msgid "Customer Account"
+msgstr ""
+
+msgid "Customer Bank Payout Details"
+msgstr ""
+
+msgid "Customer Information"
+msgstr ""
+
+msgid "Customer Name"
+msgstr ""
+
+msgid "Customer has not yet uploaded identification documents for this order."
+msgstr ""
+
+msgid "Customer's Buyback Orders"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Date Added"
+msgstr ""
+
+msgid "Date of Birth (生年月日):"
+msgstr ""
+
+msgid "Default Active Tab"
+msgstr ""
+
+msgid "Default Base Price (¥)"
+msgstr ""
+
+msgid "Default Model Title"
+msgstr ""
+
+msgid "Default Selected Carrier"
+msgstr ""
+
+msgid "Delivery Method"
+msgstr ""
+
+msgid "Descending (DESC)"
+msgstr ""
+
+msgid "Description Text"
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Device & Storage"
+msgstr ""
+
+msgid "Device Archives"
+msgstr ""
+
+msgid "Device Buyback Calculator (端末買取計算機)"
+msgstr ""
+
+msgid "Device Buyback Grid (買取機種グリッド)"
+msgstr ""
+
+msgid "Device Categories"
+msgstr ""
+
+msgid "Device Category"
+msgstr ""
+
+msgid "Device Configuration"
+msgstr ""
+
+msgid "Device Model & Identifiers"
+msgstr ""
+
+msgid "Device Primary Image & Color Variants Gallery"
+msgstr ""
+
+msgid "Device Title"
+msgstr ""
+
+msgid "Direct / In-store eKYC submission (no order code attached)."
+msgstr ""
+
+msgid "Display Options"
+msgstr ""
+
+msgid "Display SSL Security Banner"
+msgstr ""
+
+msgid "Display Sections"
+msgstr ""
+
+msgid "Display Stepper Indicator"
+msgstr ""
+
+msgid "Document Photos & Evidence"
+msgstr ""
+
+msgid "Document Type"
+msgstr ""
+
+msgid "Document Type Submitted:"
+msgstr ""
+
+msgid "Dual Search Box (検索ボックス)"
+msgstr ""
+
+msgid "Edit Category"
+msgstr ""
+
+msgid "Edit Device"
+msgstr ""
+
+msgid "Elementor Canvas (No Header/Footer)"
+msgstr ""
+
+msgid "Elementor Full Width (Kaitori Akiba)"
+msgstr ""
+
+msgid "Elementor Website Builder"
+msgstr ""
+
+msgid "Email & Phone"
+msgstr ""
+
+msgid "Email Address:"
+msgstr ""
+
+msgid "Enter verification remarks, reason for rejection, or compliance notes..."
+msgstr ""
+
+msgid "Estimated Buyback Quote"
+msgstr ""
+
+msgid "Estimated Payout"
+msgstr ""
+
+msgid "FAQ (よくある質問)"
+msgstr ""
+
+msgid "FAQ / よくあるご質問"
+msgstr ""
+
+msgid "FAQ Items"
+msgstr ""
+
+msgid "File is too large (max 10MB)."
+msgstr ""
+
+msgid "File upload failed."
+msgstr ""
+
+msgid "Filter by Brand Slug (Optional)"
+msgstr ""
+
+msgid "Filter by Category Slug (Optional)"
+msgstr ""
+
+msgid "Footer Guides Menu"
+msgstr ""
+
+msgid "Footer Services Menu"
+msgstr ""
+
+msgid "Form Container Styling"
+msgstr ""
+
+msgid "Form Content & Headings"
+msgstr ""
+
+msgid "Form Max Width (px)"
+msgstr ""
+
+msgid "Format: 128GB:152000 (new line) 256GB:168000 (new line) 512GB:184000 (new line) 1TB:202000"
+msgstr ""
+
+msgid "Free Shipping Kit Needed:"
+msgstr ""
+
+msgid "Frequently Asked Questions (FAQ)"
+msgstr ""
+
+msgid "Front Side Photo (表面)"
+msgstr ""
+
+msgid "Full Name (氏名):"
+msgstr ""
+
+msgid "Full Name:"
+msgstr ""
+
+msgid "Fully Paid Off (○)"
+msgstr ""
+
+msgid "Googleマップ"
+msgstr ""
+
+msgid "Guest"
+msgstr ""
+
+msgid "Guest Customer (No WordPress account created yet with this email)."
+msgstr ""
+
+msgid "Handover & Delivery Method"
+msgstr ""
+
+msgid "Header Title"
+msgstr ""
+
+msgid "Headings & Security Notice"
+msgstr ""
+
+msgid "Hero Banners & Slider (メインバナー・スライダー)"
+msgstr ""
+
+msgid "Hero Display Settings"
+msgstr ""
+
+msgid "How to Apply / 買取申込方法"
+msgstr ""
+
+msgid "How to Apply for Buyback"
+msgstr ""
+
+msgid "How to Register"
+msgstr ""
+
+msgid "How to Register / 新規登録"
+msgstr ""
+
+msgid "ID Photos"
+msgstr ""
+
+msgid "IMEI Number (15 Digits):"
+msgstr ""
+
+msgid "Identity Verification (eKYC)"
+msgstr ""
+
+msgid "Identity Verification (eKYC) Document Review"
+msgstr ""
+
+msgid "Identity Verification (eKYC) Status"
+msgstr ""
+
+msgid "Identity Verification / 本人確認(eKYC)"
+msgstr ""
+
+msgid "If no custom primary image is uploaded, the theme will automatically show the default showcase device image."
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "In-Store Buyback"
+msgstr ""
+
+msgid "In-Store Drop-off (Akihabara Store)"
+msgstr ""
+
+msgid "In-Store Visit"
+msgstr ""
+
+msgid "Included Accessories:"
+msgstr ""
+
+msgid "Information"
+msgstr ""
+
+msgid "Install Plugins"
+msgstr ""
+
+msgid "Install Required Plugins - Kaitori Akiba"
+msgstr ""
+
+msgid "Installing Plugin: %s"
+msgstr ""
+
+msgid "Installment Balance (△) Deduction (¥)"
+msgstr ""
+
+msgid "JAN / EAN Barcode"
+msgstr ""
+
+msgid "JR秋葉原駅 電気街口より徒歩2分"
+msgstr ""
+
+msgid "Kaitori Akiba Buyback Customer Profile & eKYC Verification"
+msgstr ""
+
+msgid "Kaitori Akiba Elements (買取アキバ)"
+msgstr ""
+
+msgid "Kaitori Akiba 無料会員登録"
+msgstr ""
+
+msgid "Kaitori Akiba 秋葉原総本店"
+msgstr ""
+
+msgid "Key Selling Points"
+msgstr ""
+
+msgid "Key Selling Points & Process (高価買取のコツ・流れ)"
+msgstr ""
+
+msgid "Keyword"
+msgstr ""
+
+msgid "Keyword Search (キーワード検索)"
+msgstr ""
+
+msgid "Keyword search"
+msgstr ""
+
+msgid "Keyword search (2+ characters)"
+msgstr ""
+
+msgid "Keywords"
+msgstr ""
+
+msgid "Leave blank to auto-detect from current page or use demo values."
+msgstr ""
+
+msgid "Leave empty for default taxonomy title"
+msgstr ""
+
+msgid "Linked Customer Account:"
+msgstr ""
+
+msgid "Linked Order"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Login Title"
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "Mail-in Buyback"
+msgstr ""
+
+msgid "Mail-in Buyback (Free Courier)"
+msgstr ""
+
+msgid "Mail-in Delivery"
+msgstr ""
+
+msgid "Main Header Navigation"
+msgstr ""
+
+msgid "Max Buyback Price"
+msgstr ""
+
+msgid "Max Width (px)"
+msgstr ""
+
+msgid "Maximum Buyback Price (¥) *"
+msgstr ""
+
+msgid "Member Dashboard"
+msgstr ""
+
+msgid "Member Dashboard (マイページ)"
+msgstr ""
+
+msgid "Member Profile / 会員情報変更"
+msgstr ""
+
+msgid "Member Register & Login Portal (会員登録・ログイン)"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "Method:"
+msgstr ""
+
+msgid "Model Number (e.g., A3293)"
+msgstr ""
+
+msgid "Model:"
+msgstr ""
+
+msgid "My Page"
+msgstr ""
+
+msgid "New Device"
+msgstr ""
+
+msgid "News Settings"
+msgstr ""
+
+msgid "No MDM / Corporate Profile Lock:"
+msgstr ""
+
+msgid "No buyback orders found for this customer email."
+msgstr ""
+
+msgid "No custom gallery images uploaded yet. The default 4 color angles will be displayed."
+msgstr ""
+
+msgid "No file uploaded."
+msgstr ""
+
+msgid "No photo attachments found for this submission."
+msgstr ""
+
+msgid "Not Needed (Self Packed)"
+msgstr ""
+
+msgid "Not Specified"
+msgstr ""
+
+msgid "Not Submitted Yet"
+msgstr ""
+
+msgid "Number of Devices"
+msgstr ""
+
+msgid "Number of Items to Show"
+msgstr ""
+
+msgid "Occupation (ご職業):"
+msgstr ""
+
+msgid "Official Buyback Portal"
+msgstr ""
+
+msgid "Only JPG, PNG, or PDF files are allowed."
+msgstr ""
+
+msgid "Only visible to administrators and staff."
+msgstr ""
+
+msgid "Open 10:00 - 19:30"
+msgstr ""
+
+msgid "Open Customer User Profile &rarr;"
+msgstr ""
+
+msgid "Open Full Image"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Order By"
+msgstr ""
+
+msgid "Order Processing Status"
+msgstr ""
+
+msgid "Other Reported Issues:"
+msgstr ""
+
+msgid "Page Not Found (お探しのページが見つかりません)"
+msgstr ""
+
+msgid "Parent Category"
+msgstr ""
+
+msgid "Parent Category:"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Pending Review (Documents Uploaded)"
+msgstr ""
+
+msgid "Phone Number:"
+msgstr ""
+
+msgid "Phone Single Showcase (端末詳細・買取価格)"
+msgstr ""
+
+msgid "Please enter device name, model number, JAN code, etc."
+msgstr ""
+
+msgid "Popular Keywords (人気キーワード)"
+msgstr ""
+
+msgid "Popular Search Keywords!"
+msgstr ""
+
+msgid "Portal Settings"
+msgstr ""
+
+msgid "Postal Code (郵便番号):"
+msgstr ""
+
+msgid "Powers On Correctly:"
+msgstr ""
+
+msgid "Preferred Pickup / Visit Date:"
+msgstr ""
+
+msgid "Price (Highest)"
+msgstr ""
+
+msgid "Price Guarantee / 査定価格保証"
+msgstr ""
+
+msgid "Price Guarantee Policy"
+msgstr ""
+
+msgid "Primary Device Image"
+msgstr ""
+
+msgid "Process Flow Buttons (買取の流れバナー)"
+msgstr ""
+
+msgid "Query & Filter"
+msgstr ""
+
+msgid "Question"
+msgstr ""
+
+msgid "Questions List"
+msgstr ""
+
+msgid "Random"
+msgstr ""
+
+msgid "Rank A Price (Unused / Open Box ¥)"
+msgstr ""
+
+msgid "Rank B Price (Used - Excellent ¥)"
+msgstr ""
+
+msgid "Rank C Price (Used - Good / Minor Marks ¥)"
+msgstr ""
+
+msgid "Rank D Price (Cracked Screen / Heavy Marks ¥)"
+msgstr ""
+
+msgid "Rank S - D Pricing"
+msgstr ""
+
+msgid "Rank S Price (Factory Sealed ¥)"
+msgstr ""
+
+msgid "Record ID"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Register & Login (会員登録)"
+msgstr ""
+
+msgid "Registered WordPress User:"
+msgstr ""
+
+msgid "Registration Title"
+msgstr ""
+
+msgid "Rejected"
+msgstr ""
+
+msgid "Rejected (Re-submission Required)"
+msgstr ""
+
+msgid "Remaining Balance Due:"
+msgstr ""
+
+msgid "Remove Image"
+msgstr ""
+
+msgid "Reset to Default Image"
+msgstr ""
+
+msgid "Reveal"
+msgstr ""
+
+msgid "Review / Inspect Customer's eKYC Document &rarr;"
+msgstr ""
+
+msgid "Reviewer Internal Notes (社内メモ)"
+msgstr ""
+
+msgid "Screen Condition:"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Search Categories"
+msgstr ""
+
+msgid "Search Devices"
+msgstr ""
+
+msgid "Search by device model name or model number!"
+msgstr ""
+
+msgid "Section Title"
+msgstr ""
+
+msgid "Security & iCloud Lock Verification"
+msgstr ""
+
+msgid "Select Category"
+msgstr ""
+
+msgid "Select Device Post (Optional)"
+msgstr ""
+
+msgid "Select Taxonomy"
+msgstr ""
+
+msgid "Select one or more categories (Multiple selection supported)"
+msgstr ""
+
+msgid "Select one or more filters"
+msgstr ""
+
+msgid "Selfie / Face Photo (本人顔写真)"
+msgstr ""
+
+msgid "Serial Number:"
+msgstr ""
+
+msgid "Series"
+msgstr ""
+
+msgid "Show 2-Column Hero Banners"
+msgstr ""
+
+msgid "Show Buyback Flow Infographic"
+msgstr ""
+
+msgid "Show Checkpoints Before Applying"
+msgstr ""
+
+msgid "Show Condition Ranks S-D Table"
+msgstr ""
+
+msgid "Show Installment Notice (利用制限△)"
+msgstr ""
+
+msgid "Show Key Selling Points"
+msgstr ""
+
+msgid "Show More / 詳細を見る"
+msgstr ""
+
+msgid "Show Pre-shipment Checklist"
+msgstr ""
+
+msgid "Show Quick Guide Links"
+msgstr ""
+
+msgid "Show Swiper Banner Slider"
+msgstr ""
+
+msgid "Something went wrong with the plugin API."
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Status:"
+msgstr ""
+
+msgid "Step-by-Step Category Search"
+msgstr ""
+
+msgid "Step-by-Step Search (絞り込み検索)"
+msgstr ""
+
+msgid "Storage Capacities & Base Buyback Prices (One per line format: Capacity:Price)"
+msgstr ""
+
+msgid "Store Access (店舗アクセス)"
+msgstr ""
+
+msgid "Submission Date"
+msgstr ""
+
+msgid "Subtitle"
+msgstr ""
+
+msgid "Taxonomy Settings"
+msgstr ""
+
+msgid "The highest ceiling price shown on homepage cards and search"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Top Utility Bar Links"
+msgstr ""
+
+msgid "Topics"
+msgstr ""
+
+msgid "Under Installment (△)"
+msgstr ""
+
+msgid "Update Category"
+msgstr ""
+
+msgid "Update Device"
+msgstr ""
+
+msgid "Updating Plugin: %s"
+msgstr ""
+
+msgid "Upload / Select Primary Image"
+msgstr ""
+
+msgid "Upload photos for individual colors (e.g. Natural Titanium, White, Black). If left empty, default showcase colors are displayed."
+msgstr ""
+
+msgid "Urgent Notice Title"
+msgstr ""
+
+msgid "Used with no noticeable scratches or dents"
+msgstr ""
+
+msgid "Verification Status"
+msgstr ""
+
+msgid "Verification Status (審査判定)"
+msgstr ""
+
+msgid "Verified"
+msgstr ""
+
+msgid "Verified (Identity Document Approved)"
+msgstr ""
+
+msgid "Verify Address on Google Maps"
+msgstr ""
+
+msgid "View / Edit Application"
+msgstr ""
+
+msgid "View / Inspect Customer's eKYC Document &rarr;"
+msgstr ""
+
+msgid "View / Verify ID"
+msgstr ""
+
+msgid "View All / 一覧を見る"
+msgstr ""
+
+msgid "View All / 全機種一覧"
+msgstr ""
+
+msgid "View Device"
+msgstr ""
+
+msgid "View Full Buyback Order Details &rarr;"
+msgstr ""
+
+msgid "Visible minor abrasions or small scratches"
+msgstr ""
+
+msgid "Water Damage / Past Repairs:"
+msgstr ""
+
+msgid "What's News (新着情報・お知らせ)"
+msgstr ""
+
+msgid "What's News Box (新着お知らせ)"
+msgstr ""
+
+msgid "When \"Verified\", customer and linked orders are automatically marked as verified."
+msgstr ""
+
+msgid "eKYC Identity Verification Form (本人確認フォーム)"
+msgstr ""
+
+msgid "eKYC Identity Verification Status"
+msgstr ""
+
+msgid "eKYC Verification"
+msgstr ""
+
+msgid "eKYC Verification (本人確認)"
+msgstr ""
+
+msgid "eKYC Verifications"
+msgstr ""
+
+msgid "eKYC Verify"
+msgstr ""
+
+msgid "iPhone 16 Pro 査定"
+msgstr ""
+
+msgid "iPhone Buyback"
+msgstr ""
+
+msgid "iPhone, Smartphone & Mobile Phone Specialist [Tokyo Akihabara]"
+msgstr ""
+
+msgid "iPhone・スマホ買取 査定・オンライン申込"
+msgstr ""
+
+msgid "iPhone買取"
+msgstr ""
+
+msgid "※ 会員限定機能です。会員登録・ログイン後にご利用いただけます。"
+msgstr ""
+
+msgid "⏳ Pending Review (確認中・未承認)"
+msgstr ""
+
+msgid "⏳ Pending Verification"
+msgstr ""
+
+msgid "⏳ 確認中"
+msgstr ""
+
+msgid "⚠ No eKYC Submitted Yet"
+msgstr ""
+
+msgid "✓ Verified & Approved"
+msgstr ""
+
+msgid "✓ Verified & Approved (承認完了・本人確認済)"
+msgstr ""
+
+msgid "✓ 本人確認済み"
+msgstr ""
+
+msgid "✗ Rejected (Invalid ID)"
+msgstr ""
+
+msgid "✗ Rejected (不備・再提出要請)"
+msgstr ""
+
+msgid "✗ 不備あり・再提出"
+msgstr ""
+
+msgid "【買取アキバ】お申込みステータス更新（%s）"
+msgstr ""
+
+msgid "【買取アキバ】買取お申込みを受け付けました（%s）"
+msgstr ""
+
+msgid "【重要】買取アキバからのお知らせ (Urgent Announcements)"
+msgstr ""
+
+msgid "お振込みが完了いたしました。ご利用誠にありがとうございました。"
+msgstr ""
+
+msgid "お気に入りに追加"
+msgstr ""
+
+msgid "お気に入りの保存には会員登録・ログインが必要です。"
+msgstr ""
+
+msgid "お気に入り端末"
+msgstr ""
+
+msgid "お申込み（%s）のステータスが更新されました。"
+msgstr ""
+
+msgid "かんたんステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！"
+msgstr ""
+
+msgid "このメールは送信専用です。"
+msgstr ""
+
+msgid "このメールアドレスは既に登録されています。ログインしてください。"
+msgstr ""
+
+msgid "ご利用案内"
+msgstr ""
+
+msgid "ご登録のメールアドレスとパスワードを入力してください。"
+msgstr ""
+
+msgid "ご登録済みのメールアドレスとパスワードでログインしてください。"
+msgstr ""
+
+msgid "すべての必須プラグインのインストールと有効化が完了しました。%1$s"
+msgstr ""
+
+msgid "はい。「iPhoneを探す」をオフにし、Apple ID / iCloudからサインアウトのうえ初期化をお願いいたします。ロックが残っている端末は買取不可となります。"
+msgstr ""
+
+msgid "はい。分割残債あり（利用制限△）の端末も、原則として減額査定なしでお買取り可能です。詳細はお申込みフォームよりご確認ください。"
+msgstr ""
+
+msgid "まだ買取お申込みはありません。"
+msgstr ""
+
+msgid "よくあるご質問 (FAQ)"
+msgstr ""
+
+msgid "よくある質問"
+msgstr ""
+
+msgid "よくある質問 (FAQ)"
+msgstr ""
+
+msgid "アクセス"
+msgstr ""
+
+msgid "アクティベーションロックは解除が必要ですか？"
+msgstr ""
+
+msgid "オンライン査定は概算金額です。最終的な買取金額は、実機の状態・付属品の有無を検品のうえ確定いたします。"
+msgstr ""
+
+msgid "サービス案内"
+msgstr ""
+
+msgid "ステータス"
+msgstr ""
+
+msgid "ステータス更新のお知らせ"
+msgstr ""
+
+msgid "トップ (Home)"
+msgstr ""
+
+msgid "トップページへ戻る (Back to Home)"
+msgstr ""
+
+msgid "パスワードは8文字以上で設定してください。"
+msgstr ""
+
+msgid "パスワードは英字と数字を組み合わせてください。"
+msgstr ""
+
+msgid "プラグインが正常に有効化されました。"
+msgstr ""
+
+msgid "ホーム (Home)"
+msgstr ""
+
+msgid "マイページ (Member Dashboard)"
+msgstr ""
+
+msgid "マイページで確認"
+msgstr ""
+
+msgid "マイページのご利用にはログインが必要です。"
+msgstr ""
+
+msgid "メールアドレス（またはユーザー名）とパスワードを入力してください。"
+msgstr ""
+
+msgid "メールマガジン登録"
+msgstr ""
+
+msgid "ログアウト"
+msgstr ""
+
+msgid "ログイン"
+msgstr ""
+
+msgid "ログイン (Login)"
+msgstr ""
+
+msgid "ログイン / 会員登録"
+msgstr ""
+
+msgid "ログインに成功しました！マイページへ移動します。"
+msgstr ""
+
+msgid "ログイン情報が正しくありません。パスワードまたはメールアドレスをご確認ください。"
+msgstr ""
+
+msgid "ログイン試行回数が多すぎます。10分ほど待って再度お試しください。"
+msgstr ""
+
+msgid "不正な送信が検出されました。ページを再読み込みしてお試しください。"
+msgstr ""
+
+msgid "以下のプラグインが有効化されました:"
+msgstr ""
+
+msgid "会員ログイン (Login)"
+msgstr ""
+
+msgid "会員登録 (Register)"
+msgstr ""
+
+msgid "会員登録が完了いたしました！マイページへ移動します。"
+msgstr ""
+
+msgid "会員登録を行うと、次回からの入力省略や買取履歴の確認、会員限定ボーナスがご利用いただけます。"
+msgstr ""
+
+msgid "住所"
+msgstr ""
+
+msgid "分割払い（残債）が残っている端末も買取できますか？"
+msgstr ""
+
+msgid "受付番号"
+msgstr ""
+
+msgid "古物営業法に基づき、お取引の際には本人確認が義務付けられています。運転免許証・マイナンバーカード・在留カード等をオンラインでご提出いただけます。"
+msgstr ""
+
+msgid "古物営業法に基づき、スマートフォン等の買取時には本人確認書類の提出が義務付けられています。"
+msgstr ""
+
+msgid "古物営業法に基づき、スマートフォン等の買取時には本人確認書類の提出が義務付けられています。オンラインで安全に書類画像をアップロードいただけます。"
+msgstr ""
+
+msgid "古物営業法に基づき、初回のお取引には本人確認（eKYC）が必要です。下記より書類をご提出ください。"
+msgstr ""
+
+msgid "古物営業法に基づく表記"
+msgstr ""
+
+msgid "商品一覧の「★」から気になる端末を登録できます。"
+msgstr ""
+
+msgid "商品一覧の「★」ボタンをクリックすると、お気に入りリストへ登録できます。"
+msgstr ""
+
+msgid "営業時間"
+msgstr ""
+
+msgid "営業時間: 10:00 〜 19:30 (年中無休)"
+msgstr ""
+
+msgid "定休日"
+msgstr ""
+
+msgid "対象の端末が見つかりませんでした。"
+msgstr ""
+
+msgid "年中無休"
+msgstr ""
+
+msgid "店舗アクセス"
+msgstr ""
+
+msgid "店舗名"
+msgstr ""
+
+msgid "店頭買取の流れ"
+msgstr ""
+
+msgid "店頭買取を予約"
+msgstr ""
+
+msgid "必須プラグインのインストーラーへ戻る"
+msgstr ""
+
+msgid "新規会員登録"
+msgstr ""
+
+msgid "新規会員登録 (Register)"
+msgstr ""
+
+msgid "有効なメールアドレスを入力してください。"
+msgstr ""
+
+msgid "未提出"
+msgstr ""
+
+msgid "本人確認 (Identity Verification - eKYC)"
+msgstr ""
+
+msgid "本人確認 (eKYC)"
+msgstr ""
+
+msgid "本人確認 (eKYC) に進む"
+msgstr ""
+
+msgid "本人確認 (eKYC) ステータス"
+msgstr ""
+
+msgid "本人確認を行う →"
+msgstr ""
+
+msgid "本人確認データの送信に失敗しました。"
+msgstr ""
+
+msgid "本人確認書類のアップロードが完了いたしました。審査完了まで今しばらくお待ちください。"
+msgstr ""
+
+msgid "本人確認（eKYC）はなぜ必要ですか？"
+msgstr ""
+
+msgid "本件のお取引はキャンセル／返送となりました。"
+msgstr ""
+
+msgid "東京都公安委員会許可 第301031200000号"
+msgstr ""
+
+msgid "東京都公安委員会許可 第301031200000号<br>個人情報保護方針に基づき、お客様からお預かりした身分証明書および端末データは厳重に管理・保護いたします。"
+msgstr ""
+
+msgid "東京都千代田区外神田1丁目（秋葉原店）"
+msgstr ""
+
+msgid "東京都千代田区外神田1丁目（秋葉原駅 徒歩2分）"
+msgstr ""
+
+msgid "査定・買取を申込む"
+msgstr ""
+
+msgid "査定金額は確定ですか？"
+msgstr ""
+
+msgid "査定額"
+msgstr ""
+
+msgid "検品が完了し、最終査定額が確定いたしました。詳細をご確認ください。"
+msgstr ""
+
+msgid "検品を行っております。結果が確定次第ご連絡いたします。"
+msgstr ""
+
+msgid "概算査定額"
+msgstr ""
+
+msgid "機種"
+msgstr ""
+
+msgid "気になる機種の買取価格の変動をいつでもスムーズにチェック可能！"
+msgstr ""
+
+msgid "現在のステータス:"
+msgstr ""
+
+msgid "申し訳ありません。アクセスいただいたページは削除されたか、URLが変更された可能性があります。"
+msgstr ""
+
+msgid "申し訳ありません。申込の送信中にエラーが発生しました。"
+msgstr ""
+
+msgid "申込日"
+msgstr ""
+
+msgid "秋葉原駅徒歩2分。iPhone、Android、iPad、MacBookなどの高価買取専門店。最新の市場相場に基づいた適正・透明な高額査定をお約束します。"
+msgstr ""
+
+msgid "端末が当店に到着いたしました。これより検品を開始いたします。"
+msgstr ""
+
+msgid "解決しない場合はお気軽にお問い合わせください。"
+msgstr ""
+
+msgid "記事が見つかりませんでした。(Nothing found)"
+msgstr ""
+
+msgid "許可"
+msgstr ""
+
+msgid "試行回数が多すぎます。しばらく時間をおいて再度お試しください。"
+msgstr ""
+
+msgid "買取お申込みを受け付けました。内容は以下の通りです。"
+msgstr ""
+
+msgid "買取お申込み受付のご案内"
+msgstr ""
+
+msgid "買取お申込み履歴"
+msgstr ""
+
+msgid "買取の申込みから入金までどのくらいかかりますか？"
+msgstr ""
+
+msgid "買取を申し込む →"
+msgstr ""
+
+msgid "買取アキバ"
+msgstr ""
+
+msgid "買取アキバのサービスについて、お客様からよくいただくご質問をまとめました。"
+msgstr ""
+
+msgid "買取機種・価格一覧 (Device Price List)"
+msgstr ""
+
+msgid "買取機種一覧"
+msgstr ""
+
+msgid "買取機種一覧 (Devices)"
+msgstr ""
+
+msgid "買取申込 (Sell Apply)"
+msgstr ""
+
+msgid "買取申込が正常に送信されました。確認メールをご確認ください。"
+msgstr ""
+
+msgid "送料はかかりますか？"
+msgstr ""
+
+msgid "通信エラーが発生しました。しばらくしてからもう一度お試しください。"
+msgstr ""
+
+msgid "郵送買取の場合、端末到着後、最短即日で査定・ご入金が可能です。店頭買取ではその場で現金払いに対応しております。"
+msgstr ""
+
+msgid "郵送買取の流れ"
+msgstr ""
+
+msgid "郵送買取の送料は無料です。無料梱包キットの発送にも対応しております。"
+msgstr ""
+
+msgid "電話"
+msgstr ""
+
