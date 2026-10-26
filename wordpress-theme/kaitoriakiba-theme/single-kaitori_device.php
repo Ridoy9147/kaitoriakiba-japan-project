@@ -56,9 +56,9 @@ else :
 
         <!-- Breadcrumb Navigation -->
         <div class="product-breadcrumb" style="display:flex; align-items:center; gap:8px; font-size:13px; color:#64748b; margin-bottom:24px;">
-            <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><i class="fa fa-home"></i> <?php _e( 'トップ (Home)', 'kaitoriakiba' ); ?></a>
+            <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><i class="fa fa-home"></i> <?php kaitori_te( 'Home', 'トップ (Home)' ); ?></a>
             <span class="sep"><i class="fa fa-chevron-right" style="font-size:11px;"></i></span>
-            <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( '買取機種一覧', 'kaitoriakiba' ); ?></a>
+            <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'Device List', '買取機種一覧' ); ?></a>
             <span class="sep"><i class="fa fa-chevron-right" style="font-size:11px;"></i></span>
             <span class="current" style="color:#0f172a; font-weight:700;"><?php the_title(); ?></span>
         </div>
@@ -69,7 +69,7 @@ else :
                 <!-- Left: Media Gallery -->
                 <div class="col-lg-5 col-md-5 col-sm-12 text-center">
                     <div style="background:#ffffff; border:1px solid #f1f5f9; border-radius:12px; padding:24px; min-height:360px; display:flex; align-items:center; justify-content:center; position:relative;">
-                        <span style="position:absolute; top:16px; left:16px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#fff; font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px;">高価買取強化中</span>
+                        <span style="position:absolute; top:16px; left:16px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#fff; font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px;"><?php kaitori_te( 'High Price Campaign', '高価買取強化中' ); ?></span>
                         <img id="mainProductImg" src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" style="max-height:320px; max-width:100%; object-fit:contain;">
                     </div>
                     <div style="display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap;">
@@ -86,9 +86,9 @@ else :
 
                     <!-- Trust Checklist -->
                     <div style="background:#f8fafc; border-radius:10px; padding:14px; margin-top:20px; text-align:left; font-size:12.5px; color:#334155; line-height:1.7; border:1px dashed #cbd5e1;">
-                        <div><i class="fa fa-check-circle" style="color:#10b981; margin-right:6px;"></i> 当日価格保証：Web事前査定額を完全キープ</div>
-                        <div><i class="fa fa-check-circle" style="color:#10b981; margin-right:6px;"></i> 分割中 (利用制限△) でも減額最小限・即日現金化</div>
-                        <div><i class="fa fa-check-circle" style="color:#10b981; margin-right:6px;"></i> 秋葉原店頭なら最短5分で即手渡し / 郵送は即日振込</div>
+                        <div><i class="fa fa-check-circle" style="color:#10b981; margin-right:6px;"></i> <?php kaitori_te( 'Same-day price guarantee: your online quote is fully kept', '当日価格保証：Web事前査定額を完全キープ' ); ?></div>
+                        <div><i class="fa fa-check-circle" style="color:#10b981; margin-right:6px;"></i> <?php kaitori_te( 'Even on installments (restriction △): minimal reduction, same-day cash', '分割中 (利用制限△) でも減額最小限・即日現金化' ); ?></div>
+                        <div><i class="fa fa-check-circle" style="color:#10b981; margin-right:6px;"></i> <?php kaitori_te( 'In-store in Akihabara: cash in as little as 5 min / mail-in: same-day transfer', '秋葉原店頭なら最短5分で即手渡し / 郵送は即日振込' ); ?></div>
                     </div>
                 </div>
 
@@ -99,28 +99,28 @@ else :
                             <?php echo esc_html( $brand_str ); ?> / <?php echo esc_html( $series_str ); ?>
                         </span>
                         <h1 id="deviceTitleHeading" style="font-size:24px; font-weight:900; color:#0f172a; margin:0 0 6px 0;"><?php the_title(); ?></h1>
-                        <p style="font-size:13px; color:#64748b; margin:0;">型番: <?php echo esc_html( $model_num ); ?> | JAN: <?php echo esc_html( $jan_code ); ?> | 国内正規SIMフリー版 &amp; 各社キャリア版対応</p>
+                        <p style="font-size:13px; color:#64748b; margin:0;"><?php kaitori_te( 'Model', '型番' ); ?>: <?php echo esc_html( $model_num ); ?> | JAN: <?php echo esc_html( $jan_code ); ?> | <?php kaitori_te( 'SIM-free &amp; all carrier versions accepted', '国内正規SIMフリー版 &amp; 各社キャリア版対応' ); ?></p>
                     </div>
 
                     <!-- Live Price Box -->
                     <div style="background:linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%); border:2px solid #fed7aa; border-radius:14px; padding:20px 24px; margin-bottom:24px;">
                         <div style="font-size:13px; font-weight:700; color:#c2410c; margin-bottom:6px;">
-                            <i class="fa fa-bolt"></i> 本日の最高買取上限価格 (新品未開封・SIMフリー)
+                            <i class="fa fa-bolt"></i> <?php kaitori_te( "Today's max buyback price (sealed new · SIM-free)", '本日の最高買取上限価格 (新品未開封・SIMフリー)' ); ?>
                         </div>
                         <div style="display:flex; align-items:baseline; gap:8px;">
                             <span style="font-size:24px; font-weight:800; color:#dc2626;">¥</span>
                             <span id="livePriceNum" style="font-size:38px; font-weight:900; color:#dc2626; line-height:1;"><?php echo number_format((int)$base_price); ?></span>
-                            <span style="font-size:12px; font-weight:700; color:#78350f; background:#fed7aa; padding:3px 10px; border-radius:20px; margin-left:8px;">税込・手数料0円</span>
+                            <span style="font-size:12px; font-weight:700; color:#78350f; background:#fed7aa; padding:3px 10px; border-radius:20px; margin-left:8px;"><?php kaitori_te( 'Tax incl. · 0 fees', '税込・手数料0円' ); ?></span>
                         </div>
                         <div style="font-size:12px; color:#9a3412; margin-top:8px;">
-                            <i class="fa fa-shield"></i> 本日中のWeb査定申し込みで上記価格を完全保証いたします
+                            <i class="fa fa-shield"></i> <?php kaitori_te( 'Apply online today and we fully guarantee the price above', '本日中のWeb査定申し込みで上記価格を完全保証いたします' ); ?>
                         </div>
                     </div>
 
                     <!-- 1. Storage Capacity Pills -->
                     <div style="margin-bottom:20px;">
                         <label style="font-size:13.5px; font-weight:800; color:#1e293b; display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span>1. ストレージ容量を選択</span>
+                            <span><?php kaitori_te( '1. Select storage capacity', '1. ストレージ容量を選択' ); ?></span>
                             <span id="activeStorageText" style="color:#ef4444;">256GB</span>
                         </label>
                         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
@@ -134,7 +134,7 @@ else :
                     <!-- 2. Carrier Selector -->
                     <div style="margin-bottom:20px;">
                         <label style="font-size:13.5px; font-weight:800; color:#1e293b; display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span>2. キャリア / SIMロック状態</span>
+                            <span><?php kaitori_te( '2. Carrier / SIM lock status', '2. キャリア / SIMロック状態' ); ?></span>
                             <span id="activeCarrierText" style="color:#ef4444;">SIMフリー</span>
                         </label>
                         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
@@ -148,7 +148,7 @@ else :
                     <!-- Action Button -->
                     <div style="margin-top:28px;">
                         <a id="applyCtaLink" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) . '&storage=256GB' ) ); ?>" class="btn-apply-main" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#fff; font-size:16px; font-weight:800; padding:16px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; box-shadow:0 6px 20px rgba(239,68,68,0.35);">
-                            <i class="fa fa-paper-plane"></i> この機種の買取を申し込む (Apply for Buyback)
+                            <i class="fa fa-paper-plane"></i> <?php kaitori_te( 'Apply to sell this device', 'この機種の買取を申し込む (Apply for Buyback)' ); ?>
                         </a>
                     </div>
                 </div>
@@ -158,46 +158,46 @@ else :
         <!-- Section 2: Condition / Rank S-D Price Table -->
         <div style="background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.04); margin-bottom:32px;">
             <h2 style="font-size:19px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:18px; border-bottom:2px solid #f1f5f9; padding-bottom:12px;">
-                <i class="fa fa-sliders" style="color:#ef4444;"></i> コンディション別買取価格一覧表 (Rank Pricing)
+                <i class="fa fa-sliders" style="color:#ef4444;"></i> <?php kaitori_te( 'Buyback Price by Condition (Rank Pricing)', 'コンディション別買取価格一覧表 (Rank Pricing)' ); ?>
             </h2>
             <table class="rank-price-table">
                 <thead>
                     <tr>
-                        <th style="width:15%;">ランク</th>
-                        <th style="width:25%;">状態の目安</th>
-                        <th style="width:35%;">査定詳細・付属品条件</th>
-                        <th style="width:25%;">買取目安価格</th>
+                        <th style="width:15%;"><?php kaitori_te( 'Rank', 'ランク' ); ?></th>
+                        <th style="width:25%;"><?php kaitori_te( 'Condition guide', '状態の目安' ); ?></th>
+                        <th style="width:35%;"><?php kaitori_te( 'Appraisal details / accessory conditions', '査定詳細・付属品条件' ); ?></th>
+                        <th style="width:25%;"><?php kaitori_te( 'Est. buyback price', '買取目安価格' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><span class="badge-rank badge-rank-s">新品 (S)</span></td>
-                        <td><strong>未開封・未使用新品</strong></td>
-                        <td>元箱の封印シールが剥がされていない未開封品。アクティベーション前。</td>
+                        <td><span class="badge-rank badge-rank-s"><?php kaitori_te( 'New (S)', '新品 (S)' ); ?></span></td>
+                        <td><strong><?php kaitori_te( 'Sealed · unused new', '未開封・未使用新品' ); ?></strong></td>
+                        <td><?php kaitori_te( 'Factory seal intact, unopened, before activation.', '元箱の封印シールが剥がされていない未開封品。アクティベーション前。' ); ?></td>
                         <td><span class="table-price-val" id="rankPriceS">¥<?php echo number_format((int)$price_s); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-a">未使用 (A)</span></td>
-                        <td><strong>開封済み・未使用品</strong></td>
-                        <td>通電確認のみ実施。本体・液晶に傷や汚れなし。付属品欠品なし。</td>
+                        <td><span class="badge-rank badge-rank-a"><?php kaitori_te( 'Unused (A)', '未使用 (A)' ); ?></span></td>
+                        <td><strong><?php kaitori_te( 'Opened · unused', '開封済み・未使用品' ); ?></strong></td>
+                        <td><?php kaitori_te( 'Power-on check only. No scratches/dirt on body or screen. No missing accessories.', '通電確認のみ実施。本体・液晶に傷や汚れなし。付属品欠品なし。' ); ?></td>
                         <td><span class="table-price-val" id="rankPriceA">¥<?php echo number_format((int)$price_a); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-b">美品 (B)</span></td>
-                        <td><strong>中古美品 (目立つ傷なし)</strong></td>
-                        <td>使用感が少なく液晶・外装ともに綺麗な状態。バッテリー最大容量85%以上。</td>
+                        <td><span class="badge-rank badge-rank-b"><?php kaitori_te( 'Mint (B)', '美品 (B)' ); ?></span></td>
+                        <td><strong><?php kaitori_te( 'Used, mint (no visible scratches)', '中古美品 (目立つ傷なし)' ); ?></strong></td>
+                        <td><?php kaitori_te( 'Little wear, clean screen and body. Battery max capacity 85% or higher.', '使用感が少なく液晶・外装ともに綺麗な状態。バッテリー最大容量85%以上。' ); ?></td>
                         <td><span class="table-price-val" id="rankPriceB">¥<?php echo number_format((int)$price_b); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-c">良品 (C)</span></td>
-                        <td><strong>中古良品 (小傷・スレあり)</strong></td>
-                        <td>日常使用に伴う軽微な擦り傷・小打痕あり。動作全機能正常。</td>
+                        <td><span class="badge-rank badge-rank-c"><?php kaitori_te( 'Good (C)', '良品 (C)' ); ?></span></td>
+                        <td><strong><?php kaitori_te( 'Used, good (minor scratches/scuffs)', '中古良品 (小傷・スレあり)' ); ?></strong></td>
+                        <td><?php kaitori_te( 'Minor scuffs/small dents from daily use. All functions work.', '日常使用に伴う軽微な擦り傷・小打痕あり。動作全機能正常。' ); ?></td>
                         <td><span class="table-price-val" id="rankPriceC">¥<?php echo number_format((int)$price_c); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-d">難あり (D)</span></td>
-                        <td><strong>画面割れ・背面割れ・故障</strong></td>
-                        <td>ガラス割れ、カメラ不具合、バッテリー著しい劣化等のジャンク品。</td>
+                        <td><span class="badge-rank badge-rank-d"><?php kaitori_te( 'Faulty (D)', '難あり (D)' ); ?></span></td>
+                        <td><strong><?php kaitori_te( 'Cracked screen/back · faulty', '画面割れ・背面割れ・故障' ); ?></strong></td>
+                        <td><?php kaitori_te( 'Junk condition: cracked glass, camera faults, severe battery degradation, etc.', 'ガラス割れ、カメラ不具合、バッテリー著しい劣化等のジャンク品。' ); ?></td>
                         <td><span class="table-price-val" id="rankPriceD">¥<?php echo number_format((int)$price_d); ?></span></td>
                     </tr>
                 </tbody>
@@ -207,23 +207,23 @@ else :
         <!-- Section 3: Installment Notice -->
         <div style="background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.04); margin-bottom:32px;">
             <h2 style="font-size:18px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:14px;">
-                <i class="fa fa-info-circle" style="color:#ef4444;"></i> 分割支払い中（ネットワーク利用制限△）でも高価買取対応！
+                <i class="fa fa-info-circle" style="color:#ef4444;"></i> <?php kaitori_te( 'High buyback even while on installments (network restriction △)!', '分割支払い中（ネットワーク利用制限△）でも高価買取対応！' ); ?>
             </h2>
             <p style="font-size:13.5px; color:#475569; line-height:1.6;">
-                当店では、<strong>端末代金の分割支払い中（残債あり）のiPhone・スマホでも積極的に高価買取</strong>を行っております。「他店で断られた」「減額幅が大きすぎた」という場合でも、安心してお申し込みください。
+                <?php echo wp_kses_post( kaitori_t( 'We actively buy <strong>iPhones/smartphones even while on installment payments (with a remaining balance)</strong> at high prices. Even if you were turned down elsewhere or offered too big a reduction, please apply with confidence.', '当店では、<strong>端末代金の分割支払い中（残債あり）のiPhone・スマホでも積極的に高価買取</strong>を行っております。「他店で断られた」「減額幅が大きすぎた」という場合でも、安心してお申し込みください。' ) ); ?>
             </p>
             <div class="restriction-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:16px;">
                 <div style="border:1.5px solid #e2e8f0; border-radius:10px; padding:16px;">
-                    <div style="font-weight:800; color:#16a34a; margin-bottom:6px;"><i class="fa fa-circle"></i> 利用制限 ○ (一括完済)</div>
-                    <p style="font-size:12.5px; color:#64748b; margin:0;">端末代金全額完済済み。上限価格100%で買取いたします。</p>
+                    <div style="font-weight:800; color:#16a34a; margin-bottom:6px;"><i class="fa fa-circle"></i> <?php kaitori_te( 'Restriction ○ (paid in full)', '利用制限 ○ (一括完済)' ); ?></div>
+                    <p style="font-size:12.5px; color:#64748b; margin:0;"><?php kaitori_te( 'Device fully paid off. Bought at 100% of the max price.', '端末代金全額完済済み。上限価格100%で買取いたします。' ); ?></p>
                 </div>
                 <div style="border:1.5px solid #e2e8f0; border-radius:10px; padding:16px;">
-                    <div style="font-weight:800; color:#ea580c; margin-bottom:6px;"><i class="fa fa-adjust"></i> 利用制限 △ (分割支払い中)</div>
-                    <p style="font-size:12.5px; color:#64748b; margin:0;">キャリアへ分割代金お支払い中。僅かな減額（-¥<?php echo number_format((int)$installment); ?>程度）で即日現金化可能！</p>
+                    <div style="font-weight:800; color:#ea580c; margin-bottom:6px;"><i class="fa fa-adjust"></i> <?php kaitori_te( 'Restriction △ (on installments)', '利用制限 △ (分割支払い中)' ); ?></div>
+                    <p style="font-size:12.5px; color:#64748b; margin:0;"><?php kaitori_te( 'Still paying the carrier in installments. Same-day cash with only a small reduction (approx. -¥', 'キャリアへ分割代金お支払い中。僅かな減額（-¥' ); ?><?php echo number_format((int)$installment); ?><?php kaitori_te( ').', '程度）で即日現金化可能！' ); ?></p>
                 </div>
                 <div style="border:1.5px solid #e2e8f0; border-radius:10px; padding:16px;">
-                    <div style="font-weight:800; color:#dc2626; margin-bottom:6px;"><i class="fa fa-times-circle"></i> 利用制限 × (利用制限中)</div>
-                    <p style="font-size:12.5px; color:#64748b; margin:0;">ネットワークロック状態。部品取り用として個別査定いたします。</p>
+                    <div style="font-weight:800; color:#dc2626; margin-bottom:6px;"><i class="fa fa-times-circle"></i> <?php kaitori_te( 'Restriction × (restricted)', '利用制限 × (利用制限中)' ); ?></div>
+                    <p style="font-size:12.5px; color:#64748b; margin:0;"><?php kaitori_te( 'Network-locked. Appraised individually as a parts device.', 'ネットワークロック状態。部品取り用として個別査定いたします。' ); ?></p>
                 </div>
             </div>
         </div>
@@ -231,31 +231,31 @@ else :
         <!-- Section 4: Pre-shipment Checklist -->
         <div style="background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.04); margin-bottom:32px;">
             <h2 style="font-size:18px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:16px;">
-                <i class="fa fa-check-square-o" style="color:#ef4444;"></i> 発送前・持込前のかんたん初期化チェック
+                <i class="fa fa-check-square-o" style="color:#ef4444;"></i> <?php kaitori_te( 'Quick reset checklist before shipping / drop-off', '発送前・持込前のかんたん初期化チェック' ); ?>
             </h2>
             <div class="row">
                 <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; height:100%;">
-                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;">1. 「iPhoneを探す」オフ</div>
-                        <p style="font-size:12px; color:#64748b; margin:0;">設定 &gt; Apple ID &gt; 探す &gt; 「iPhoneを探す」をオフにしてください。</p>
+                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;"><?php kaitori_te( '1. Turn off "Find My iPhone"', '1. 「iPhoneを探す」オフ' ); ?></div>
+                        <p style="font-size:12px; color:#64748b; margin:0;"><?php kaitori_te( 'Settings &gt; Apple ID &gt; Find My &gt; turn off "Find My iPhone".', '設定 &gt; Apple ID &gt; 探す &gt; 「iPhoneを探す」をオフにしてください。' ); ?></p>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; height:100%;">
-                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;">2. Apple ID サインアウト</div>
-                        <p style="font-size:12px; color:#64748b; margin:0;">設定最上部のユーザー名 &gt; 最下部「サインアウト」を実行。</p>
+                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;"><?php kaitori_te( '2. Sign out of Apple ID', '2. Apple ID サインアウト' ); ?></div>
+                        <p style="font-size:12px; color:#64748b; margin:0;"><?php kaitori_te( 'Tap your name at the top of Settings &gt; scroll down &gt; "Sign Out".', '設定最上部のユーザー名 &gt; 最下部「サインアウト」を実行。' ); ?></p>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; height:100%;">
-                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;">3. すべてのコンテンツ消去</div>
-                        <p style="font-size:12px; color:#64748b; margin:0;">一般 &gt; 転送またはiPhoneをリセット &gt; 「すべてのコンテンツと設定を消去」。</p>
+                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;"><?php kaitori_te( '3. Erase all content', '3. すべてのコンテンツ消去' ); ?></div>
+                        <p style="font-size:12px; color:#64748b; margin:0;"><?php kaitori_te( 'General &gt; Transfer or Reset iPhone &gt; "Erase All Content and Settings".', '一般 &gt; 転送またはiPhoneをリセット &gt; 「すべてのコンテンツと設定を消去」。' ); ?></p>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; height:100%;">
-                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;">4. SIMカード抜き忘れ確認</div>
-                        <p style="font-size:12px; color:#64748b; margin:0;">本体側面トレイの物理SIMカードを取り出してください。</p>
+                        <div style="font-weight:800; font-size:13.5px; color:#0f172a; margin-bottom:4px;"><?php kaitori_te( '4. Remove your SIM card', '4. SIMカード抜き忘れ確認' ); ?></div>
+                        <p style="font-size:12px; color:#64748b; margin:0;"><?php kaitori_te( 'Take out the physical SIM card from the side tray.', '本体側面トレイの物理SIMカードを取り出してください。' ); ?></p>
                     </div>
                 </div>
             </div>

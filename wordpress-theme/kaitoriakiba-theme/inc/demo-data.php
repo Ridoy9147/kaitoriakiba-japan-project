@@ -67,6 +67,27 @@ function kaitoriakiba_auto_create_pages() {
             'content'  => '<p>iPhone、Google Pixel、Xperia、Galaxy等の高価買取対象機種一覧です。</p>',
             'is_front' => false,
         ),
+        'mypage' => array(
+            'title'    => 'マイページ',
+            'slug'     => 'mypage',
+            'template' => 'page-mypage.php',
+            'content'  => '<p>会員様の買取申込履歴・本人確認状況・お気に入りを確認できるマイページです。</p>',
+            'is_front' => false,
+        ),
+        'faq' => array(
+            'title'    => 'よくある質問 (FAQ)',
+            'slug'     => 'faq',
+            'template' => 'page-faq.php',
+            'content'  => '<p>買取アキバのサービスに関するよくあるご質問と回答をまとめています。</p>',
+            'is_front' => false,
+        ),
+        'access' => array(
+            'title'    => '店舗アクセス',
+            'slug'     => 'access',
+            'template' => 'page-access.php',
+            'content'  => '<p>秋葉原店の所在地・営業時間・アクセス方法のご案内です。</p>',
+            'is_front' => false,
+        ),
     );
 
     $created_page_ids = array();
@@ -736,6 +757,7 @@ function kaitoriakiba_seed_initial_data() {
                 update_post_meta( $post_id, '_installment_deduction', $dev['installment'] );
                 update_post_meta( $post_id, '_model_number', $dev['model'] );
                 update_post_meta( $post_id, '_jan_code', $dev['jan'] );
+                update_post_meta( $post_id, '_kaitori_demo', 1 ); // tag for clean demo removal
 
                 // Assign Taxonomies
                 wp_set_object_terms( $post_id, $dev['cat'], 'device_category' );

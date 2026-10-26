@@ -15,13 +15,37 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handle Buyback Application Submission
  */
 function kaitoriakiba_ajax_submit_application() {
-    check_ajax_referer( 'kaitori_nonce', 'security' );
+    if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
+        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
+    }
+    kaitoriakiba_guard_public_form( 'application', 20 );
 
-    $model          = isset( $_POST['model'] ) ? sanitize_text_field( $_POST['model'] ) : '';
-    $storage        = isset( $_POST['storage'] ) ? sanitize_text_field( $_POST['storage'] ) : '';
-    $color          = isset( $_POST['color'] ) ? sanitize_text_field( $_POST['color'] ) : '';
-    $carrier        = isset( $_POST['carrier'] ) ? sanitize_text_field( $_POST['carrier'] ) : '';
-    $imei           = isset( $_POST['imei'] ) ? sanitize_text_field( $_POST['imei'] ) : '';
+    // Gate: login + eKYC required (server-side enforcement; cannot be bypassed).
+    if ( function_exists( 'kaitoriakiba_user_can_sell' ) ) {
+        list( $can_sell, $gate_reason ) = kaitoriakiba_user_can_sell();
+        if ( ! $can_sell ) {
+            $messages = array(
+                'login'    => __( '買取申込にはログインが必要です。', 'kaitoriakiba' ),
+                'need_kyc' => __( 'お申込みの前に本人確認（eKYC）を完了してください。', 'kaitoriakiba' ),
+                'pending'  => __( '本人確認の審査中です。承認後にお申込みいただけます。', 'kaitoriakiba' ),
+                'rejected' => __( '本人確認に不備があります。再提出をお願いいたします。', 'kaitoriakiba' ),
+            );
+            wp_send_json_error( array(
+                'message'  => isset( $messages[ $gate_reason ] ) ? $messages[ $gate_reason ] : $messages['need_kyc'],
+                'gate'     => $gate_reason,
+                'kyc_url'  => home_url( '/kyc-verify/' ),
+                'login_url'=> home_url( '/register/?action=login' ),
+            ) );
+        }
+    }
+
+    // Accept both the native template field names (model/storage/...) and the
+    // Elementor widget field names (device_model/device_storage/...).
+    $model          = isset( $_POST['model'] ) ? sanitize_text_field( $_POST['model'] ) : ( isset( $_POST['device_model'] ) ? sanitize_text_field( $_POST['device_model'] ) : '' );
+    $storage        = isset( $_POST['storage'] ) ? sanitize_text_field( $_POST['storage'] ) : ( isset( $_POST['device_storage'] ) ? sanitize_text_field( $_POST['device_storage'] ) : '' );
+    $color          = isset( $_POST['color'] ) ? sanitize_text_field( $_POST['color'] ) : ( isset( $_POST['device_color'] ) ? sanitize_text_field( $_POST['device_color'] ) : '' );
+    $carrier        = isset( $_POST['carrier'] ) ? sanitize_text_field( $_POST['carrier'] ) : ( isset( $_POST['device_carrier'] ) ? sanitize_text_field( $_POST['device_carrier'] ) : '' );
+    $imei           = isset( $_POST['imei'] ) ? sanitize_text_field( $_POST['imei'] ) : ( isset( $_POST['device_imei'] ) ? sanitize_text_field( $_POST['device_imei'] ) : '' );
     $serial         = isset( $_POST['serial'] ) ? sanitize_text_field( $_POST['serial'] ) : '';
     $screen_cond    = isset( $_POST['screen_condition'] ) ? sanitize_text_field( $_POST['screen_condition'] ) : '';
     $body_cond      = isset( $_POST['body_condition'] ) ? sanitize_text_field( $_POST['body_condition'] ) : '';
@@ -41,14 +65,27 @@ function kaitoriakiba_ajax_submit_application() {
 
     // Delivery & Bank
     $delivery_meth  = isset( $_POST['delivery_method'] ) ? sanitize_text_field( $_POST['delivery_method'] ) : 'mail';
-    $shipping_kit   = isset( $_POST['shipping_kit_needed'] ) ? sanitize_text_field( $_POST['shipping_kit_needed'] ) : 'no';
+    $shipping_kit   = isset( $_POST['shipping_kit_needed'] ) ? sanitize_text_field( $_POST['shipping_kit_needed'] ) : ( isset( $_POST['shipping_kit'] ) ? sanitize_text_field( $_POST['shipping_kit'] ) : 'no' );
     $pickup_dt      = isset( $_POST['pickup_datetime'] ) ? sanitize_text_field( $_POST['pickup_datetime'] ) : '';
     $bank_name      = isset( $_POST['bank_name'] ) ? sanitize_text_field( $_POST['bank_name'] ) : '';
     $branch_name    = isset( $_POST['bank_branch'] ) ? sanitize_text_field( $_POST['bank_branch'] ) : '';
     $acc_type       = isset( $_POST['bank_account_type'] ) ? sanitize_text_field( $_POST['bank_account_type'] ) : '普通';
     $acc_number     = isset( $_POST['bank_account_number'] ) ? sanitize_text_field( $_POST['bank_account_number'] ) : '';
     $holder_kana    = isset( $_POST['bank_holder_kana'] ) ? sanitize_text_field( $_POST['bank_holder_kana'] ) : '';
-    $est_price      = isset( $_POST['estimated_price'] ) ? intval( $_POST['estimated_price'] ) : 0;
+
+    // SECURITY: never trust the price from the browser. Recompute on the server
+    // from the device's admin pricing. The posted value is kept only for reference.
+    $client_price   = isset( $_POST['estimated_price'] ) ? intval( $_POST['estimated_price'] ) : 0;
+    $est_price      = kaitoriakiba_calculate_quote( array(
+        'model'              => $model,
+        'storage'            => $storage,
+        'screen_condition'   => $screen_cond,
+        'body_condition'     => $body_cond,
+        'battery_health'     => $battery_health,
+        'powers_on'          => $powers_on,
+        'camera_works'       => $camera_works,
+        'installment_status' => $installment_st,
+    ) );
 
     // Customer
     $name           = isset( $_POST['applicant_name'] ) ? sanitize_text_field( $_POST['applicant_name'] ) : 'Guest Customer';
@@ -104,9 +141,11 @@ function kaitoriakiba_ajax_submit_application() {
     update_post_meta( $order_id, '_bank_name', $bank_name );
     update_post_meta( $order_id, '_bank_branch', $branch_name );
     update_post_meta( $order_id, '_bank_account_type', $acc_type );
-    update_post_meta( $order_id, '_bank_account_number', $acc_number );
-    update_post_meta( $order_id, '_bank_holder_kana', $holder_kana );
+    // Encrypt financial PII at rest (see inc/crypto.php).
+    update_post_meta( $order_id, '_bank_account_number', kaitoriakiba_encrypt( $acc_number ) );
+    update_post_meta( $order_id, '_bank_holder_kana', kaitoriakiba_encrypt( $holder_kana ) );
     update_post_meta( $order_id, '_estimated_price', $est_price );
+    update_post_meta( $order_id, '_estimated_price_client', $client_price ); // reference only
 
     // Link WordPress User Profile
     $user_id = is_user_logged_in() ? get_current_user_id() : 0;
@@ -151,6 +190,11 @@ function kaitoriakiba_ajax_submit_application() {
              . "管理画面より詳細をご確認ください:\n" . admin_url('post.php?post=' . $order_id . '&action=edit');
     @wp_mail( $admin_email, $subject, $message );
 
+    // Confirmation email to the CUSTOMER (previously missing).
+    if ( function_exists( 'kaitoriakiba_send_order_confirmation' ) ) {
+        kaitoriakiba_send_order_confirmation( $order_id );
+    }
+
     wp_send_json_success( array(
         'order_id'    => $order_id,
         'order_code'  => $order_title,
@@ -164,7 +208,10 @@ add_action( 'wp_ajax_nopriv_kaitori_submit_application', 'kaitoriakiba_ajax_subm
  * Handle eKYC ID Submission & Connect with Customer Profile + Orders
  */
 function kaitoriakiba_ajax_submit_kyc() {
-    check_ajax_referer( 'kaitori_nonce', 'security' );
+    if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
+        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
+    }
+    kaitoriakiba_guard_public_form( 'kyc', 20 );
 
     $name       = isset( $_POST['kyc_name'] ) ? sanitize_text_field( $_POST['kyc_name'] ) : ( isset( $_POST['customer_name'] ) ? sanitize_text_field( $_POST['customer_name'] ) : '' );
     $kana       = isset( $_POST['kyc_kana'] ) ? sanitize_text_field( $_POST['kyc_kana'] ) : '';
@@ -256,29 +303,26 @@ function kaitoriakiba_ajax_submit_kyc() {
         update_post_meta( $linked_order_id, '_order_kyc_record_id', $kyc_id );
     }
 
-    // Handle Uploaded ID Files
-    require_once( ABSPATH . 'wp-admin/includes/image.php' );
-    require_once( ABSPATH . 'wp-admin/includes/file.php' );
-    require_once( ABSPATH . 'wp-admin/includes/media.php' );
-
-    $front_key = ! empty( $_FILES['kyc_id_front'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front'] ) ? 'kyc_front' : '' );
+    // Handle Uploaded ID Files — stored in a PROTECTED directory, never the public media library.
+    // See inc/kyc-security.php (compliance: 古物営業法 / APPI).
+    $front_key = ! empty( $_FILES['kyc_id_front']['name'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front']['name'] ) ? 'kyc_front' : '' );
     if ( $front_key ) {
-        $front_id = media_handle_upload( $front_key, $kyc_id );
-        if ( ! is_wp_error( $front_id ) ) {
-            update_post_meta( $kyc_id, '_kyc_id_front_attach', $front_id );
+        $front_path = kaitoriakiba_kyc_store_upload( $front_key, $kyc_id );
+        if ( ! is_wp_error( $front_path ) ) {
+            update_post_meta( $kyc_id, '_kyc_id_front_file', $front_path );
         }
     }
-    $back_key = ! empty( $_FILES['kyc_id_back'] ) ? 'kyc_id_back' : ( ! empty( $_FILES['kyc_back'] ) ? 'kyc_back' : '' );
+    $back_key = ! empty( $_FILES['kyc_id_back']['name'] ) ? 'kyc_id_back' : ( ! empty( $_FILES['kyc_back']['name'] ) ? 'kyc_back' : '' );
     if ( $back_key ) {
-        $back_id = media_handle_upload( $back_key, $kyc_id );
-        if ( ! is_wp_error( $back_id ) ) {
-            update_post_meta( $kyc_id, '_kyc_id_back_attach', $back_id );
+        $back_path = kaitoriakiba_kyc_store_upload( $back_key, $kyc_id );
+        if ( ! is_wp_error( $back_path ) ) {
+            update_post_meta( $kyc_id, '_kyc_id_back_file', $back_path );
         }
     }
-    if ( ! empty( $_FILES['kyc_selfie'] ) ) {
-        $selfie_id = media_handle_upload( 'kyc_selfie', $kyc_id );
-        if ( ! is_wp_error( $selfie_id ) ) {
-            update_post_meta( $kyc_id, '_kyc_selfie_attach', $selfie_id );
+    if ( ! empty( $_FILES['kyc_selfie']['name'] ) ) {
+        $selfie_path = kaitoriakiba_kyc_store_upload( 'kyc_selfie', $kyc_id );
+        if ( ! is_wp_error( $selfie_path ) ) {
+            update_post_meta( $kyc_id, '_kyc_selfie_file', $selfie_path );
         }
     }
 
@@ -289,6 +333,29 @@ function kaitoriakiba_ajax_submit_kyc() {
 }
 add_action( 'wp_ajax_kaitori_submit_kyc', 'kaitoriakiba_ajax_submit_kyc' );
 add_action( 'wp_ajax_nopriv_kaitori_submit_kyc', 'kaitoriakiba_ajax_submit_kyc' );
+
+/**
+ * Live buyback estimate for the sell-apply form. Uses the SAME server-side engine
+ * as the final order, so the displayed figure matches what the order will store.
+ */
+function kaitoriakiba_ajax_live_estimate() {
+    $price = kaitoriakiba_calculate_quote( array(
+        'model'              => isset( $_REQUEST['model'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['model'] ) ) : '',
+        'storage'            => isset( $_REQUEST['storage'] ) ? sanitize_text_field( $_REQUEST['storage'] ) : '256GB',
+        'screen_condition'   => isset( $_REQUEST['screen_condition'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['screen_condition'] ) ) : '',
+        'body_condition'     => isset( $_REQUEST['body_condition'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['body_condition'] ) ) : '',
+        'battery_health'     => isset( $_REQUEST['battery_health'] ) ? intval( $_REQUEST['battery_health'] ) : 100,
+        'powers_on'          => isset( $_REQUEST['powers_on'] ) ? sanitize_text_field( $_REQUEST['powers_on'] ) : 'yes',
+        'camera_works'       => isset( $_REQUEST['camera_works'] ) ? sanitize_text_field( $_REQUEST['camera_works'] ) : 'yes',
+        'installment_status' => isset( $_REQUEST['installment_status'] ) ? sanitize_text_field( $_REQUEST['installment_status'] ) : 'no',
+    ) );
+    wp_send_json_success( array(
+        'price'     => $price,
+        'formatted' => '¥' . number_format( $price ),
+    ) );
+}
+add_action( 'wp_ajax_kaitori_live_estimate', 'kaitoriakiba_ajax_live_estimate' );
+add_action( 'wp_ajax_nopriv_kaitori_live_estimate', 'kaitoriakiba_ajax_live_estimate' );
 
 /**
  * Live Device Filter AJAX Query
@@ -371,7 +438,10 @@ add_action( 'wp_ajax_nopriv_kaitori_filter_devices', 'kaitoriakiba_ajax_filter_d
  * Handle Member Registration via AJAX
  */
 function kaitoriakiba_ajax_register_user() {
-    check_ajax_referer( 'kaitori_nonce', 'security' );
+    if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
+        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
+    }
+    kaitoriakiba_guard_public_form( 'register', 15 );
 
     $email      = isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : '';
     $password   = isset( $_POST['password'] ) ? $_POST['password'] : '';
@@ -387,8 +457,12 @@ function kaitoriakiba_ajax_register_user() {
         wp_send_json_error( array( 'message' => __( 'このメールアドレスは既に登録されています。ログインしてください。', 'kaitoriakiba' ) ) );
     }
 
-    if ( strlen( $password ) < 6 ) {
-        wp_send_json_error( array( 'message' => __( 'パスワードは6文字以上で設定してください。', 'kaitoriakiba' ) ) );
+    if ( strlen( $password ) < 8 ) {
+        wp_send_json_error( array( 'message' => __( 'パスワードは8文字以上で設定してください。', 'kaitoriakiba' ) ) );
+    }
+    // Require a mix of letters and numbers for basic strength.
+    if ( ! preg_match( '/[A-Za-z]/', $password ) || ! preg_match( '/\d/', $password ) ) {
+        wp_send_json_error( array( 'message' => __( 'パスワードは英字と数字を組み合わせてください。', 'kaitoriakiba' ) ) );
     }
 
     $username = sanitize_user( current( explode( '@', $email ) ) );
@@ -431,7 +505,16 @@ add_action( 'wp_ajax_nopriv_kaitori_register_user', 'kaitoriakiba_ajax_register_
  * Handle Member Login via AJAX
  */
 function kaitoriakiba_ajax_login_user() {
-    check_ajax_referer( 'kaitori_nonce', 'security' );
+    if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
+        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
+    }
+    // Brute-force throttle: 10 attempts / 10 min per IP.
+    if ( ! kaitoriakiba_rate_limit( 'login', 10, 600 ) ) {
+        wp_send_json_error( array( 'message' => __( 'ログイン試行回数が多すぎます。しばらく待ってから再度お試しください。', 'kaitoriakiba' ) ) );
+    }
+    if ( ! kaitoriakiba_check_honeypot() || ! kaitoriakiba_captcha_ok() ) {
+        wp_send_json_error( array( 'message' => __( '不正な送信が検出されました。ページを再読み込みしてお試しください。', 'kaitoriakiba' ) ) );
+    }
 
     $user_login = isset( $_POST['log'] ) ? sanitize_text_field( $_POST['log'] ) : '';
     $user_pass  = isset( $_POST['pwd'] ) ? $_POST['pwd'] : '';
@@ -460,5 +543,65 @@ function kaitoriakiba_ajax_login_user() {
 }
 add_action( 'wp_ajax_kaitori_login_user', 'kaitoriakiba_ajax_login_user' );
 add_action( 'wp_ajax_nopriv_kaitori_login_user', 'kaitoriakiba_ajax_login_user' );
+
+/**
+ * Get a user's favorite device ids.
+ *
+ * @param int|null $user_id
+ * @return int[]
+ */
+function kaitoriakiba_get_user_favorites( $user_id = null ) {
+    $user_id = $user_id ?: get_current_user_id();
+    if ( ! $user_id ) {
+        return array();
+    }
+    $favs = get_user_meta( $user_id, '_kaitori_favorites', true );
+    if ( ! is_array( $favs ) ) {
+        return array();
+    }
+    return array_values( array_unique( array_filter( array_map( 'intval', $favs ) ) ) );
+}
+
+/**
+ * Toggle a device in the current user's favorites (★).
+ * Logged-in users persist to user meta; guests get a flag so the client can
+ * keep the state in localStorage and prompt to register.
+ */
+function kaitoriakiba_ajax_toggle_favorite() {
+    check_ajax_referer( 'kaitori_nonce', 'security' );
+
+    $device_id = isset( $_POST['device_id'] ) ? intval( $_POST['device_id'] ) : 0;
+    if ( ! $device_id || 'kaitori_device' !== get_post_type( $device_id ) ) {
+        wp_send_json_error( array( 'message' => __( '対象の端末が見つかりませんでした。', 'kaitoriakiba' ) ) );
+    }
+
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_success( array(
+            'guest'      => true,
+            'device_id'  => $device_id,
+            'login_url'  => home_url( '/register/' ),
+            'message'    => __( 'お気に入りの保存には会員登録・ログインが必要です。', 'kaitoriakiba' ),
+        ) );
+    }
+
+    $uid  = get_current_user_id();
+    $favs = kaitoriakiba_get_user_favorites( $uid );
+
+    if ( in_array( $device_id, $favs, true ) ) {
+        $favs   = array_values( array_diff( $favs, array( $device_id ) ) );
+        $active = false;
+    } else {
+        $favs[] = $device_id;
+        $active = true;
+    }
+    update_user_meta( $uid, '_kaitori_favorites', $favs );
+
+    wp_send_json_success( array(
+        'active' => $active,
+        'count'  => count( $favs ),
+    ) );
+}
+add_action( 'wp_ajax_kaitori_toggle_favorite', 'kaitoriakiba_ajax_toggle_favorite' );
+add_action( 'wp_ajax_nopriv_kaitori_toggle_favorite', 'kaitoriakiba_ajax_toggle_favorite' );
 
 

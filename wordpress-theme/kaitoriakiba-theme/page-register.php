@@ -66,6 +66,7 @@ else :
                     </div>
 
                     <form id="registerForm" method="post">
+                        <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                         <div class="row">
                             <div class="col-md-6 form-group" style="margin-bottom:18px;">
                                 <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
@@ -104,7 +105,7 @@ else :
                                 <span>パスワード (Password)</span>
                                 <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                             </label>
-                            <input type="password" name="password" id="reg_pwd" class="form-control-custom" placeholder="半角英数6文字以上" required minlength="6" style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="password" name="password" id="reg_pwd" class="form-control-custom" placeholder="半角英数8文字以上（英字と数字を含む）" required minlength="8" style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom:20px;">
@@ -136,6 +137,7 @@ else :
                     </div>
 
                     <form id="loginForm" method="post">
+                        <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                         <div class="form-group" style="margin-bottom:18px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
                                 <span>メールアドレスまたはユーザー名</span>

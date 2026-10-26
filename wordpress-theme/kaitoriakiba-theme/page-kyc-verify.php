@@ -69,6 +69,7 @@ else :
             </div>
 
             <form id="kycForm" method="post" enctype="multipart/form-data">
+                <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                 <!-- Document Type Select Cards -->
                 <div class="form-group" style="margin-bottom:20px;">
                     <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">

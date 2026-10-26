@@ -1,0 +1,38 @@
+/* Kaitori Akiba — Admin Customer Management UI */
+.kaitori-admin .kaitori-sub { color:#64748b; margin:4px 0 16px; }
+.kaitori-admin .kaitori-filters { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:16px; }
+.kaitori-admin .kaitori-filters input[type="search"] { min-width:220px; }
+.kaitori-admin .kaitori-filters label { font-size:12px; color:#475569; }
+.kaitori-admin .kaitori-table { border-radius:10px; overflow:hidden; }
+.kaitori-admin .kaitori-table th { font-weight:700; }
+.kaitori-admin .kaitori-pill { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 8px; border-radius:10px; background:#f1f5f9; color:#64748b; margin-left:6px; vertical-align:middle; }
+.kaitori-admin .kaitori-pill-member { background:#e0e7ff; color:#3730a3; }
+
+/* Detail */
+.kaitori-admin.kaitori-detail h1 { margin-bottom:14px; }
+.kaitori-admin .kaitori-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; margin:16px 0; }
+.kaitori-admin .kaitori-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; }
+.kaitori-admin .kaitori-card-wide { margin-top:4px; }
+.kaitori-admin .kaitori-card h2 { font-size:15px; margin:0 0 12px; border-bottom:2px solid #f1f5f9; padding-bottom:8px; }
+.kaitori-admin .kaitori-field { margin-bottom:12px; }
+.kaitori-admin .kaitori-field label { display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px; }
+.kaitori-admin .kaitori-field input { width:100%; max-width:360px; border:1.5px solid #cbd5e1; border-radius:8px; padding:7px 10px; }
+.kaitori-admin .kaitori-field input[readonly] { background:#f8fafc; color:#64748b; }
+.kaitori-admin .kaitori-save-msg { margin-left:10px; font-weight:700; font-size:12.5px; }
+.kaitori-admin .kaitori-save-msg.ok { color:#15803d; }
+.kaitori-admin .kaitori-save-msg.err { color:#b91c1c; }
+.kaitori-admin .kaitori-muted { color:#94a3b8; }
+.kaitori-admin .kaitori-fav-list { margin:0; padding-left:18px; }
+.kaitori-admin .kaitori-order-status { border:1.5px solid #cbd5e1; border-radius:8px; padding:5px 8px; font-weight:700; }
+.kaitori-admin .kaitori-imei { font-family:monospace; font-weight:700; margin-right:6px; }
+
+/* Scanner modal */
+.kaitori-scan-modal { position:fixed; inset:0; background:rgba(15,23,42,.72); z-index:100000; display:flex; align-items:center; justify-content:center; }
+.kaitori-scan-box { background:#fff; border-radius:14px; padding:20px; width:min(460px, 92vw); text-align:center; }
+.kaitori-scan-box h3 { margin:0 0 12px; font-size:16px; }
+.kaitori-scan-box video { width:100%; border-radius:10px; background:#000; max-height:320px; }
+.kaitori-scan-hint { font-size:12.5px; color:#475569; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 10px; margin-bottom:10px; }
+.kaitori-scan-manual:focus { outline:3px solid #2563eb; outline-offset:1px; }
+.kaitori-scan-status { margin:10px 0; font-weight:700; color:#475569; min-height:20px; }
+.kaitori-scan-manual { width:100%; border:1.5px solid #cbd5e1; border-radius:8px; padding:8px 10px; margin-top:6px; }
+.kaitori-scan-actions { display:flex; gap:8px; justify-content:center; margin-top:12px; }

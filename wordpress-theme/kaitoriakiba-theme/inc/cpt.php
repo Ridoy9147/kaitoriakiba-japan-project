@@ -13,29 +13,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * The full set of auto-generated capabilities for the shared 'kaitori_record'
+ * capability_type used by buyback_order + kyc_record. WordPress generates these
+ * from map_meta_cap=true; we grant them to the right users via the filter below.
+ *
+ * IMPORTANT: we must NOT remap core meta caps (edit_post/read_post/delete_post) to
+ * a core primitive like manage_options — doing so registers that primitive as a
+ * meta-cap alias and makes map_meta_cap() return "do_not_allow" for it site-wide.
+ *
+ * @return string[]
+ */
+function kaitoriakiba_record_caps_list() {
+    $s = 'kaitori_record';
+    $p = 'kaitori_records';
+    return array(
+        "edit_$p", "edit_others_$p", "publish_$p", "read_private_$p",
+        "delete_$p", "delete_private_$p", "delete_published_$p", "delete_others_$p",
+        "edit_private_$p", "edit_published_$p", "create_$p",
+        "edit_$s", "read_$s", "delete_$s",
+    );
+}
+
+/**
+ * The capability required to view the Customers page / manage orders & eKYC.
+ * A real auto-generated primitive (never a meta cap), so direct current_user_can()
+ * checks work. Filterable for a future dedicated staff role.
+ */
+function kaitoriakiba_manage_cap() {
+    return apply_filters( 'kaitori_manage_cap', 'edit_kaitori_records' );
+}
+
+/**
+ * Grant the kaitori_record caps at runtime to anyone with manage_options
+ * (administrators). Reliable and persistence-free; a staff role can be added later.
+ */
+function kaitoriakiba_grant_record_caps( $allcaps ) {
+    if ( ! empty( $allcaps['manage_options'] ) ) {
+        foreach ( kaitoriakiba_record_caps_list() as $c ) {
+            $allcaps[ $c ] = true;
+        }
+    }
+    return $allcaps;
+}
+add_filter( 'user_has_cap', 'kaitoriakiba_grant_record_caps' );
+
+/**
  * Register Custom Post Types and Taxonomies
  */
 function kaitoriakiba_register_cpt_taxonomies() {
 
     // 1. Custom Post Type: Kaitori Devices
     $device_labels = array(
-        'name'                  => _x( 'Buyback Devices', 'Post Type General Name', 'kaitoriakiba' ),
-        'singular_name'         => _x( 'Buyback Device', 'Post Type Singular Name', 'kaitoriakiba' ),
-        'menu_name'             => __( 'Buyback Devices', 'kaitoriakiba' ),
-        'name_admin_bar'        => __( 'Device', 'kaitoriakiba' ),
-        'archives'              => __( 'Device Archives', 'kaitoriakiba' ),
-        'all_items'             => __( 'All Devices', 'kaitoriakiba' ),
-        'add_new_item'          => __( 'Add New Device', 'kaitoriakiba' ),
-        'add_new'               => __( 'Add New Device', 'kaitoriakiba' ),
-        'new_item'              => __( 'New Device', 'kaitoriakiba' ),
-        'edit_item'             => __( 'Edit Device', 'kaitoriakiba' ),
-        'update_item'           => __( 'Update Device', 'kaitoriakiba' ),
-        'view_item'             => __( 'View Device', 'kaitoriakiba' ),
-        'search_items'          => __( 'Search Devices', 'kaitoriakiba' ),
+        'name'                  => kaitori_t( 'Buyback Devices', '買取端末' ),
+        'singular_name'         => kaitori_t( 'Buyback Device', '買取端末' ),
+        'menu_name'             => kaitori_t( 'Buyback Devices', '買取端末' ),
+        'name_admin_bar'        => kaitori_t( 'Device', '端末' ),
+        'archives'              => kaitori_t( 'Device Archives', '端末アーカイブ' ),
+        'all_items'             => kaitori_t( 'All Devices', 'すべての端末' ),
+        'add_new_item'          => kaitori_t( 'Add New Device', '新規端末を追加' ),
+        'add_new'               => kaitori_t( 'Add New Device', '新規端末を追加' ),
+        'new_item'              => kaitori_t( 'New Device', '新規端末' ),
+        'edit_item'             => kaitori_t( 'Edit Device', '端末を編集' ),
+        'update_item'           => kaitori_t( 'Update Device', '端末を更新' ),
+        'view_item'             => kaitori_t( 'View Device', '端末を表示' ),
+        'search_items'          => kaitori_t( 'Search Devices', '端末を検索' ),
     );
 
     $device_args = array(
-        'label'                 => __( 'Buyback Device', 'kaitoriakiba' ),
+        'label'                 => kaitori_t( 'Buyback Device', '買取端末' ),
         'labels'                => $device_labels,
         'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'elementor' ),
         'hierarchical'          => false,
@@ -58,12 +103,12 @@ function kaitoriakiba_register_cpt_taxonomies() {
 
     // 2. Custom Post Type: Buyback Orders / Applications
     $order_labels = array(
-        'name'                  => _x( 'Buyback Orders', 'Post Type General Name', 'kaitoriakiba' ),
-        'singular_name'         => _x( 'Buyback Order', 'Post Type Singular Name', 'kaitoriakiba' ),
-        'menu_name'             => __( 'Buyback Orders', 'kaitoriakiba' ),
-        'all_items'             => __( 'All Applications', 'kaitoriakiba' ),
-        'add_new_item'          => __( 'Add New Application', 'kaitoriakiba' ),
-        'edit_item'             => __( 'View / Edit Application', 'kaitoriakiba' ),
+        'name'                  => kaitori_t( 'Buyback Orders', '買取注文' ),
+        'singular_name'         => kaitori_t( 'Buyback Order', '買取注文' ),
+        'menu_name'             => kaitori_t( 'Buyback Orders', '買取注文' ),
+        'all_items'             => kaitori_t( 'All Applications', 'すべての申込' ),
+        'add_new_item'          => kaitori_t( 'Add New Application', '新規申込を追加' ),
+        'edit_item'             => kaitori_t( 'View / Edit Application', '申込を表示 / 編集' ),
     );
     $order_args = array(
         'labels'                => $order_labels,
@@ -77,17 +122,20 @@ function kaitoriakiba_register_cpt_taxonomies() {
         'can_export'            => true,
         'has_archive'           => false,
         'publicly_queryable'    => false,
-        'capability_type'       => 'post',
+        // Restrict to admins (and any future role granted the kaitori_record caps).
+        // Dedicated capability_type so core generates proper primitives.
+        'capability_type'       => array( 'kaitori_record', 'kaitori_records' ),
+        'map_meta_cap'          => true,
     );
     register_post_type( 'buyback_order', $order_args );
 
     // 3. Custom Post Type: eKYC Submissions
     $kyc_labels = array(
-        'name'                  => _x( 'eKYC Verifications', 'Post Type General Name', 'kaitoriakiba' ),
-        'singular_name'         => _x( 'eKYC Verification', 'Post Type Singular Name', 'kaitoriakiba' ),
-        'menu_name'             => __( 'eKYC Verifications', 'kaitoriakiba' ),
-        'all_items'             => __( 'All Submissions', 'kaitoriakiba' ),
-        'edit_item'             => __( 'View / Verify ID', 'kaitoriakiba' ),
+        'name'                  => kaitori_t( 'eKYC Verifications', '本人確認 (eKYC)' ),
+        'singular_name'         => kaitori_t( 'eKYC Verification', '本人確認 (eKYC)' ),
+        'menu_name'             => kaitori_t( 'eKYC Verifications', '本人確認 (eKYC)' ),
+        'all_items'             => kaitori_t( 'All Submissions', 'すべての提出' ),
+        'edit_item'             => kaitori_t( 'View / Verify ID', 'ID を表示 / 審査' ),
     );
     $kyc_args = array(
         'labels'                => $kyc_labels,
@@ -101,7 +149,9 @@ function kaitoriakiba_register_cpt_taxonomies() {
         'can_export'            => true,
         'has_archive'           => false,
         'publicly_queryable'    => false,
-        'capability_type'       => 'post',
+        // Highly sensitive (identity documents): same restriction as orders.
+        'capability_type'       => array( 'kaitori_record', 'kaitori_records' ),
+        'map_meta_cap'          => true,
     );
     register_post_type( 'kyc_record', $kyc_args );
 
@@ -109,16 +159,16 @@ function kaitoriakiba_register_cpt_taxonomies() {
     register_taxonomy( 'device_category', array( 'kaitori_device' ), array(
         'hierarchical'      => true,
         'labels'            => array(
-            'name'              => _x( 'Device Categories', 'taxonomy general name', 'kaitoriakiba' ),
-            'singular_name'     => _x( 'Device Category', 'taxonomy singular name', 'kaitoriakiba' ),
-            'search_items'      => __( 'Search Categories', 'kaitoriakiba' ),
-            'all_items'         => __( 'All Categories', 'kaitoriakiba' ),
-            'parent_item'       => __( 'Parent Category', 'kaitoriakiba' ),
-            'parent_item_colon' => __( 'Parent Category:', 'kaitoriakiba' ),
-            'edit_item'         => __( 'Edit Category', 'kaitoriakiba' ),
-            'update_item'       => __( 'Update Category', 'kaitoriakiba' ),
-            'add_new_item'      => __( 'Add New Category', 'kaitoriakiba' ),
-            'menu_name'         => __( 'Categories', 'kaitoriakiba' ),
+            'name'              => kaitori_t( 'Device Categories', '端末カテゴリ' ),
+            'singular_name'     => kaitori_t( 'Device Category', '端末カテゴリ' ),
+            'search_items'      => kaitori_t( 'Search Categories', 'カテゴリを検索' ),
+            'all_items'         => kaitori_t( 'All Categories', 'すべてのカテゴリ' ),
+            'parent_item'       => kaitori_t( 'Parent Category', '親カテゴリ' ),
+            'parent_item_colon' => kaitori_t( 'Parent Category:', '親カテゴリ:' ),
+            'edit_item'         => kaitori_t( 'Edit Category', 'カテゴリを編集' ),
+            'update_item'       => kaitori_t( 'Update Category', 'カテゴリを更新' ),
+            'add_new_item'      => kaitori_t( 'Add New Category', '新規カテゴリを追加' ),
+            'menu_name'         => kaitori_t( 'Categories', 'カテゴリ' ),
         ),
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -131,9 +181,9 @@ function kaitoriakiba_register_cpt_taxonomies() {
     register_taxonomy( 'carrier', array( 'kaitori_device' ), array(
         'hierarchical'      => true,
         'labels'            => array(
-            'name'          => _x( 'Carriers', 'taxonomy general name', 'kaitoriakiba' ),
-            'singular_name' => _x( 'Carrier', 'taxonomy singular name', 'kaitoriakiba' ),
-            'menu_name'     => __( 'Carriers', 'kaitoriakiba' ),
+            'name'          => kaitori_t( 'Carriers', 'キャリア' ),
+            'singular_name' => kaitori_t( 'Carrier', 'キャリア' ),
+            'menu_name'     => kaitori_t( 'Carriers', 'キャリア' ),
         ),
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -146,9 +196,9 @@ function kaitoriakiba_register_cpt_taxonomies() {
     register_taxonomy( 'brand', array( 'kaitori_device' ), array(
         'hierarchical'      => true,
         'labels'            => array(
-            'name'          => _x( 'Brands', 'taxonomy general name', 'kaitoriakiba' ),
-            'singular_name' => _x( 'Brand', 'taxonomy singular name', 'kaitoriakiba' ),
-            'menu_name'     => __( 'Brands', 'kaitoriakiba' ),
+            'name'          => kaitori_t( 'Brands', 'ブランド' ),
+            'singular_name' => kaitori_t( 'Brand', 'ブランド' ),
+            'menu_name'     => kaitori_t( 'Brands', 'ブランド' ),
         ),
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -161,9 +211,9 @@ function kaitoriakiba_register_cpt_taxonomies() {
     register_taxonomy( 'series', array( 'kaitori_device' ), array(
         'hierarchical'      => true,
         'labels'            => array(
-            'name'          => _x( 'Series', 'taxonomy general name', 'kaitoriakiba' ),
-            'singular_name' => _x( 'Series', 'taxonomy singular name', 'kaitoriakiba' ),
-            'menu_name'     => __( 'Series', 'kaitoriakiba' ),
+            'name'          => kaitori_t( 'Series', 'シリーズ' ),
+            'singular_name' => kaitori_t( 'Series', 'シリーズ' ),
+            'menu_name'     => kaitori_t( 'Series', 'シリーズ' ),
         ),
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -175,18 +225,43 @@ function kaitoriakiba_register_cpt_taxonomies() {
 add_action( 'init', 'kaitoriakiba_register_cpt_taxonomies' );
 
 /**
+ * Canonical buyback order statuses — single source of truth used by the admin
+ * list column, the order meta-box dropdown, and customer status emails.
+ *
+ * @return array<string,array{label:string,label_ja:string,bg:string,color:string}>
+ */
+function kaitoriakiba_order_statuses() {
+    return apply_filters( 'kaitori_order_statuses', array(
+        'pending'    => array( 'label' => 'Pending Review',        'label_ja' => '審査待ち',       'bg' => '#fef3c7', 'color' => '#b45309' ),
+        'received'   => array( 'label' => 'Device Received',       'label_ja' => '端末到着・入荷', 'bg' => '#e0e7ff', 'color' => '#3730a3' ),
+        'inspecting' => array( 'label' => 'Inspecting',            'label_ja' => '検品中',         'bg' => '#fce7f3', 'color' => '#9d174d' ),
+        'inspected'  => array( 'label' => 'Inspection Completed',  'label_ja' => '検品完了',       'bg' => '#cffafe', 'color' => '#0e7490' ),
+        'paid'       => array( 'label' => 'Paid / Completed',      'label_ja' => '入金完了',       'bg' => '#dcfce7', 'color' => '#15803d' ),
+        'cancelled'  => array( 'label' => 'Cancelled / Returned',  'label_ja' => 'キャンセル・返送', 'bg' => '#fee2e2', 'color' => '#991b1b' ),
+    ) );
+}
+
+/**
+ * Get a single status row with a safe fallback to "pending".
+ */
+function kaitoriakiba_get_order_status( $status ) {
+    $all = kaitoriakiba_order_statuses();
+    return isset( $all[ $status ] ) ? $all[ $status ] : $all['pending'];
+}
+
+/**
  * Custom Admin Columns for Buyback Orders
  */
 function kaitoriakiba_order_columns( $columns ) {
     $new_columns = array(
         'cb'              => $columns['cb'],
-        'title'           => __( 'Application ID / Title', 'kaitoriakiba' ),
-        'applicant_name'  => __( 'Customer Name', 'kaitoriakiba' ),
-        'device_model'    => __( 'Device & Storage', 'kaitoriakiba' ),
-        'estimated_price' => __( 'Estimated Payout', 'kaitoriakiba' ),
-        'delivery_method' => __( 'Delivery Method', 'kaitoriakiba' ),
-        'order_status'    => __( 'Status', 'kaitoriakiba' ),
-        'date'            => __( 'Date', 'kaitoriakiba' ),
+        'title'           => kaitori_t( 'Application ID / Title', '申込ID / タイトル' ),
+        'applicant_name'  => kaitori_t( 'Customer Name', 'お客様名' ),
+        'device_model'    => kaitori_t( 'Device & Storage', '端末・容量' ),
+        'estimated_price' => kaitori_t( 'Estimated Payout', '概算査定額' ),
+        'delivery_method' => kaitori_t( 'Delivery Method', '受取方法' ),
+        'order_status'    => kaitori_t( 'Status', 'ステータス' ),
+        'date'            => kaitori_t( 'Date', '日付' ),
     );
     return $new_columns;
 }
@@ -215,22 +290,15 @@ function kaitoriakiba_order_custom_column( $column, $post_id ) {
         case 'delivery_method':
             $delivery = get_post_meta( $post_id, '_delivery_method', true );
             if ( $delivery === 'store' ) {
-                echo '<span class="dashicons dashicons-store" style="color:#f59e0b; vertical-align:middle;"></span> ' . __( 'In-Store Visit', 'kaitoriakiba' );
+                echo '<span class="dashicons dashicons-store" style="color:#f59e0b; vertical-align:middle;"></span> ' . esc_html( kaitori_t( 'In-Store Visit', '店頭来店' ) );
             } else {
-                echo '<span class="dashicons dashicons-car" style="color:#10b981; vertical-align:middle;"></span> ' . __( 'Mail-in Delivery', 'kaitoriakiba' );
+                echo '<span class="dashicons dashicons-car" style="color:#10b981; vertical-align:middle;"></span> ' . esc_html( kaitori_t( 'Mail-in Delivery', '郵送' ) );
             }
             break;
         case 'order_status':
             $status = get_post_meta( $post_id, '_order_status', true ) ?: 'pending';
-            $status_labels = array(
-                'pending'    => array( 'label' => __( 'Pending Review', 'kaitoriakiba' ), 'bg' => '#fef3c7', 'color' => '#b45309' ),
-                'approved'   => array( 'label' => __( 'Approved / Awaiting Device', 'kaitoriakiba' ), 'bg' => '#e0e7ff', 'color' => '#3730a3' ),
-                'inspecting' => array( 'label' => __( 'Device Inspecting', 'kaitoriakiba' ), 'bg' => '#fce7f3', 'color' => '#9d174d' ),
-                'paid'       => array( 'label' => __( 'Paid / Completed', 'kaitoriakiba' ), 'bg' => '#dcfce7', 'color' => '#15803d' ),
-                'rejected'   => array( 'label' => __( 'Cancelled / Returned', 'kaitoriakiba' ), 'bg' => '#fee2e2', 'color' => '#991b1b' ),
-            );
-            $s_info = isset( $status_labels[$status] ) ? $status_labels[$status] : $status_labels['pending'];
-            echo '<span style="display:inline-block; padding:3px 10px; border-radius:12px; font-size:11.5px; font-weight:700; background:' . esc_attr( $s_info['bg'] ) . '; color:' . esc_attr( $s_info['color'] ) . ';">' . esc_html( $s_info['label'] ) . '</span>';
+            $s_info = kaitoriakiba_get_order_status( $status );
+            echo '<span style="display:inline-block; padding:3px 10px; border-radius:12px; font-size:11.5px; font-weight:700; background:' . esc_attr( $s_info['bg'] ) . '; color:' . esc_attr( $s_info['color'] ) . ';">' . esc_html( kaitori_t( $s_info['label'], $s_info['label_ja'] ) ) . '</span>';
             break;
     }
 }
@@ -242,13 +310,13 @@ add_action( 'manage_buyback_order_posts_custom_column', 'kaitoriakiba_order_cust
 function kaitoriakiba_device_columns( $columns ) {
     $new = array();
     $new['cb'] = $columns['cb'];
-    $new['device_thumb'] = __( 'Image', 'kaitoriakiba' );
+    $new['device_thumb'] = kaitori_t( 'Image', '画像' );
     $new['title'] = $columns['title'];
-    $new['max_price'] = __( 'Max Buyback Price', 'kaitoriakiba' );
-    $new['ranks'] = __( 'Rank S - D Pricing', 'kaitoriakiba' );
-    $new['taxonomy-device_category'] = __( 'Category', 'kaitoriakiba' );
-    $new['taxonomy-brand'] = __( 'Brand', 'kaitoriakiba' );
-    $new['taxonomy-carrier'] = __( 'Carrier', 'kaitoriakiba' );
+    $new['max_price'] = kaitori_t( 'Max Buyback Price', '最高買取価格' );
+    $new['ranks'] = kaitori_t( 'Rank S - D Pricing', 'ランク S〜D 価格' );
+    $new['taxonomy-device_category'] = kaitori_t( 'Category', 'カテゴリ' );
+    $new['taxonomy-brand'] = kaitori_t( 'Brand', 'ブランド' );
+    $new['taxonomy-carrier'] = kaitori_t( 'Carrier', 'キャリア' );
     $new['date'] = $columns['date'];
     return $new;
 }
@@ -289,15 +357,15 @@ add_action( 'manage_kaitori_device_posts_custom_column', 'kaitoriakiba_device_cu
 function kaitoriakiba_kyc_columns( $columns ) {
     return array(
         'cb'            => $columns['cb'],
-        'title'         => __( 'Record ID', 'kaitoriakiba' ),
-        'kyc_name'      => __( 'Applicant Name', 'kaitoriakiba' ),
-        'kyc_contact'   => __( 'Email & Phone', 'kaitoriakiba' ),
-        'kyc_user'      => __( 'Customer Account', 'kaitoriakiba' ),
-        'kyc_order'     => __( 'Linked Order', 'kaitoriakiba' ),
-        'kyc_doc'       => __( 'Document Type', 'kaitoriakiba' ),
-        'kyc_uploads'   => __( 'ID Photos', 'kaitoriakiba' ),
-        'kyc_status'    => __( 'Verification Status', 'kaitoriakiba' ),
-        'date'          => __( 'Submission Date', 'kaitoriakiba' ),
+        'title'         => kaitori_t( 'Record ID', 'レコードID' ),
+        'kyc_name'      => kaitori_t( 'Applicant Name', '申請者名' ),
+        'kyc_contact'   => kaitori_t( 'Email & Phone', 'メール・電話' ),
+        'kyc_user'      => kaitori_t( 'Customer Account', '会員アカウント' ),
+        'kyc_order'     => kaitori_t( 'Linked Order', '紐付け注文' ),
+        'kyc_doc'       => kaitori_t( 'Document Type', '書類種別' ),
+        'kyc_uploads'   => kaitori_t( 'ID Photos', 'ID写真' ),
+        'kyc_status'    => kaitori_t( 'Verification Status', '審査ステータス' ),
+        'date'          => kaitori_t( 'Submission Date', '提出日' ),
     );
 }
 add_filter( 'manage_kyc_record_posts_columns', 'kaitoriakiba_kyc_columns' );
@@ -339,7 +407,7 @@ function kaitoriakiba_kyc_custom_column( $column, $post_id ) {
                     echo 'User #' . esc_html($user_id);
                 }
             } else {
-                echo '<span style="color:#94a3b8;">' . __( 'Guest', 'kaitoriakiba' ) . '</span>';
+                echo '<span style="color:#94a3b8;">' . esc_html( kaitori_t( 'Guest', 'ゲスト' ) ) . '</span>';
             }
             break;
 
@@ -372,10 +440,10 @@ function kaitoriakiba_kyc_custom_column( $column, $post_id ) {
             break;
 
         case 'kyc_uploads':
-            $front_id = get_post_meta( $post_id, '_kyc_id_front_attach', true );
-            $back_id  = get_post_meta( $post_id, '_kyc_id_back_attach', true );
-            $front_url = $front_id ? ( is_numeric($front_id) ? wp_get_attachment_url($front_id) : $front_id ) : '';
-            $back_url  = $back_id ? ( is_numeric($back_id) ? wp_get_attachment_url($back_id) : $back_id ) : '';
+            $front_store = get_post_meta( $post_id, '_kyc_id_front_file', true ) ?: get_post_meta( $post_id, '_kyc_id_front_attach', true );
+            $back_store  = get_post_meta( $post_id, '_kyc_id_back_file', true )  ?: get_post_meta( $post_id, '_kyc_id_back_attach', true );
+            $front_url = function_exists( 'kaitoriakiba_kyc_resolve_src' ) ? kaitoriakiba_kyc_resolve_src( $front_store ) : $front_store;
+            $back_url  = function_exists( 'kaitoriakiba_kyc_resolve_src' ) ? kaitoriakiba_kyc_resolve_src( $back_store )  : $back_store;
             
             if ( $front_url ) {
                 echo '<a href="' . esc_url($front_url) . '" target="_blank" title="Front Photo">';
@@ -393,11 +461,11 @@ function kaitoriakiba_kyc_custom_column( $column, $post_id ) {
         case 'kyc_status':
             $status = get_post_meta( $post_id, '_kyc_status', true ) ?: 'pending';
             if ( $status === 'verified' ) {
-                echo '<span style="color:#16a34a; font-weight:800; background:#dcfce7; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-yes-alt" style="font-size:14px; vertical-align:middle;"></span> ' . __( 'Verified', 'kaitoriakiba' ) . '</span>';
+                echo '<span style="color:#16a34a; font-weight:800; background:#dcfce7; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-yes-alt" style="font-size:14px; vertical-align:middle;"></span> ' . esc_html( kaitori_t( 'Verified', '承認済み' ) ) . '</span>';
             } elseif ( $status === 'rejected' ) {
-                echo '<span style="color:#dc2626; font-weight:800; background:#fee2e2; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-dismiss" style="font-size:14px; vertical-align:middle;"></span> ' . __( 'Rejected', 'kaitoriakiba' ) . '</span>';
+                echo '<span style="color:#dc2626; font-weight:800; background:#fee2e2; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-dismiss" style="font-size:14px; vertical-align:middle;"></span> ' . esc_html( kaitori_t( 'Rejected', '不備・却下' ) ) . '</span>';
             } else {
-                echo '<span style="color:#b45309; font-weight:800; background:#fef3c7; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-clock" style="font-size:14px; vertical-align:middle;"></span> ' . __( 'Pending', 'kaitoriakiba' ) . '</span>';
+                echo '<span style="color:#b45309; font-weight:800; background:#fef3c7; padding:3px 8px; border-radius:10px;"><span class="dashicons dashicons-clock" style="font-size:14px; vertical-align:middle;"></span> ' . esc_html( kaitori_t( 'Pending', '確認中' ) ) . '</span>';
             }
             break;
     }

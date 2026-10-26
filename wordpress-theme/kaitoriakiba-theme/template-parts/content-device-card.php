@@ -14,7 +14,8 @@ $thumb_url = has_post_thumbnail() ? get_the_post_thumbnail_url( $dev_id, 'medium
 ?>
 
 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-    <div class="pro-border gutter-10 row pro_list" style="margin-bottom:20px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; padding:15px; transition:all 0.2s;">
+    <div class="pro-border gutter-10 row pro_list" style="margin-bottom:20px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; padding:15px; transition:all 0.2s; position:relative;">
+        <div data-isok="false" data-value="<?php echo esc_attr( $dev_id ); ?>" class="collect" title="<?php echo esc_attr( kaitori_t( 'Add to favorites', 'お気に入りに追加' ) ); ?>"></div>
         <div class="col-xs-12 text-center" style="margin-bottom:12px;">
             <a href="<?php the_permalink(); ?>">
                 <img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" style="max-height:160px; max-width:100%; object-fit:contain;">
@@ -25,12 +26,12 @@ $thumb_url = has_post_thumbnail() ? get_the_post_thumbnail_url( $dev_id, 'medium
             <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:6px; min-height:40px;">
                 <a href="<?php the_permalink(); ?>" style="color:inherit; text-decoration:none;"><?php the_title(); ?></a>
             </div>
-            <div style="font-size:11px; color:#ec1600; margin-bottom:4px;">分割残債あり(△)も減額査定なし対応</div>
+            <div style="font-size:11px; color:#ec1600; margin-bottom:4px;"><?php kaitori_te( 'Installment balance (△) accepted with no reduction', '分割残債あり(△)も減額査定なし対応' ); ?></div>
             <div style="font-size:12px; font-weight:700; color:#475569; margin-top:8px;">
-                最高買取: <strong style="font-size:18px; color:#dc2626;">¥<?php echo number_format((int)$price); ?></strong>
+                <?php kaitori_te( 'Max buyback:', '最高買取:' ); ?> <strong style="font-size:18px; color:#dc2626;">¥<?php echo number_format((int)$price); ?></strong>
             </div>
             <a href="<?php the_permalink(); ?>" class="btn btn-pro" style="display:block; text-align:center; width:100%; margin-top:12px; font-weight:700; border-radius:6px; padding:8px;">
-                <?php _e( '査定・買取を申込む', 'kaitoriakiba' ); ?>
+                <?php kaitori_te( 'Get a quote / Apply', '査定・買取を申込む' ); ?>
             </a>
         </div>
     </div>

@@ -19,11 +19,11 @@
             // Validate mandatory fields
             var imei = $form.find('input[name="imei"]').val();
             if (imei && imei.length !== 15) {
-                alert('IMEI番号は15桁の数字で入力してください。');
+                alert((kaitori_ajax.i18n && kaitori_ajax.i18n.imei_error) || 'Invalid IMEI');
                 return false;
             }
 
-            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> 送信中...');
+            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.sending) || 'Sending…'));
 
             var formData = new FormData(this);
             formData.append('action', 'kaitori_submit_application');
@@ -51,7 +51,7 @@
                             var kycUrl = kaitori_ajax.home_url + 'kyc-verify/?order=' + encodeURIComponent(response.data.order_code) + '&name=' + encodeURIComponent(appName) + '&email=' + encodeURIComponent(appEmail) + '&phone=' + encodeURIComponent(appPhone);
                             $('#btnGoToKyc, .btn-goto-kyc').attr('href', kycUrl);
                         }
-                        alert(response.data.message || '買取申込が完了いたしました！');
+                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.app_success) || 'Done');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {
                         alert(response.data.message || kaitori_ajax.i18n_error);
@@ -72,7 +72,7 @@
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-kyc');
             var originalText = $submitBtn.html();
 
-            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> 書類アップロード中...');
+            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.uploading) || 'Uploading…'));
 
             var formData = new FormData(this);
             formData.append('action', 'kaitori_submit_kyc');
@@ -89,7 +89,7 @@
                     if (response.success) {
                         $form.hide();
                         $('#kyc-success-message').fadeIn();
-                        alert(response.data.message || '本人確認書類の提出が完了いたしました。');
+                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.kyc_success) || 'Done');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {
                         alert(response.data.message || kaitori_ajax.i18n_error);
@@ -110,7 +110,7 @@
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-reg');
             var originalText = $submitBtn.html();
 
-            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> 登録中...');
+            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.registering) || 'Registering…'));
 
             var formData = new FormData(this);
             formData.append('action', 'kaitori_register_user');
@@ -125,7 +125,7 @@
                 success: function(response) {
                     $submitBtn.prop('disabled', false).html(originalText);
                     if (response.success) {
-                        alert(response.data.message || '会員登録が完了いたしました！');
+                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.reg_success) || 'Done');
                         if (response.data.redirect_url) {
                             window.location.href = response.data.redirect_url;
                         }
@@ -148,7 +148,7 @@
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-login');
             var originalText = $submitBtn.html();
 
-            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ログイン中...');
+            $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.logging_in) || 'Logging in…'));
 
             var formData = new FormData(this);
             formData.append('action', 'kaitori_login_user');
@@ -163,7 +163,7 @@
                 success: function(response) {
                     $submitBtn.prop('disabled', false).html(originalText);
                     if (response.success) {
-                        alert(response.data.message || 'ログインしました。');
+                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.login_success) || 'Done');
                         if (response.data.redirect_url) {
                             window.location.href = response.data.redirect_url;
                         } else {
@@ -180,6 +180,80 @@
             });
         });
 
+        // 3.4 Accessibility: make click-driven widgets keyboard operable.
+        (function a11yWidgets() {
+            var selectors = '.radio-card, .color-swatch-item, .collect';
+            $(selectors).each(function() {
+                var $w = $(this);
+                if ($w.attr('tabindex') === undefined) { $w.attr('tabindex', '0'); }
+                if (!$w.attr('role')) { $w.attr('role', 'button'); }
+            });
+            // Enter / Space triggers the element's existing click handler.
+            $(document).on('keydown', selectors, function(e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        })();
+
+        // 3.5 Favorites (★) toggle — persists for members, localStorage for guests
+        function getLocalFavs() {
+            try { return JSON.parse(localStorage.getItem('kaitori_favs') || '[]'); } catch (e) { return []; }
+        }
+        function setLocalFavs(arr) {
+            try { localStorage.setItem('kaitori_favs', JSON.stringify(arr)); } catch (e) {}
+        }
+
+        // Mark initial favorite state on all cards.
+        (function markFavorites() {
+            var favs = [];
+            if (kaitori_ajax.logged_in && kaitori_ajax.favorites) {
+                favs = kaitori_ajax.favorites.map(String);
+            } else {
+                favs = getLocalFavs().map(String);
+            }
+            $('.collect[data-value]').each(function() {
+                var id = String($(this).data('value'));
+                $(this).attr('data-isok', favs.indexOf(id) !== -1 ? 'true' : 'false');
+            });
+        })();
+
+        $(document).on('click', '.collect', function() {
+            var $el = $(this);
+            var id = $el.data('value');
+            if (!id) { return; }
+
+            $.post(kaitori_ajax.ajax_url, {
+                action: 'kaitori_toggle_favorite',
+                security: kaitori_ajax.security,
+                device_id: id
+            }, function(res) {
+                if (!res || !res.success) {
+                    alert((res && res.data && res.data.message) || kaitori_ajax.i18n_error);
+                    return;
+                }
+                if (res.data.guest) {
+                    // Guest: toggle in localStorage, keep the UI responsive, gently prompt once.
+                    var favs = getLocalFavs().map(String);
+                    var sid = String(id);
+                    var idx = favs.indexOf(sid);
+                    if (idx === -1) {
+                        favs.push(sid);
+                        $el.attr('data-isok', 'true');
+                    } else {
+                        favs.splice(idx, 1);
+                        $el.attr('data-isok', 'false');
+                    }
+                    setLocalFavs(favs);
+                } else {
+                    $el.attr('data-isok', res.data.active ? 'true' : 'false');
+                }
+            }).fail(function() {
+                alert(kaitori_ajax.i18n_error);
+            });
+        });
+
         // 4. Step Search / Filter Auto-Submit or AJAX
         $('.step_search select, .keyword_search select').on('change', function() {
             var $form = $(this).closest('form');
@@ -188,11 +262,37 @@
                 var queryData = $form.serialize();
                 queryData += '&action=kaitori_filter_devices';
 
-                $('#live-device-results').html('<div class="text-center" style="padding:40px;"><i class="fa fa-spinner fa-spin fa-2x"></i> 読み込み中...</div>');
+                $('#live-device-results').html('<div class="text-center" style="padding:40px;"><i class="fa fa-spinner fa-spin fa-2x"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.loading) || 'Loading…') + '</div>');
 
                 $.get(kaitori_ajax.ajax_url, queryData, function(html) {
                     $('#live-device-results').html(html);
                 });
+            }
+        });
+
+        // 5. Mobile Navigation Drawer Toggle
+        function openMobileDrawer() {
+            $('#mobileNavDrawer').addClass('active').attr('aria-hidden', 'false');
+            $('body').css('overflow', 'hidden');
+        }
+        function closeMobileDrawer() {
+            $('#mobileNavDrawer').removeClass('active').attr('aria-hidden', 'true');
+            $('body').css('overflow', '');
+        }
+
+        $(document).on('click', '#mobileNavToggle, #mobileBottomMenuBtn, .btn-open-mobile-drawer', function(e) {
+            e.preventDefault();
+            openMobileDrawer();
+        });
+
+        $(document).on('click', '#mobileDrawerClose, #mobileDrawerBackdrop', function(e) {
+            e.preventDefault();
+            closeMobileDrawer();
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && $('#mobileNavDrawer').hasClass('active')) {
+                closeMobileDrawer();
             }
         });
 

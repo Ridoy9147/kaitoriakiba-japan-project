@@ -111,18 +111,18 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
 
         $def_tab = ! empty( $settings['default_tab'] ) ? $settings['default_tab'] : 'register';
         $is_login = ( $def_tab === 'login' ) || ( isset( $_GET['action'] ) && $_GET['action'] === 'login' );
-        $reg_title = ! empty( $settings['register_title'] ) ? $settings['register_title'] : __( '新規会員登録 (Register)', 'kaitoriakiba' );
-        $log_title = ! empty( $settings['login_title'] ) ? $settings['login_title'] : __( '会員ログイン (Login)', 'kaitoriakiba' );
+        $reg_title = kaitori_t( 'Kaitori Akiba Free Registration', 'Kaitori Akiba 無料会員登録' );
+        $log_title = kaitori_t( 'Member Login', '会員ログイン' );
         ?>
         <div class="auth-container" style="margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
             
             <!-- Auth Navigation Tabs -->
             <div style="display:flex; border-bottom:2px solid #e2e8f0; margin-bottom:28px;">
                 <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" style="flex:1; padding:12px; font-weight:800; font-size:15px; border:none; background:transparent; border-bottom:3px solid <?php echo $is_login ? 'transparent' : '#ef4444'; ?>; color:<?php echo $is_login ? '#64748b' : '#ef4444'; ?>; cursor:pointer;">
-                    <i class="fa fa-user-plus"></i> <?php _e( '新規会員登録 (Register)', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-user-plus"></i> <?php kaitori_te( 'Register', '新規会員登録' ); ?>
                 </button>
                 <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" style="flex:1; padding:12px; font-weight:800; font-size:15px; border:none; background:transparent; border-bottom:3px solid <?php echo $is_login ? '#ef4444' : 'transparent'; ?>; color:<?php echo $is_login ? '#ef4444' : '#64748b'; ?>; cursor:pointer;">
-                    <i class="fa fa-sign-in"></i> <?php _e( 'ログイン (Login)', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-sign-in"></i> <?php kaitori_te( 'Login', 'ログイン' ); ?>
                 </button>
             </div>
 
@@ -131,10 +131,10 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
             ?>
                 <div class="alert alert-info text-center" style="border-radius:10px; padding:24px;">
                     <div style="font-size:32px; color:#10b981; margin-bottom:8px;"><i class="fa fa-user-circle"></i></div>
-                    <p style="margin:0 0 14px 0; font-size:15px;">現在 <strong><?php echo esc_html( $current_user->display_name ?: $current_user->user_login ); ?></strong> 様としてログインしています。</p>
+                    <p style="margin:0 0 14px 0; font-size:15px;"><?php echo esc_html( sprintf( kaitori_t( 'You are logged in as %s.', '現在 %s 様としてログインしています。' ), $current_user->display_name ?: $current_user->user_login ) ); ?></p>
                     <div style="display:flex; gap:10px; justify-content:center;">
-                        <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>" class="btn btn-danger" style="background:#ef4444; border-color:#ef4444; font-weight:700; border-radius:8px; padding:10px 20px;">買取申込へ進む &rarr;</a>
-                        <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="btn btn-default" style="font-weight:700; border-radius:8px; padding:10px 20px;">ログアウト</a>
+                        <a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>" class="btn btn-danger" style="background:#ef4444; border-color:#ef4444; font-weight:700; border-radius:8px; padding:10px 20px;"><?php kaitori_te( 'Go to buyback application', '買取申込へ進む' ); ?> &rarr;</a>
+                        <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="btn btn-default" style="font-weight:700; border-radius:8px; padding:10px 20px;"><?php kaitori_te( 'Logout', 'ログアウト' ); ?></a>
                     </div>
                 </div>
             <?php else : ?>
@@ -146,23 +146,24 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
                             <?php echo esc_html( $reg_title ); ?>
                         </h2>
                         <p style="color: #64748b; font-size: 13.5px; margin:0;">
-                            <?php _e( '会員登録を行うと、次回からの入力省略や買取履歴の確認、会員限定ボーナスがご利用いただけます。', 'kaitoriakiba' ); ?>
+                            <?php kaitori_te( 'By registering, you can skip input next time, check your buyback history, and enjoy members-only bonuses.', '会員登録を行うと、次回からの入力省略や買取履歴の確認、会員限定ボーナスがご利用いただけます。' ); ?>
                         </p>
                     </div>
 
                     <form id="registerForm" method="post">
+                        <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                         <div class="row">
                             <div class="col-md-6 form-group" style="margin-bottom:18px;">
                                 <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                    <span>姓 (Last Name)</span>
-                                    <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
+                                    <span><?php kaitori_te( 'Last Name', '姓 (Last Name)' ); ?></span>
+                                    <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                                 </label>
                                 <input type="text" name="last_name" class="form-control-custom" placeholder="山田" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             </div>
                             <div class="col-md-6 form-group" style="margin-bottom:18px;">
                                 <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                    <span>名 (First Name)</span>
-                                    <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
+                                    <span><?php kaitori_te( 'First Name', '名 (First Name)' ); ?></span>
+                                    <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                                 </label>
                                 <input type="text" name="first_name" class="form-control-custom" placeholder="太郎" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             </div>
@@ -170,31 +171,31 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
 
                         <div class="form-group" style="margin-bottom:18px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>メールアドレス (Email)</span>
-                                <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
+                                <span><?php kaitori_te( 'Email Address', 'メールアドレス (Email)' ); ?></span>
+                                <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                             </label>
                             <input type="email" name="email" class="form-control-custom" placeholder="taro@example.com" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom:18px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>電話番号 (Phone Number)</span>
-                                <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
+                                <span><?php kaitori_te( 'Phone Number', '電話番号 (Phone Number)' ); ?></span>
+                                <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                             </label>
                             <input type="tel" name="phone" class="form-control-custom" placeholder="09012345678" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom:24px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
-                                <span>パスワード (Password)</span>
-                                <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
+                                <span><?php kaitori_te( 'Password', 'パスワード (Password)' ); ?></span>
+                                <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                             </label>
-                            <input type="password" name="password" minlength="8" class="form-control-custom" placeholder="半角英数字8文字以上" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
-                            <small style="color:#64748b; font-size:12px;">※8文字以上の半角英数字を組み合わせて入力してください。</small>
+                            <input type="password" name="password" minlength="8" class="form-control-custom" placeholder="<?php echo esc_attr( kaitori_t( '8+ alphanumeric characters', '半角英数字8文字以上' ) ); ?>" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <small style="color:#64748b; font-size:12px;"><?php kaitori_te( '* Use at least 8 half-width alphanumeric characters.', '※8文字以上の半角英数字を組み合わせて入力してください。' ); ?></small>
                         </div>
 
                         <button type="submit" id="btnSubmitRegister" class="btn btn-danger btn-block" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px; border-radius:10px; font-size:16px;">
-                            <i class="fa fa-user-plus"></i> 会員登録を完了する
+                            <i class="fa fa-user-plus"></i> <?php kaitori_te( 'Complete Registration', '会員登録を完了する' ); ?>
                         </button>
                     </form>
                 </div>
@@ -206,34 +207,35 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
                             <?php echo esc_html( $log_title ); ?>
                         </h2>
                         <p style="color: #64748b; font-size: 13.5px; margin:0;">
-                            <?php _e( 'ご登録のメールアドレスとパスワードを入力してください。', 'kaitoriakiba' ); ?>
+                            <?php kaitori_te( 'Enter your registered email address and password.', 'ご登録のメールアドレスとパスワードを入力してください。' ); ?>
                         </p>
                     </div>
 
                     <form id="loginForm" method="post">
+                        <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                         <div class="form-group" style="margin-bottom:18px;">
                             <label class="form-label" style="font-weight:700; font-size:14px; margin-bottom:6px; display:block;">
-                                メールアドレス (Email)
+                                <?php kaitori_te( 'Email Address', 'メールアドレス (Email)' ); ?>
                             </label>
                             <input type="email" name="log" class="form-control-custom" placeholder="example@kaitori-akiba.com" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom:20px;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <label class="form-label" style="font-weight:700; font-size:14px; margin:0;">パスワード (Password)</label>
-                                <a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" style="font-size:12px; color:#ef4444; font-weight:600;">パスワードをお忘れですか？</a>
+                                <label class="form-label" style="font-weight:700; font-size:14px; margin:0;"><?php kaitori_te( 'Password', 'パスワード (Password)' ); ?></label>
+                                <a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" style="font-size:12px; color:#ef4444; font-weight:600;"><?php kaitori_te( 'Forgot your password?', 'パスワードをお忘れですか？' ); ?></a>
                             </div>
-                            <input type="password" name="pwd" class="form-control-custom" placeholder="パスワード" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="password" name="pwd" class="form-control-custom" placeholder="<?php echo esc_attr( kaitori_t( 'Password', 'パスワード' ) ); ?>" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
 
                         <div class="form-group" style="margin-bottom:24px;">
                             <label style="font-size:13px; color:#475569; cursor:pointer;">
-                                <input type="checkbox" name="rememberme" value="forever"> ログイン状態を保持する
+                                <input type="checkbox" name="rememberme" value="forever"> <?php kaitori_te( 'Keep me logged in', 'ログイン状態を保持する' ); ?>
                             </label>
                         </div>
 
                         <button type="submit" id="btnSubmitLogin" class="btn btn-danger btn-block" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px; border-radius:10px; font-size:16px;">
-                            <i class="fa fa-sign-in"></i> ログインする
+                            <i class="fa fa-sign-in"></i> <?php kaitori_te( 'Sign In', 'ログインする' ); ?>
                         </button>
                     </form>
                 </div>

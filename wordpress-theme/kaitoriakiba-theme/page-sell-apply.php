@@ -10,6 +10,12 @@
 
 get_header();
 
+// Gate: require login + eKYC before the buyback form (admin-configurable).
+if ( function_exists( 'kaitoriakiba_maybe_block_sell_form' ) && kaitoriakiba_maybe_block_sell_form() ) {
+    get_footer();
+    return;
+}
+
 // Check if page is built with Elementor
 $is_elementor = kaitoriakiba_is_elementor_page();
 
@@ -91,6 +97,7 @@ else :
 
             <!-- Form -->
             <form id="sellForm" method="post" enctype="multipart/form-data">
+                <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                 <input type="hidden" name="estimated_price" id="hidden_estimated_price" value="195000">
 
                 <!-- STEP 1: Phone Details -->
@@ -631,28 +638,33 @@ else :
             }
         }
 
+        var _estimateTimer = null;
         function calculateEstimate() {
+            // Debounced call to the SERVER pricing engine so the displayed quote
+            // matches the admin's device pricing (and the final stored order).
+            if (_estimateTimer) { clearTimeout(_estimateTimer); }
+            _estimateTimer = setTimeout(fetchServerEstimate, 250);
+        }
+
+        function fetchServerEstimate() {
             var modelEl = document.getElementById('phone_model');
-            var model = modelEl ? modelEl.value : '';
-            var basePrice = 140000;
-            if (model.indexOf('16 Pro Max') !== -1) basePrice = 215000;
-            else if (model.indexOf('16 Pro') !== -1) basePrice = 195000;
-            else if (model.indexOf('16') !== -1) basePrice = 135000;
-            else if (model.indexOf('15 Pro Max') !== -1) basePrice = 165000;
-            else if (model.indexOf('15 Pro') !== -1) basePrice = 145000;
-            else if (model.indexOf('15') !== -1) basePrice = 115000;
-
-            var battery = parseInt(document.getElementById('battery_val').value) || 95;
-            if (battery < 80) basePrice -= 8000;
-
-            var debt = document.getElementById('installment_debt_status').value;
-            if (debt === 'yes') {
-                basePrice = Math.max(20000, basePrice - 10000);
-            }
-
-            document.getElementById('summary_price').innerText = '¥' + basePrice.toLocaleString();
-            document.getElementById('hidden_estimated_price').value = basePrice;
-            return basePrice;
+            var data = {
+                action: 'kaitori_live_estimate',
+                model: modelEl ? modelEl.value : '',
+                storage: ($('input[name="storage"]:checked').val() || '256GB'),
+                screen_condition: ($('input[name="screen_condition"]:checked').val() || ''),
+                body_condition: ($('input[name="body_condition"]:checked').val() || ''),
+                battery_health: (parseInt(document.getElementById('battery_val').value) || 95),
+                powers_on: ($('input[name="powers_on"]:checked').val() || 'yes'),
+                camera_works: ($('input[name="camera_works"]:checked').val() || 'yes'),
+                installment_status: (document.getElementById('installment_debt_status') ? document.getElementById('installment_debt_status').value : 'no')
+            };
+            $.get(kaitori_ajax.ajax_url, data, function(res) {
+                if (res && res.success) {
+                    document.getElementById('summary_price').innerText = res.data.formatted;
+                    document.getElementById('hidden_estimated_price').value = res.data.price;
+                }
+            });
         }
 
         function navigateStep(direction) {
@@ -733,6 +745,9 @@ else :
             document.getElementById('sum_battery').innerText = document.getElementById('battery_val').value + '%';
             document.getElementById('sum_bank').innerText = document.getElementById('bank_name').value + ' ' + document.getElementById('bank_branch').value;
         }
+
+        // Initial server-side estimate on load.
+        jQuery(function(){ fetchServerEstimate(); });
     </script>
     <?php
 endif;

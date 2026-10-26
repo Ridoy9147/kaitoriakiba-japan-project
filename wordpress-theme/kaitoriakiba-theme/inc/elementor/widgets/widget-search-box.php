@@ -331,7 +331,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
                         <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180712/kaitoriakiba_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180712/kaitoriwiki_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
                         </a>
                     </div>
                 </div>

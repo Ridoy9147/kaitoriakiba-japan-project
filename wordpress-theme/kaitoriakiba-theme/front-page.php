@@ -61,15 +61,15 @@ else :
                 <!-- Col 1: Keyword Search -->
                 <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
                     <div class="search_title">
-                        <div class="search_title_h2"><?php _e( 'Search by device model name or model number!', 'kaitoriakiba' ); ?></div>
-                        <div class="search_title_h3"><?php _e( 'Please enter device name, model number, JAN code, etc.', 'kaitoriakiba' ); ?></div>					
+                        <div class="search_title_h2"><?php kaitori_te( 'Search by device model name or model number!', '機種名・型番で検索！' ); ?></div>
+                        <div class="search_title_h3"><?php kaitori_te( 'Please enter device name, model number, JAN code, etc.', '機種名・型番・JANコード等をご入力ください。' ); ?></div>				
                     </div>
                     <div class="search_box">
                         <form class="m_fullsearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                             <div class="form-group mbtm0 clearfix">
                                 <div class="keyword_search">
                                     <select class="form-control fw_cat" name="cat">
-                                        <option value=""><?php _e( 'All Categories', 'kaitoriakiba' ); ?></option>
+                                        <option value=""><?php kaitori_te( 'All Categories', 'すべてのカテゴリ' ); ?></option>
                                         <?php
                                         $cats = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );
                                         if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
@@ -83,12 +83,12 @@ else :
                                         }
                                         ?>
                                     </select>
-                                    <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php esc_attr_e( 'Keyword search (2+ characters)', 'kaitoriakiba' ); ?>" required="required" autocomplete="off">
-                                    <button class="btn search_word" type="submit"><?php _e( 'Search', 'kaitoriakiba' ); ?> <i class="fa fa-search"></i></button>
+                                    <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php echo esc_attr( kaitori_t( 'Keyword search (2+ characters)', 'キーワード検索（2文字以上）' ) ); ?>" required="required" autocomplete="off">
+                                    <button class="btn search_word" type="submit"><?php kaitori_te( 'Search', '検索' ); ?> <i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
-                        <div class="title"><?php _e( 'Popular Search Keywords!', 'kaitoriakiba' ); ?>
+                        <div class="title"><?php kaitori_te( 'Popular Search Keywords!', '人気の検索キーワード！' ); ?>
                             <ul class="hotword">
                                 <li><a href="<?php echo esc_url( home_url( '/devices/?q=iphone' ) ); ?>">iphone</a></li>
                                 <li><a href="<?php echo esc_url( home_url( '/devices/?q=Nintendo+switch' ) ); ?>">Nintendo switch</a></li>
@@ -106,8 +106,8 @@ else :
                 <!-- Col 2: Step-by-Step Search -->
                 <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
                     <div class="search_title">
-                        <div class="search_title_h2"><?php _e( 'Step-by-Step Category Search', 'kaitoriakiba' ); ?></div>
-                        <div class="search_title_h3"><?php _e( 'Select one or more categories (Multiple selection supported)', 'kaitoriakiba' ); ?></div>					
+                        <div class="search_title_h2"><?php kaitori_te( 'Step-by-Step Category Search', 'カテゴリから絞り込み検索' ); ?></div>
+                        <div class="search_title_h3"><?php kaitori_te( 'Select one or more categories (Multiple selection supported)', '条件を選択してください（複数選択可）' ); ?></div>				
                     </div>
                     <div class="search_box">
                         <form class="snssearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
@@ -115,7 +115,7 @@ else :
                                 <div class="step_search">
                                     <div class="step_search_filters">
                                         <select class="form-control s_cat" name="cat">
-                                            <option value=""><?php _e( 'Select Category', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php kaitori_te( 'Select Category', 'カテゴリを選択' ); ?></option>
                                             <?php
                                             if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
                                                 foreach ( $cats as $c ) {
@@ -128,7 +128,7 @@ else :
                                             ?>
                                         </select>
                                         <select class="form-control s_career" name="s_career">
-                                            <option value=""><?php _e( 'By Carrier', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php kaitori_te( 'By Carrier', 'キャリアで選択' ); ?></option>
                                             <?php
                                             $carriers = get_terms( array( 'taxonomy' => 'carrier', 'hide_empty' => false ) );
                                             if ( ! empty( $carriers ) && ! is_wp_error( $carriers ) ) {
@@ -142,7 +142,7 @@ else :
                                             ?>
                                         </select>
                                         <select class="form-control s_brand" name="brand">
-                                            <option value=""><?php _e( 'By Brand', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php kaitori_te( 'By Brand', 'ブランドで選択' ); ?></option>
                                             <?php
                                             $brands = get_terms( array( 'taxonomy' => 'brand', 'hide_empty' => false ) );
                                             if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
@@ -156,7 +156,7 @@ else :
                                             ?>
                                         </select>
                                         <select class="form-control s_series" name="series">
-                                            <option value=""><?php _e( 'By Series', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php kaitori_te( 'By Series', 'シリーズで選択' ); ?></option>
                                             <?php
                                             $series = get_terms( array( 'taxonomy' => 'series', 'hide_empty' => false ) );
                                             if ( ! empty( $series ) && ! is_wp_error( $series ) ) {
@@ -170,7 +170,7 @@ else :
                                             ?>
                                         </select>
                                     </div>
-                                    <button class="btn step_search_btn" type="submit"><?php _e( 'Search', 'kaitoriakiba' ); ?> <i class="fa fa-search"></i></button>
+                                    <button class="btn step_search_btn" type="submit"><?php kaitori_te( 'Search', '検索' ); ?> <i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
@@ -222,7 +222,7 @@ else :
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
                         <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriakiba_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriwiki_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
                         </a>
                     </div>
                 </div>
@@ -241,19 +241,19 @@ else :
                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_1">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>" title="In-Store Buyback Flow">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s1.png" class="img-responsive hidden-xs" alt="In-Store Buyback Flow" />
-                                <span class="btn btn-orange"><?php _e( 'In-Store Buyback', 'kaitoriakiba' ); ?></span>
+                                <span class="btn btn-orange"><?php kaitori_te( 'In-Store Buyback', '店頭買取' ); ?></span>
                             </a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_2">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>" title="Mail-in Buyback Flow">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s2.png" class="img-responsive hidden-xs" alt="Mail-in Buyback Flow" />
-                                <span class="btn btn-green"><?php _e( 'Mail-in Buyback', 'kaitoriakiba' ); ?></span>
+                                <span class="btn btn-green"><?php kaitori_te( 'Mail-in Buyback', '郵送買取' ); ?></span>
                             </a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_3">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>" title="Corporate Buyback Flow">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s3.png" class="img-responsive hidden-xs" alt="Corporate Buyback Flow" />
-                                <span class="btn btn-blue"><?php _e( 'Corporate Buyback', 'kaitoriakiba' ); ?></span>
+                                <span class="btn btn-blue"><?php kaitori_te( 'Corporate Buyback', '法人買取' ); ?></span>
                             </a>
                         </div>
                     </div>
@@ -271,22 +271,22 @@ else :
             <div class="container">
                 <div class="row home_lx_box">
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php _e( 'How to Register', 'kaitoriakiba' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php kaitori_te( 'How to Register', '会員登録の方法' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><?php _e( 'How to Apply for Buyback', 'kaitoriakiba' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><?php kaitori_te( 'How to Apply for Buyback', '買取申込の方法' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><?php _e( 'Identity Verification (eKYC)', 'kaitoriakiba' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><?php kaitori_te( 'Identity Verification (eKYC)', '本人確認 (eKYC)' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'Price Guarantee Policy', 'kaitoriakiba' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'Price Guarantee Policy', '価格保証について' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/register/#login' ) ); ?>"><?php _e( 'Member Dashboard', 'kaitoriakiba' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/mypage/' ) ); ?>"><?php kaitori_te( 'Member Dashboard', 'マイページ' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/faq/' ) ); ?>"><?php _e( 'Frequently Asked Questions (FAQ)', 'kaitoriakiba' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/faq/' ) ); ?>"><?php kaitori_te( 'Frequently Asked Questions (FAQ)', 'よくある質問 (FAQ)' ); ?></a></div>
                     </div>
                 </div>
             </div>
@@ -296,7 +296,7 @@ else :
         <div class="container pding0">
             <div style="background:#feecec; padding:20px; margin-bottom:10px; border-radius:8px;">
                 <div style="border-bottom:1px solid #fca5a5; padding-bottom:10px; font-weight:800; color:#b91c1c; font-size:15px;">
-                    <i class="fa fa-bullhorn" style="margin-right:6px;"></i> <?php _e( '【重要】買取アキバからのお知らせ (Urgent Announcements)', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-bullhorn" style="margin-right:6px;"></i> <?php kaitori_te( '[Important] Announcements from Kaitori Akiba', '【重要】買取アキバからのお知らせ (Urgent Announcements)' ); ?>
                 </div>
                 <div style="padding-top:15px;" class="qingbao" id="qb">
                     <p><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><span style="font-size:15px; color:#003399;"><strong><u>【重要】古物営業法に基づく本人確認書類（eKYC）および購入証明書の提出について</u></strong></span></a></p>
@@ -307,7 +307,7 @@ else :
                     <p style="font-size:13px; color:#334155;">■ 法人様の大量端末お買取り・データ消去証明書の発行にも対応しております。</p>
                 </div>
                 <div class="dropdownbutton" style="text-align:center; margin-top:10px;">
-                    <button id="moreless" class="dropdown" onclick="qbopen();" style="cursor:pointer;"><?php _e( 'Show More / 詳細を見る', 'kaitoriakiba' ); ?></button>
+                    <button id="moreless" class="dropdown" onclick="qbopen();" style="cursor:pointer;"><?php kaitori_te( 'Show More', '詳細を見る' ); ?></button>
                 </div>
             </div>
         </div>
@@ -373,8 +373,8 @@ else :
                             </a>
                         </div>
                         <div class="swiper-slide">
-                            <a href="https://lin.ee/5wvtHzl" target="_blank">
-                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20220222/450216 Kaitori Akibaスライドバナー.png" alt="LINE Official Support" class="img-responsive" style="width:100%; border-radius:8px;">
+                            <a href="https://lin.ee/5wvtHzl" target="_blank" rel="noopener">
+                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20210621/member_rank02.png" alt="LINE Official Support" class="img-responsive" style="width:100%; border-radius:8px;">
                             </a>
                         </div>
                     </div>
@@ -404,9 +404,9 @@ else :
                                 <?php _e( "What's News (新着情報・お知らせ)", 'kaitoriakiba' ); ?>
                             </p>
                             <ul class="topicCategory">
-                                <li class="tc01 cur"><span class="all" data-id="all"><?php _e( 'All', 'kaitoriakiba' ); ?></span></li>
-                                <li class="tc02" data-id="1"><span class="blogTopic"><?php _e( 'Topics', 'kaitoriakiba' ); ?></span></li>
-                                <li class="tc02" data-id="2"><span class="blogTopic"><?php _e( 'Information', 'kaitoriakiba' ); ?></span></li>
+                                <li class="tc01 cur"><span class="all" data-id="all"><?php kaitori_te( 'All', 'すべて' ); ?></span></li>
+                                <li class="tc02" data-id="1"><span class="blogTopic"><?php kaitori_te( 'Topics', 'トピックス' ); ?></span></li>
+                                <li class="tc02" data-id="2"><span class="blogTopic"><?php kaitori_te( 'Information', 'お知らせ' ); ?></span></li>
                             </ul>
                         </div>
                         <div class="topicList">
@@ -427,7 +427,7 @@ else :
                                     <li class="col-xs-12 col-md-6">
                                         <div class="mThumbnail">
                                             <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">
-                                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/article/20260707/スクリーンショット 2026-07-07 172258.png" class="img-responsive" alt="eKYC" />
+                                                <img src="<?php echo esc_url( $theme_uri ); ?>/upload/goods/nophoto.png" class="img-responsive" alt="eKYC" />
                                             </a>
                                         </div>
                                         <div class="layout_cell">
@@ -464,7 +464,7 @@ else :
                             </div>
                         </div>
                         <div class="topicFooter">
-                            <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 一覧を見る', 'kaitoriakiba' ); ?></a>
+                            <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'View All', '一覧を見る' ); ?></a>
                         </div>
                     </div>
 
@@ -474,9 +474,9 @@ else :
                             <div class="text-center head_img">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/sub_box_header05.png" alt="Favorites Header" class="img-responsive" style="margin:0 auto;" />
                             </div>
-                            <p style="text-indent: 10%; margin-top:12px;"><?php _e( '商品一覧の「★」ボタンをクリックすると、お気に入りリストへ登録できます。', 'kaitoriakiba' ); ?></p>
-                            <p style="text-indent: 10%;"><?php _e( '気になる機種の買取価格の変動をいつでもスムーズにチェック可能！', 'kaitoriakiba' ); ?></p>
-                            <p style="text-align: center; color:red; font-weight:bold;"><?php _e( '※ 会員限定機能です。会員登録・ログイン後にご利用いただけます。', 'kaitoriakiba' ); ?></p>
+                            <p style="text-indent: 10%; margin-top:12px;"><?php kaitori_te( 'Click the "★" button on the product list to add it to your favorites.', '商品一覧の「★」ボタンをクリックすると、お気に入りリストへ登録できます。' ); ?></p>
+                            <p style="text-indent: 10%;"><?php kaitori_te( 'Smoothly check the price changes of devices you care about anytime!', '気になる機種の買取価格の変動をいつでもスムーズにチェック可能！' ); ?></p>
+                            <p style="text-align: center; color:red; font-weight:bold;"><?php kaitori_te( '* Members-only feature. Available after registering / logging in.', '※ 会員限定機能です。会員登録・ログイン後にご利用いただけます。' ); ?></p>
                         </div>
                     </div>
 
@@ -529,10 +529,10 @@ else :
                                                             </li>
                                                             <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $jan ); ?></li>
                                                         </div>
-                                                        <li class="sub-pro-jia"><?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span></li>
+                                                        <li class="sub-pro-jia"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span></li>
                                                         <li>
                                                             <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) ) ); ?>">
-                                                                <button type="button" class="btn btn-pro"><?php _e( 'Apply for Buyback', 'kaitoriakiba' ); ?></button>
+                                                                <button type="button" class="btn btn-pro"><?php kaitori_te( 'Apply for Buyback', '買取を申し込む' ); ?></button>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -582,10 +582,10 @@ else :
                                                             </li>
                                                             <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
                                                         </div>
-                                                        <li class="sub-pro-jia"><?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span></li>
+                                                        <li class="sub-pro-jia"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span></li>
                                                         <li>
                                                             <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
-                                                                <button type="button" class="btn btn-pro"><?php _e( 'Apply for Buyback', 'kaitoriakiba' ); ?></button>
+                                                                <button type="button" class="btn btn-pro"><?php kaitori_te( 'Apply for Buyback', '買取を申し込む' ); ?></button>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -599,7 +599,7 @@ else :
                                 <div class="clearfix"></div>
                             </div>
                             <div class="sub-pro-footer">
-                                <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 全機種一覧', 'kaitoriakiba' ); ?></a>
+                                <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'View All Devices', '全機種一覧' ); ?></a>
                             </div>
                         </div>
                     </div>
@@ -608,7 +608,7 @@ else :
                     <div class="mainpage-box">
                         <div class="mainpage-title col-center">
                             <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_title_1.jpg" alt="Key Checkpoints to Sell Your Phone at the Highest Price" class="img-responsive" /> 
-                            <h2><?php _e( 'Key Selling Points', 'kaitoriakiba' ); ?></h2>
+                            <h2><?php kaitori_te( 'Key Selling Points', '高く売るためのポイント' ); ?></h2>
                         </div>
                         <ul class="gutter-0" style="list-style:none; padding:0; margin:0;">
                             <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">
@@ -717,7 +717,7 @@ else :
                         <div class="clearfix"></div>
                         <div style="text-align:center; margin-top:20px;">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>">
-                                <button type="button" class="btn btn-faren col-center"><?php _e( 'Corporate Clients Click Here (法人様買取相談)', 'kaitoriakiba' ); ?></button>
+                                <button type="button" class="btn btn-faren col-center"><?php kaitori_te( 'Corporate Clients Click Here', '法人様買取相談はこちら' ); ?></button>
                             </a>
                         </div>
                     </div>
@@ -769,7 +769,7 @@ else :
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
                         <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriakiba_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriwiki_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
                         </a>
                     </div>
                 </div>
