@@ -270,29 +270,15 @@
             }
         });
 
-        // 5. Mobile Navigation Drawer Toggle
-        function openMobileDrawer() {
-            $('#mobileNavDrawer').addClass('active').attr('aria-hidden', 'false');
-            $('body').css('overflow', 'hidden');
-        }
-        function closeMobileDrawer() {
-            $('#mobileNavDrawer').removeClass('active').attr('aria-hidden', 'true');
-            $('body').css('overflow', '');
-        }
-
-        $(document).on('click', '#mobileNavToggle, #mobileBottomMenuBtn, .btn-open-mobile-drawer', function(e) {
-            e.preventDefault();
-            openMobileDrawer();
-        });
-
-        $(document).on('click', '#mobileDrawerClose, #mobileDrawerBackdrop', function(e) {
-            e.preventDefault();
-            closeMobileDrawer();
-        });
-
-        $(document).on('keydown', function(e) {
-            if (e.key === 'Escape' && $('#mobileNavDrawer').hasClass('active')) {
-                closeMobileDrawer();
+        // 5. Mobile Bottom Bar Search Smooth Scroll
+        $(document).on('click', '.header-menu .btn-dt a', function(e) {
+            var $target = $('#index-search');
+            if ($target.length) {
+                e.preventDefault();
+                $('html, body').animate({
+                    scrollTop: $target.offset().top - 20
+                }, 400);
+                $target.find('.keyword_search_text').focus();
             }
         });
 
