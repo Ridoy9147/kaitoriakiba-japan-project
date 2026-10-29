@@ -295,43 +295,43 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
             <div class="href_list">
                 <div class="gutter-10 clearflex">
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/phone.jpg" alt="Smartphones" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>" title="iPhone 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_iphone.svg" alt="iPhone" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/ipad.jpg" alt="Tablets" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>" title="iPad / タブレット 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_ipad.svg" alt="iPad / Tablets" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=gaming' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/game.jpg" alt="Gaming Consoles" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>" title="Google Pixel 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_pixel.svg" alt="Google Pixel" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cosmetics' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180512/meizhuang.jpg" alt="Cosmetics" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Galaxy' ) ); ?>" title="Galaxy 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_galaxy.svg" alt="Galaxy" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=appliances' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180702/20180628171113.jpg" alt="Home Appliances" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xperia' ) ); ?>" title="Xperia 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_xperia.svg" alt="Xperia" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cameras' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180702/20180628171104.jpg" alt="Cameras" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=AQUOS' ) ); ?>" title="AQUOS / arrows 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_aquos.svg" alt="AQUOS / arrows" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=pc' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180702/20180628170919.jpg" alt="PC & Laptops" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xiaomi' ) ); ?>" title="Xiaomi / OPPO 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_xiaomi.svg" alt="Xiaomi / OPPO" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/20180712/kaitoriwiki_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?s_career=simfree' ) ); ?>" title="SIMフリー スマホ 買取">
+                            <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_simfree.svg" alt="SIM Free Smartphones" class="img-responsive" />
                         </a>
                     </div>
                 </div>

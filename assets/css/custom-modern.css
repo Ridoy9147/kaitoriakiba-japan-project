@@ -154,8 +154,11 @@ body {
   text-decoration: none !important;
 }
 
-.brand-logo-img {
+.brand-logo-img,
+.header-brand img,
+.custom-logo {
   max-height: 58px !important;
+  max-width: 150px !important;
   height: auto !important;
   width: auto !important;
   object-fit: contain !important;
@@ -163,7 +166,9 @@ body {
   transition: opacity 0.2s ease !important;
 }
 
-.brand-logo-img:hover {
+.brand-logo-img:hover,
+.header-brand img:hover,
+.custom-logo:hover {
   opacity: 0.9 !important;
 }
 
@@ -285,7 +290,10 @@ body {
 }
 
 @media (max-width: 767px) {
-  .brand-logo-img {
+  .brand-logo-img,
+  .header-brand img,
+  .custom-logo {
+    max-width: 120px !important;
     max-height: 44px !important;
   }
   .header-actions {
@@ -297,6 +305,30 @@ body {
   }
   .header-cart-badge {
     padding: 6px 10px !important;
+  }
+
+  /* Process Flow Buttons (.guid) on Mobile */
+  .guid {
+    padding: 14px 0 !important;
+  }
+  .guid .type_1, 
+  .guid .type_2, 
+  .guid .type_3 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    margin: 6px 0 !important;
+    float: none !important;
+    padding: 0 15px !important;
+  }
+  .guid .btn {
+    width: 100% !important;
+    display: block !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.4 !important;
   }
 }
 
@@ -768,10 +800,31 @@ div[style*="border-bottom:1px solid #ccc"]::before {
     margin: 0 !important;
   }
 
-  .keyword_search input.keyword_search_text {
+  .keyword_search input.keyword_search_text,
+  .search .keyword_search_text,
+  input.keyword_search_text {
     width: 100% !important;
-    flex: 1 1 100% !important;
+    height: 44px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 0 14px !important;
     margin: 0 !important;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .keyword_search select.fw_cat,
+  .keyword_search select,
+  .search .input-group select {
+    width: 100% !important;
+    height: 44px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 0 28px 0 12px !important;
+    margin: 0 !important;
+    background-color: #ffffff !important;
+    box-sizing: border-box !important;
   }
 
   .search_box .keyword_search .search_word,
@@ -782,26 +835,31 @@ div[style*="border-bottom:1px solid #ccc"]::before {
     margin: 0 !important;
     justify-content: center !important;
   }
+}
 
-  .hotword {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-    margin-top: 8px !important;
-    padding-left: 0 !important;
-    list-style: none !important;
-  }
+/* Popular Search Keywords Horizontal Layout (Desktop, Tablet & Mobile) */
+.search_box .title {
+  margin-top: 14px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+}
 
-  .hotword li {
-    margin: 0 !important;
-    display: inline-block !important;
-  }
+.hotword {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 8px 0 0 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
 
-  .hotword li a {
-    font-size: 11.5px !important;
-    padding: 4px 10px !important;
-    margin: 0 !important;
-  }
+.hotword li {
+  display: inline-flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .hotword li a {
@@ -809,19 +867,44 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   color: #475569 !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  padding: 4px 12px !important;
+  padding: 5px 12px !important;
   border-radius: 20px !important;
   border: 1px solid #e2e8f0 !important;
   text-decoration: none !important;
   transition: all 0.2s ease !important;
   display: inline-block !important;
-  margin: 3px 2px !important;
+  white-space: nowrap !important;
 }
 
 .hotword li a:hover {
-  background: #e60012 !important;
+  background: #ef4444 !important;
   color: #ffffff !important;
-  border-color: #e60012 !important;
+  border-color: #ef4444 !important;
+}
+
+/* --- Phone Brand Category Banners (href_list) --- */
+.bg-white .href_list,
+.href_list {
+  background-color: #f8fafc !important;
+  padding: 16px 0 !important;
+  border-radius: 12px !important;
+}
+
+.href_item {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  transition: transform 0.2s ease !important;
+}
+
+.href_item:hover {
+  transform: translateY(-2px) !important;
+}
+
+.href_item img {
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* --- 8. Product Grid & Cards --- */

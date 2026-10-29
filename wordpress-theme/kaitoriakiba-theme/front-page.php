@@ -187,43 +187,43 @@ else :
             <div class="container">
                 <div class="gutter-10 clearflex">
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/phone.jpg" alt="Smartphones" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>" title="iPhone 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_iphone.svg" alt="iPhone" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/ipad.jpg" alt="Tablets" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>" title="iPad / タブレット 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_ipad.svg" alt="iPad / Tablets" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=gaming' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/game.jpg" alt="Gaming Consoles" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>" title="Google Pixel 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_pixel.svg" alt="Google Pixel" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cosmetics' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180512/meizhuang.jpg" alt="Cosmetics" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Galaxy' ) ); ?>" title="Galaxy 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_galaxy.svg" alt="Galaxy" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=appliances' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628171113.jpg" alt="Home Appliances" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xperia' ) ); ?>" title="Xperia 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_xperia.svg" alt="Xperia" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=cameras' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628171104.jpg" alt="Cameras" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=AQUOS' ) ); ?>" title="AQUOS / arrows 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_aquos.svg" alt="AQUOS / arrows" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=pc' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180702/20180628170919.jpg" alt="PC & Laptops" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xiaomi' ) ); ?>" title="Xiaomi / OPPO 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_xiaomi.svg" alt="Xiaomi / OPPO" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20180712/kaitoriwiki_link.jpg" alt="Kaitori Akiba" class="img-responsive" />
+                        <a href="<?php echo esc_url( home_url( '/devices/?s_career=simfree' ) ); ?>" title="SIMフリー スマホ 買取">
+                            <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/phones/banner_simfree.svg" alt="SIM Free Smartphones" class="img-responsive" />
                         </a>
                     </div>
                 </div>
@@ -239,19 +239,19 @@ else :
                 <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12 center col-preg-main">
                     <div class="col-lg-1 col-xs-0"></div>
                     <div class="col-lg-10 col-xs-12 col-preg-main">
-                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_1">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 type_1">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=store' ) ); ?>" title="In-Store Buyback Flow">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s1.png" class="img-responsive hidden-xs" alt="In-Store Buyback Flow" />
                                 <span class="btn btn-orange"><?php kaitori_te( 'In-Store Buyback', '店頭買取' ); ?></span>
                             </a>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_2">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 type_2">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>" title="Mail-in Buyback Flow">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s2.png" class="img-responsive hidden-xs" alt="Mail-in Buyback Flow" />
                                 <span class="btn btn-green"><?php kaitori_te( 'Mail-in Buyback', '郵送買取' ); ?></span>
                             </a>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 type_3">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 type_3">
                             <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>" title="Corporate Buyback Flow">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/topmenu/s3.png" class="img-responsive hidden-xs" alt="Corporate Buyback Flow" />
                                 <span class="btn btn-blue"><?php kaitori_te( 'Corporate Buyback', '法人買取' ); ?></span>
