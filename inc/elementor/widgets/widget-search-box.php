@@ -185,7 +185,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                         <form method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                             <div class="form-group mbtm0 clearfix">
                                 <div class="keyword_search">
-                                    <select class="form-control fw_cat" name="cat">
+                                    <select class="form-control fw_cat" name="cat" style="height: 44px; min-height: 44px; padding: 10px 28px 10px 14px; border-radius: 8px; line-height: normal;">
                                         <option value=""><?php _e( 'All Categories', 'kaitoriakiba' ); ?></option>
                                         <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
                                             <?php foreach ( $categories as $cat ) : ?>

@@ -29,7 +29,7 @@ get_header();
                     <form method="get" action="<?php echo esc_url( get_post_type_archive_link( 'kaitori_device' ) ); ?>">
                         <div class="form-group mbtm0 clearfix">
                             <div class="keyword_search">
-                                <select class="form-control fw_cat" name="cat">
+                                <select class="form-control fw_cat" name="cat" style="height: 44px; min-height: 44px; padding: 10px 28px 10px 14px; border-radius: 8px; line-height: normal;">
                                     <option value=""><?php _e( 'All Categories', 'kaitoriakiba' ); ?></option>
                                     <?php
                                     $cats = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );

@@ -73,10 +73,10 @@ function kaitoriakiba_lang_switcher() {
     $cur = kaitoriakiba_lang();
     $en  = esc_url( add_query_arg( 'lang', 'en' ) );
     $ja  = esc_url( add_query_arg( 'lang', 'ja' ) );
-    echo '<li class="kaitori-lang-switch"><i class="fa fa-globe"></i> ';
-    echo '<a href="' . $en . '" style="font-weight:' . ( 'en' === $cur ? '800;text-decoration:underline;' : '400;' ) . '">EN</a>';
+    echo '<li class="kaitori-lang-switch" style="white-space:nowrap; display:inline-flex; align-items:center; gap:4px;"><i class="fa fa-globe"></i> ';
+    echo '<a href="' . $en . '" style="font-weight:' . ( 'en' === $cur ? '800;text-decoration:underline;' : '400;' ) . 'white-space:nowrap;">EN</a>';
     echo ' <span style="opacity:.5;">|</span> ';
-    echo '<a href="' . $ja . '" style="font-weight:' . ( 'ja' === $cur ? '800;text-decoration:underline;' : '400;' ) . '">日本語</a>';
+    echo '<a href="' . $ja . '" style="font-weight:' . ( 'ja' === $cur ? '800;text-decoration:underline;' : '400;' ) . 'white-space:nowrap;">日本語</a>';
     echo '</li>';
 }
 

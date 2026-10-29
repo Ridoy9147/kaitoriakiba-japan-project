@@ -70,7 +70,7 @@ else :
                     <form class="m_fullsearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
                         <div class="form-group mbtm0 clearfix">
                             <div class="keyword_search">
-                                <select class="form-control fw_cat" name="cat">
+                                <select class="form-control fw_cat" name="cat" style="height: 44px; min-height: 44px; padding: 10px 28px 10px 14px; border-radius: 8px; line-height: normal;">
                                     <option value=""><?php kaitori_te( 'All Categories', 'すべてのカテゴリ' ); ?></option>
                                     <?php
                                     $cats = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );
