@@ -30,11 +30,14 @@ $render_elementor = false;
 if ( function_exists( 'kaitoriakiba_is_elementor_active' ) && kaitoriakiba_is_elementor_active() ) {
     $render_elementor = true;
 } elseif ( function_exists( 'kaitoriakiba_is_elementor_page' ) && kaitoriakiba_is_elementor_page() ) {
-    // 2. If page was edited and saved with Elementor builder
-    $raw_content = isset( $post->post_content ) ? trim( $post->post_content ) : '';
-    if ( ! empty( $raw_content ) && $raw_content !== '<!-- Kaitori Akiba Modern Buyback Portal Homepage -->' ) {
-        $render_elementor = true;
-    }
+    // 2. If page was edited and saved with Elementor builder, render the customized Elementor design
+    $render_elementor = true;
+}
+
+// 3. If page template is explicitly set to Elementor Full Width or Canvas
+$page_template = get_page_template_slug();
+if ( in_array( $page_template, array( 'template-elementor-fullwidth.php', 'template-elementor-canvas.php' ), true ) ) {
+    $render_elementor = true;
 }
 
 if ( $render_elementor ) :
