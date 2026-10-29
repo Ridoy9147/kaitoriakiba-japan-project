@@ -31,8 +31,8 @@
                     ?>
                     <li><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>" class="link-highlight"><i class="fa fa-shopping-cart"></i> <?php kaitori_te( 'iPhone Buyback', 'iPhone買取' ); ?></a></li>
                     <li><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><i class="fa fa-id-card-o"></i> <?php kaitori_te( 'eKYC Verify', '本人確認(eKYC)' ); ?></a></li>
+                    <li><a href="<?php echo esc_url( kaitoriakiba_get_account_url() ); ?>"><i class="fa fa-user-circle-o"></i> <?php kaitori_te( 'My Account', 'マイページ' ); ?></a></li>
                     <?php if ( is_user_logged_in() ) : ?>
-                        <li><a href="<?php echo esc_url( home_url( '/mypage/' ) ); ?>"><i class="fa fa-user-circle-o"></i> <?php kaitori_te( 'My Page', 'マイページ' ); ?></a></li>
                         <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>"><i class="fa fa-sign-out"></i> <?php kaitori_te( 'Logout', 'ログアウト' ); ?></a></li>
                     <?php else : ?>
                         <li><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><i class="fa fa-user-plus"></i> <?php kaitori_te( 'Register', '会員登録' ); ?></a></li>

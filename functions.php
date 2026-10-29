@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.3.4' );
+define( 'KAITORIAKIBA_VERSION', '2.3.5' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 
@@ -242,6 +242,7 @@ function kaitoriakiba_add_page_templates( $templates ) {
     $templates['page-register.php']                = __( 'Register & Login (会員登録)', 'kaitoriakiba' );
     $templates['page-phone-single.php']            = __( 'Phone Single Showcase (端末詳細・買取価格)', 'kaitoriakiba' );
     $templates['page-mypage.php']                  = __( 'Member Dashboard (マイページ)', 'kaitoriakiba' );
+    $templates['page-my-account.php']              = __( 'My Account (マイページ / アカウント)', 'kaitoriakiba' );
     $templates['page-faq.php']                     = __( 'FAQ (よくある質問)', 'kaitoriakiba' );
     $templates['page-access.php']                  = __( 'Store Access (店舗アクセス)', 'kaitoriakiba' );
     return $templates;
@@ -307,3 +308,90 @@ function kaitoriakiba_get_price( $post_id = null ) {
     $price = get_post_meta( $id, '_max_buyback_price', true );
     return $price ? '¥' . number_format( (int)$price ) : '¥0';
 }
+
+/**
+ * 7. Account URL Helper (returns permalink to /my-account/ or /mypage/)
+ */
+function kaitoriakiba_get_account_url() {
+    $account_page = get_page_by_path( 'my-account' );
+    if ( $account_page ) {
+        return get_permalink( $account_page );
+    }
+    $mypage = get_page_by_path( 'mypage' );
+    if ( $mypage ) {
+        return get_permalink( $mypage );
+    }
+    return home_url( '/my-account/' );
+}
+
+/**
+ * 8. Auto-create core pages (My Account / My Page, etc.) if missing in WordPress DB.
+ */
+function kaitoriakiba_ensure_core_pages() {
+    if ( get_transient( 'kaitoriakiba_core_pages_verified_v1' ) ) {
+        return;
+    }
+
+    $core_pages = array(
+        'my-account' => array(
+            'title'    => 'My Account (マイページ)',
+            'template' => 'page-my-account.php',
+            'content'  => '<!-- wp:paragraph --><p>会員様の買取申込履歴・本人確認状況・お気に入りを確認できるマイページです。</p><!-- /wp:paragraph -->',
+        ),
+        'mypage' => array(
+            'title'    => 'マイページ (My Page)',
+            'template' => 'page-mypage.php',
+            'content'  => '<!-- wp:paragraph --><p>会員様の買取申込履歴・本人確認状況・お気に入りを確認できるマイページです。</p><!-- /wp:paragraph -->',
+        ),
+    );
+
+    foreach ( $core_pages as $slug => $data ) {
+        $existing = get_page_by_path( $slug );
+        if ( ! $existing ) {
+            $page_id = wp_insert_post( array(
+                'post_title'     => $data['title'],
+                'post_name'      => $slug,
+                'post_status'    => 'publish',
+                'post_type'      => 'page',
+                'post_content'   => $data['content'],
+                'comment_status' => 'closed',
+                'ping_status'    => 'closed',
+            ) );
+            if ( $page_id && ! is_wp_error( $page_id ) ) {
+                update_post_meta( $page_id, '_wp_page_template', $data['template'] );
+            }
+        }
+    }
+
+    set_transient( 'kaitoriakiba_core_pages_verified_v1', true, DAY_IN_SECONDS );
+}
+add_action( 'init', 'kaitoriakiba_ensure_core_pages', 20 );
+
+add_action( 'after_switch_theme', function() {
+    delete_transient( 'kaitoriakiba_core_pages_verified_v1' );
+    kaitoriakiba_ensure_core_pages();
+} );
+
+/**
+ * 9. Fallback template routing for /mypage and /my-account to prevent 404 errors.
+ */
+function kaitoriakiba_account_template_include( $template ) {
+    $uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+    $path = trim( (string) wp_parse_url( $uri, PHP_URL_PATH ), '/' );
+
+    if ( preg_match( '#(^|/)(mypage|my-account|my_account)$#i', $path ) ) {
+        status_header( 200 );
+        global $wp_query;
+        if ( $wp_query ) {
+            $wp_query->is_404  = false;
+            $wp_query->is_page = true;
+        }
+        $target = locate_template( array( 'page-my-account.php', 'page-mypage.php' ) );
+        if ( $target ) {
+            return $target;
+        }
+    }
+    return $template;
+}
+add_filter( 'template_include', 'kaitoriakiba_account_template_include', 99 );
+
