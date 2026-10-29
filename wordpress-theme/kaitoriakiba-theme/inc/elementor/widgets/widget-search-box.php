@@ -174,9 +174,9 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
         $series_list= get_terms( array( 'taxonomy' => 'series', 'hide_empty' => false ) );
         ?>
         <div class="kaitori-elementor-search-box search">
-            <div class="row">
+            <div class="row search-box-row">
                 <!-- 1. Keyword Search -->
-                <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-keyword">
                     <div class="search_title">
                         <div class="search_title_h2"><?php echo esc_html( $kw_title ); ?></div>
                         <div class="search_title_h3"><?php echo esc_html( $kw_subtitle ); ?></div>
@@ -219,7 +219,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                 </div>
 
                 <!-- 2. Step-by-Step Search -->
-                <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-step">
                     <div class="search_title">
                         <div class="search_title_h2"><?php echo esc_html( $step_title ); ?></div>
                         <div class="search_title_h3"><?php echo esc_html( $step_subtitle ); ?></div>

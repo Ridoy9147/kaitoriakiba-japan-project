@@ -59,22 +59,66 @@ else :
 
     <!-- 1. Search Box (Dual Search) & Quick Category Bar -->
     <div class="container search mtop10" id="top-search-area">
-        <div class="row">
-            <div class="col-lg-12 col-mg-12 col-sm-12">
-                <!-- Col 1: Keyword Search -->
-                <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
-                    <div class="search_title">
-                        <div class="search_title_h2"><?php kaitori_te( 'Search by device model name or model number!', '機種名・型番で検索！' ); ?></div>
-                        <div class="search_title_h3"><?php kaitori_te( 'Please enter device name, model number, JAN code, etc.', '機種名・型番・JANコード等をご入力ください。' ); ?></div>				
+        <div class="row search-box-row">
+            <!-- Col 1: Keyword Search -->
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-keyword">
+                <div class="search_title">
+                    <div class="search_title_h2"><?php kaitori_te( 'Search by device model name or model number!', '機種名・型番で検索！' ); ?></div>
+                    <div class="search_title_h3"><?php kaitori_te( 'Please enter device name, model number, JAN code, etc.', '機種名・型番・JANコード等をご入力ください。' ); ?></div>				
+                </div>
+                <div class="search_box">
+                    <form class="m_fullsearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                        <div class="form-group mbtm0 clearfix">
+                            <div class="keyword_search">
+                                <select class="form-control fw_cat" name="cat">
+                                    <option value=""><?php kaitori_te( 'All Categories', 'すべてのカテゴリ' ); ?></option>
+                                    <?php
+                                    $cats = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );
+                                    if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
+                                        foreach ( $cats as $c ) {
+                                            echo '<option value="' . esc_attr( $c->slug ) . '">' . esc_html( $c->name ) . '</option>';
+                                        }
+                                    } else {
+                                        echo '<option value="iphone">iPhone</option>';
+                                        echo '<option value="smartphones">Smartphones</option>';
+                                        echo '<option value="tablets">Tablets</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php echo esc_attr( kaitori_t( 'Keyword search (2+ characters)', 'キーワード検索（2文字以上）' ) ); ?>" required="required" autocomplete="off">
+                                <button class="btn search_word" type="submit"><?php kaitori_te( 'Search', '検索' ); ?> <i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="title"><?php kaitori_te( 'Popular Search Keywords!', '人気の検索キーワード！' ); ?>
+                        <ul class="hotword">
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=iphone' ) ); ?>">iphone</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=Nintendo+switch' ) ); ?>">Nintendo switch</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>">Pixel</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+16' ) ); ?>">iPhone 16</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+16+Pro' ) ); ?>">iPhone 16 Pro</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=OPPO' ) ); ?>">OPPO</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=airpods' ) ); ?>">airpods</a></li>
+                            <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+15' ) ); ?>">iPhone 15</a></li>
+                        </ul>
                     </div>
-                    <div class="search_box">
-                        <form class="m_fullsearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <div class="form-group mbtm0 clearfix">
-                                <div class="keyword_search">
-                                    <select class="form-control fw_cat" name="cat">
-                                        <option value=""><?php kaitori_te( 'All Categories', 'すべてのカテゴリ' ); ?></option>
+                </div>
+            </div>
+
+            <!-- Col 2: Step-by-Step Search -->
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-step">
+                <div class="search_title">
+                    <div class="search_title_h2"><?php kaitori_te( 'Step-by-Step Category Search', 'カテゴリから絞り込み検索' ); ?></div>
+                    <div class="search_title_h3"><?php kaitori_te( 'Select one or more categories (Multiple selection supported)', '条件を選択してください（複数選択可）' ); ?></div>				
+                </div>
+                <div class="search_box">
+                    <form class="snssearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
+                        <div class="form-group">
+                            <div class="step_search">
+                                <div class="step_search_filters">
+                                    <select class="form-control s_cat" name="cat">
+                                        <option value=""><?php kaitori_te( 'Select Category', 'カテゴリを選択' ); ?></option>
                                         <?php
-                                        $cats = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );
                                         if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
                                             foreach ( $cats as $c ) {
                                                 echo '<option value="' . esc_attr( $c->slug ) . '">' . esc_html( $c->name ) . '</option>';
@@ -82,102 +126,56 @@ else :
                                         } else {
                                             echo '<option value="iphone">iPhone</option>';
                                             echo '<option value="smartphones">Smartphones</option>';
-                                            echo '<option value="tablets">Tablets</option>';
                                         }
                                         ?>
                                     </select>
-                                    <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php echo esc_attr( kaitori_t( 'Keyword search (2+ characters)', 'キーワード検索（2文字以上）' ) ); ?>" required="required" autocomplete="off">
-                                    <button class="btn search_word" type="submit"><?php kaitori_te( 'Search', '検索' ); ?> <i class="fa fa-search"></i></button>
+                                    <select class="form-control s_career" name="s_career">
+                                        <option value=""><?php kaitori_te( 'By Carrier', 'キャリアで選択' ); ?></option>
+                                        <?php
+                                        $carriers = get_terms( array( 'taxonomy' => 'carrier', 'hide_empty' => false ) );
+                                        if ( ! empty( $carriers ) && ! is_wp_error( $carriers ) ) {
+                                            foreach ( $carriers as $car ) {
+                                                echo '<option value="' . esc_attr( $car->slug ) . '">' . esc_html( $car->name ) . '</option>';
+                                            }
+                                        } else {
+                                            $sample_c = array( 'docomo', 'au', 'SoftBank', 'Y!mobile', 'UQ mobile', 'SIM FREE', 'RakutenMobile' );
+                                            foreach ( $sample_c as $sc ) echo '<option value="' . esc_attr($sc) . '">' . esc_html($sc) . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                    <select class="form-control s_brand" name="brand">
+                                        <option value=""><?php kaitori_te( 'By Brand', 'ブランドで選択' ); ?></option>
+                                        <?php
+                                        $brands = get_terms( array( 'taxonomy' => 'brand', 'hide_empty' => false ) );
+                                        if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
+                                            foreach ( $brands as $b ) {
+                                                echo '<option value="' . esc_attr( $b->slug ) . '">' . esc_html( $b->name ) . '</option>';
+                                            }
+                                        } else {
+                                            $sample_b = array( 'Apple', 'Xiaomi', 'OPPO', 'ASUS', 'FUJITSU', 'SAMSUNG', 'Google', 'SONY' );
+                                            foreach ( $sample_b as $sb ) echo '<option value="' . esc_attr($sb) . '">' . esc_html($sb) . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                    <select class="form-control s_series" name="series">
+                                        <option value=""><?php kaitori_te( 'By Series', 'シリーズで選択' ); ?></option>
+                                        <?php
+                                        $series = get_terms( array( 'taxonomy' => 'series', 'hide_empty' => false ) );
+                                        if ( ! empty( $series ) && ! is_wp_error( $series ) ) {
+                                            foreach ( $series as $s ) {
+                                                echo '<option value="' . esc_attr( $s->slug ) . '">' . esc_html( $s->name ) . '</option>';
+                                            }
+                                        } else {
+                                            $sample_s = array( 'iPhone', 'Xperia', 'Galaxy', 'arrows', 'AQUOS', 'Pixel' );
+                                            foreach ( $sample_s as $ss ) echo '<option value="' . esc_attr($ss) . '">' . esc_html($ss) . '</option>';
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
+                                <button class="btn step_search_btn" type="submit"><?php kaitori_te( 'Search', '検索' ); ?> <i class="fa fa-search"></i></button>
                             </div>
-                        </form>
-                        <div class="title"><?php kaitori_te( 'Popular Search Keywords!', '人気の検索キーワード！' ); ?>
-                            <ul class="hotword">
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=iphone' ) ); ?>">iphone</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=Nintendo+switch' ) ); ?>">Nintendo switch</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>">Pixel</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+16' ) ); ?>">iPhone 16</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+16+Pro' ) ); ?>">iPhone 16 Pro</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=OPPO' ) ); ?>">OPPO</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=airpods' ) ); ?>">airpods</a></li>
-                                <li><a href="<?php echo esc_url( home_url( '/devices/?q=iPhone+15' ) ); ?>">iPhone 15</a></li>
-                            </ul>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Col 2: Step-by-Step Search -->
-                <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
-                    <div class="search_title">
-                        <div class="search_title_h2"><?php kaitori_te( 'Step-by-Step Category Search', 'カテゴリから絞り込み検索' ); ?></div>
-                        <div class="search_title_h3"><?php kaitori_te( 'Select one or more categories (Multiple selection supported)', '条件を選択してください（複数選択可）' ); ?></div>				
-                    </div>
-                    <div class="search_box">
-                        <form class="snssearch" method="get" action="<?php echo esc_url( home_url( '/devices/' ) ); ?>">
-                            <div class="form-group">
-                                <div class="step_search">
-                                    <div class="step_search_filters">
-                                        <select class="form-control s_cat" name="cat">
-                                            <option value=""><?php kaitori_te( 'Select Category', 'カテゴリを選択' ); ?></option>
-                                            <?php
-                                            if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
-                                                foreach ( $cats as $c ) {
-                                                    echo '<option value="' . esc_attr( $c->slug ) . '">' . esc_html( $c->name ) . '</option>';
-                                                }
-                                            } else {
-                                                echo '<option value="iphone">iPhone</option>';
-                                                echo '<option value="smartphones">Smartphones</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                        <select class="form-control s_career" name="s_career">
-                                            <option value=""><?php kaitori_te( 'By Carrier', 'キャリアで選択' ); ?></option>
-                                            <?php
-                                            $carriers = get_terms( array( 'taxonomy' => 'carrier', 'hide_empty' => false ) );
-                                            if ( ! empty( $carriers ) && ! is_wp_error( $carriers ) ) {
-                                                foreach ( $carriers as $car ) {
-                                                    echo '<option value="' . esc_attr( $car->slug ) . '">' . esc_html( $car->name ) . '</option>';
-                                                }
-                                            } else {
-                                                $sample_c = array( 'docomo', 'au', 'SoftBank', 'Y!mobile', 'UQ mobile', 'SIM FREE', 'RakutenMobile' );
-                                                foreach ( $sample_c as $sc ) echo '<option value="' . esc_attr($sc) . '">' . esc_html($sc) . '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                        <select class="form-control s_brand" name="brand">
-                                            <option value=""><?php kaitori_te( 'By Brand', 'ブランドで選択' ); ?></option>
-                                            <?php
-                                            $brands = get_terms( array( 'taxonomy' => 'brand', 'hide_empty' => false ) );
-                                            if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
-                                                foreach ( $brands as $b ) {
-                                                    echo '<option value="' . esc_attr( $b->slug ) . '">' . esc_html( $b->name ) . '</option>';
-                                                }
-                                            } else {
-                                                $sample_b = array( 'Apple', 'Xiaomi', 'OPPO', 'ASUS', 'FUJITSU', 'SAMSUNG', 'Google', 'SONY' );
-                                                foreach ( $sample_b as $sb ) echo '<option value="' . esc_attr($sb) . '">' . esc_html($sb) . '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                        <select class="form-control s_series" name="series">
-                                            <option value=""><?php kaitori_te( 'By Series', 'シリーズで選択' ); ?></option>
-                                            <?php
-                                            $series = get_terms( array( 'taxonomy' => 'series', 'hide_empty' => false ) );
-                                            if ( ! empty( $series ) && ! is_wp_error( $series ) ) {
-                                                foreach ( $series as $s ) {
-                                                    echo '<option value="' . esc_attr( $s->slug ) . '">' . esc_html( $s->name ) . '</option>';
-                                                }
-                                            } else {
-                                                $sample_s = array( 'iPhone', 'Xperia', 'Galaxy', 'arrows', 'AQUOS', 'Pixel' );
-                                                foreach ( $sample_s as $ss ) echo '<option value="' . esc_attr($ss) . '">' . esc_html($ss) . '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    <button class="btn step_search_btn" type="submit"><?php kaitori_te( 'Search', '検索' ); ?> <i class="fa fa-search"></i></button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

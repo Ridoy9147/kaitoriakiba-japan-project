@@ -18,9 +18,9 @@ get_header();
 
     <!-- Search Box (Dual Search) -->
     <div class="search" style="margin-bottom: 24px;">
-        <div class="row">
+        <div class="row search-box-row">
             <!-- Col 1: Keyword Search -->
-            <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-keyword">
                 <div class="search_title">
                     <div class="search_title_h2"><?php _e( 'Search by device model name or model number!', 'kaitoriakiba' ); ?></div>
                     <div class="search_title_h3"><?php _e( 'Please enter device name, model number, JAN code, etc.', 'kaitoriakiba' ); ?></div>					
@@ -50,7 +50,7 @@ get_header();
             </div>
 
             <!-- Col 2: Step-by-Step Search -->
-            <div class="col-lg-6 col-mg-12 col-sm-12 col-xm-12">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-step">
                 <div class="search_title">
                     <div class="search_title_h2"><?php _e( 'Step-by-Step Category Search', 'kaitoriakiba' ); ?></div>
                     <div class="search_title_h3"><?php _e( 'Select one or more filters', 'kaitoriakiba' ); ?></div>					
