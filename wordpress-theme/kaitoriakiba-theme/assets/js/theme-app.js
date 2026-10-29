@@ -71,9 +71,9 @@
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-app');
             var originalText = $submitBtn.html();
 
-            // Validate mandatory fields
-            var imei = $form.find('input[name="imei"]').val();
-            if (imei && imei.length !== 15) {
+            // Validate fields (IMEI is optional, but if entered it must be 15 digits)
+            var imei = $form.find('input[name="imei"], input[name="device_imei"]').val();
+            if (imei && imei.trim() !== '' && imei.trim().length !== 15) {
                 kaitoriPopup((kaitori_ajax.i18n && kaitori_ajax.i18n.imei_error) || 'Invalid IMEI', 'error');
                 return false;
             }
