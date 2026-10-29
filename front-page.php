@@ -519,31 +519,31 @@ else :
                                         $img_url   = ! empty( $custom_img ) ? $custom_img : ( has_post_thumbnail( $p_id ) ? get_the_post_thumbnail_url( $p_id, 'medium' ) : $theme_uri . '/upload/goods/20260911/iPhone 18 Pro 256GB Black.png' );
                                         ?>
                                         <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-                                            <div class="pro-border gutter-10 row pro_list">
+                                            <div class="pro-border gutter-10 row pro_list" style="padding: 14px 12px 8px 12px;">
                                                 <div data-isok="false" data-value="<?php echo esc_attr( $p_id ); ?>" class="collect"></div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding:10px 0;">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding: 6px 0; margin-bottom: 8px;">
                                                     <a href="<?php the_permalink(); ?>">
-                                                        <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php the_title_attribute(); ?>" class="img-responsive" style="max-height:160px; margin:0 auto; object-fit:contain;">
+                                                        <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php the_title_attribute(); ?>" class="img-responsive" style="max-height: 140px; margin: 0 auto; object-fit: contain;">
                                                     </a>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box" style="margin-bottom: 0; padding-bottom: 0;">
                                                     <ul style="list-style:none; padding:0; margin:0;">
-                                                        <div class="sub-pro">
+                                                        <div class="sub-pro" style="margin-bottom: 4px;">
                                                             <li class="sub-pro-career">
                                                                 <a href="<?php echo esc_url( home_url( '/devices/?brand=' . urlencode( $brand_str ) ) ); ?>"><?php echo esc_html( $brand_str ); ?></a>
                                                             </li>
-                                                            <li class="sub-pro-name">
+                                                            <li class="sub-pro-name sub-pro-device-title">
                                                                 <a title="<?php the_title_attribute(); ?>" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                                                             </li>
-                                                            <li class="sub-pro-name">
-                                                                <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php the_permalink(); ?>">分割残債あり(△)も減額なし対応</a>
+                                                            <li class="sub-pro-notice-item" style="margin: 2px 0 1px 0; line-height: 1.2;">
+                                                                <a style="color:#ec1600; font-size: 11px; font-weight: 600; display: block; height: auto; max-height: 18px; line-height: 1.2; text-decoration: none;" title="分割残債あり(△)も減額なし対応" href="<?php the_permalink(); ?>">分割残債あり(△)も減額なし対応</a>
                                                             </li>
-                                                            <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $jan ); ?></li>
+                                                            <li class="sub-pro-jan-item" style="font-size:11px; color:#64748b; margin: 2px 0 0 0; line-height: 1.2; padding: 0;">JAN：<?php echo esc_html( $jan ); ?></li>
                                                         </div>
-                                                        <li class="sub-pro-jia"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span></li>
-                                                        <li>
-                                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) ) ); ?>">
-                                                                <button type="button" class="btn btn-pro"><?php kaitori_te( 'Apply for Buyback', '買取を申し込む' ); ?></button>
+                                                        <li class="sub-pro-jia" style="margin: auto 0 6px 0; padding-top: 6px;"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span></li>
+                                                        <li style="margin: 0; padding: 0;">
+                                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) ) ); ?>" style="display: block; margin: 0; padding: 0;">
+                                                                <button type="button" class="btn btn-pro" style="margin: 0; padding: 8px 12px;"><?php kaitori_te( 'Apply for Buyback', '買取を申し込む' ); ?></button>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -572,31 +572,31 @@ else :
                                     foreach ( $sample_devices as $dev ) :
                                         ?>
                                         <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-                                            <div class="pro-border gutter-10 row pro_list">
+                                            <div class="pro-border gutter-10 row pro_list" style="padding: 14px 12px 8px 12px;">
                                                 <div data-isok="false" class="collect"></div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding:10px 0;">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding: 6px 0; margin-bottom: 8px;">
                                                     <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
-                                                        <img src="<?php echo esc_url( $theme_uri . '/upload/goods/20260911/' . $dev['img'] ); ?>" alt="<?php echo esc_attr( $dev['title'] ); ?>" class="img-responsive" style="max-height:160px; margin:0 auto; object-fit:contain;">
+                                                        <img src="<?php echo esc_url( $theme_uri . '/upload/goods/20260911/' . $dev['img'] ); ?>" alt="<?php echo esc_attr( $dev['title'] ); ?>" class="img-responsive" style="max-height: 140px; margin: 0 auto; object-fit: contain;">
                                                     </a>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box" style="margin-bottom: 0; padding-bottom: 0;">
                                                     <ul style="list-style:none; padding:0; margin:0;">
-                                                        <div class="sub-pro">
+                                                        <div class="sub-pro" style="margin-bottom: 4px;">
                                                             <li class="sub-pro-career">
                                                                 <a href="<?php echo esc_url( home_url( '/devices/?brand=apple' ) ); ?>">Apple</a>
                                                             </li>
-                                                            <li class="sub-pro-name">
+                                                            <li class="sub-pro-name sub-pro-device-title">
                                                                 <a title="<?php echo esc_attr( $dev['title'] ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php echo esc_html( $dev['title'] ); ?></a>
                                                             </li>
-                                                            <li class="sub-pro-name">
-                                                                <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">分割残債あり(△)も減額なし対応</a>
+                                                            <li class="sub-pro-notice-item" style="margin: 2px 0 1px 0; line-height: 1.2;">
+                                                                <a style="color:#ec1600; font-size: 11px; font-weight: 600; display: block; height: auto; max-height: 18px; line-height: 1.2; text-decoration: none;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">分割残債あり(△)も減額なし対応</a>
                                                             </li>
-                                                            <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
+                                                            <li class="sub-pro-jan-item" style="font-size:11px; color:#64748b; margin: 2px 0 0 0; line-height: 1.2; padding: 0;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
                                                         </div>
-                                                        <li class="sub-pro-jia"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span></li>
-                                                        <li>
-                                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
-                                                                <button type="button" class="btn btn-pro"><?php kaitori_te( 'Apply for Buyback', '買取を申し込む' ); ?></button>
+                                                        <li class="sub-pro-jia" style="margin: auto 0 6px 0; padding-top: 6px;"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span></li>
+                                                        <li style="margin: 0; padding: 0;">
+                                                            <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>" style="display: block; margin: 0; padding: 0;">
+                                                                <button type="button" class="btn btn-pro" style="margin: 0; padding: 8px 12px;"><?php kaitori_te( 'Apply for Buyback', '買取を申し込む' ); ?></button>
                                                             </a>
                                                         </li>
                                                     </ul>
