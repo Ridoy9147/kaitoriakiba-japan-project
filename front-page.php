@@ -485,14 +485,16 @@ else :
                     <div class="mainpage-box xs-pad0">
                         <div class="sub-box" id="layout_y">
                             <div class="kaitori-section-header" style="text-align: center; margin-bottom: 25px; padding: 15px 0;">
-                                <div class="section-badge" style="display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 12px; font-weight: 800; padding: 4px 16px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 8px;">
-                                    <span class="badge-dot" style="width: 7px; height: 7px; background-color: #ef4444; border-radius: 50%; display: inline-block;"></span>
-                                    <span class="badge-text"><?php kaitori_te( 'HIGH PRICE GUARANTEED', '高価買取強化中' ); ?></span>
+                                <div class="section-title-wrap" style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                                    <div class="section-badge" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 12px; font-weight: 800; padding: 4px 14px; border-radius: 20px; letter-spacing: 0.5px; margin: 0; line-height: 1.4; vertical-align: middle; box-sizing: border-box;">
+                                        <span class="badge-dot" style="width: 7px; height: 7px; background-color: #ef4444; border-radius: 50%; display: inline-block;"></span>
+                                        <span class="badge-text" style="display: inline-block; line-height: 1;"><?php kaitori_te( 'HIGH PRICE GUARANTEED', '高価買取強化中' ); ?></span>
+                                    </div>
+                                    <h2 class="section-title" style="display: inline-flex; align-items: center; font-size: 24px; font-weight: 900; color: #0f172a; margin: 0; padding: 0; line-height: 1.2; letter-spacing: -0.5px; vertical-align: middle;">
+                                        <span class="title-highlight" style="background: linear-gradient(135deg, #0f172a 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; line-height: 1.2;"><?php kaitori_te( 'Featured Buyback Models', '買取強化商品一覧' ); ?></span>
+                                    </h2>
                                 </div>
-                                <h2 class="section-title" style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 4px 0 6px 0; letter-spacing: -0.5px;">
-                                    <span class="title-highlight" style="background: linear-gradient(135deg, #0f172a 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><?php kaitori_te( 'Featured Buyback Models', '買取強化商品一覧' ); ?></span>
-                                </h2>
-                                <p class="section-subtitle" style="font-size: 13px; color: #64748b; margin: 0 auto; font-weight: 500; max-width: 600px;"><?php kaitori_te( 'iPhone, Android Smartphones & Tablets - Top Market Rates Updated Daily', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' ); ?></p>
+                                <p class="section-subtitle" style="font-size: 13px; color: #64748b; margin: 0 auto; font-weight: 500; max-width: 600px; line-height: 1.5;"><?php kaitori_te( 'iPhone, Android Smartphones & Tablets - Top Market Rates Updated Daily', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' ); ?></p>
                                 <div class="section-title-line" style="width: 48px; height: 3px; background: linear-gradient(90deg, #ef4444, #f59e0b); border-radius: 2px; margin: 12px auto 0 auto;"></div>
                             </div>
                             <div class="sub-pro-box">

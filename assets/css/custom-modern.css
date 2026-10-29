@@ -915,19 +915,33 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   position: relative !important;
 }
 
+.kaitori-section-header .section-title-wrap {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+}
+
 .kaitori-section-header .section-badge {
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
   gap: 6px !important;
   background: #fef2f2 !important;
   border: 1px solid #fecaca !important;
   color: #dc2626 !important;
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 800 !important;
   padding: 4px 14px !important;
   border-radius: 20px !important;
   letter-spacing: 0.5px !important;
-  margin-bottom: 8px !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  box-sizing: border-box !important;
   text-transform: uppercase !important;
 }
 
@@ -940,19 +954,30 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
 
+.kaitori-section-header .section-badge .badge-text {
+  display: inline-block !important;
+  line-height: 1 !important;
+}
+
 .kaitori-section-header .section-title {
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: middle !important;
   font-size: 24px !important;
   font-weight: 900 !important;
   color: #0f172a !important;
-  margin: 0 0 6px 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
   letter-spacing: -0.5px !important;
-  line-height: 1.3 !important;
+  line-height: 1.2 !important;
 }
 
 .kaitori-section-header .section-title .title-highlight {
   background: linear-gradient(135deg, #0f172a 0%, #dc2626 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+  display: inline-block !important;
+  line-height: 1.2 !important;
 }
 
 .kaitori-section-header .section-subtitle {
@@ -961,6 +986,7 @@ div[style*="border-bottom:1px solid #ccc"]::before {
   margin: 0 auto !important;
   font-weight: 500 !important;
   max-width: 600px !important;
+  line-height: 1.5 !important;
 }
 
 .kaitori-section-header .section-title-line {
