@@ -575,7 +575,25 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 });
             }
 
+            var kaitoriCurrentStep = 1;
             function goToStep(stepNum) {
+                // Moving FORWARD: validate the current step's fields first. Otherwise a
+                // required field left invalid on an earlier (now display:none) step makes
+                // the browser silently refuse the final submit ("control is not focusable")
+                // — the submit event never fires, so nothing happens on the Review step.
+                if (stepNum > kaitoriCurrentStep) {
+                    var curStepEl = document.getElementById('step-' + kaitoriCurrentStep);
+                    if (curStepEl) {
+                        var curFields = curStepEl.querySelectorAll('input, select, textarea');
+                        for (var f = 0; f < curFields.length; f++) {
+                            if (curFields[f].willValidate && !curFields[f].checkValidity()) {
+                                curFields[f].reportValidity();
+                                return;
+                            }
+                        }
+                    }
+                }
+                kaitoriCurrentStep = stepNum;
                 for (var i = 1; i <= 6; i++) {
                     var stepEl = document.getElementById('step-' + i);
                     var nodeEl = document.getElementById('step-node-' + i);

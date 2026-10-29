@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.2.3' );
+define( 'KAITORIAKIBA_VERSION', '2.2.4' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 
@@ -129,6 +129,8 @@ require_once KAITORIAKIBA_DIR . '/inc/kyc-security.php';
 require_once KAITORIAKIBA_DIR . '/inc/cpt.php';
 require_once KAITORIAKIBA_DIR . '/inc/meta-boxes.php';
 require_once KAITORIAKIBA_DIR . '/inc/admin-customers.php';
+require_once KAITORIAKIBA_DIR . '/inc/invoice.php';
+require_once KAITORIAKIBA_DIR . '/inc/admin-order-create.php';
 require_once KAITORIAKIBA_DIR . '/inc/sell-gate.php';
 require_once KAITORIAKIBA_DIR . '/inc/emails.php';
 require_once KAITORIAKIBA_DIR . '/inc/ajax-handlers.php';

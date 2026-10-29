@@ -2,7 +2,7 @@
 <html <?php language_attributes(); ?>>
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no, email=no">
     <?php wp_head(); ?>
 </head>
@@ -86,13 +86,13 @@
     </div>
 </header>
 
-<!-- Mobile Navigation Bar (Original Authentic Design) -->
+<!-- Mobile Navigation Drawer Header -->
 <div class="navbar-header visible-xs">
     <div class="header-menu">
         <ul>
-            <li class="btn-dt"><a href="#index-search"><?php kaitori_te( 'Search', '検索' ); ?></a></li>
+            <li class="btn-dt"><a href="#index-search" data-toggle="collapse"><?php kaitori_te( 'Search', '検索' ); ?></a></li>
             <li class="btn-yj"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'Menu', 'メニュー' ); ?></a></li>
-            <li class="btn-fr"><a href="<?php echo esc_url( is_user_logged_in() ? home_url( '/mypage/' ) : home_url( '/register/' ) ); ?>"><?php kaitori_te( 'Account', 'アカウント' ); ?></a></li>
+            <li class="btn-fr"><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php kaitori_te( 'Account', 'アカウント' ); ?></a></li>
         </ul>
     </div>
 </div>

@@ -15,10 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handle Buyback Application Submission
  */
 function kaitoriakiba_ajax_submit_application() {
-    if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
-        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
-    }
-    kaitoriakiba_guard_public_form( 'application', 20 );
+    check_ajax_referer( 'kaitori_nonce', 'security' );
+    kaitoriakiba_guard_public_form( 'application', 15 );
 
     // Gate: login + eKYC required (server-side enforcement; cannot be bypassed).
     if ( function_exists( 'kaitoriakiba_user_can_sell' ) ) {
@@ -208,10 +206,8 @@ add_action( 'wp_ajax_nopriv_kaitori_submit_application', 'kaitoriakiba_ajax_subm
  * Handle eKYC ID Submission & Connect with Customer Profile + Orders
  */
 function kaitoriakiba_ajax_submit_kyc() {
-    if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
-        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
-    }
-    kaitoriakiba_guard_public_form( 'kyc', 20 );
+    check_ajax_referer( 'kaitori_nonce', 'security' );
+    kaitoriakiba_guard_public_form( 'kyc', 15 );
 
     $name       = isset( $_POST['kyc_name'] ) ? sanitize_text_field( $_POST['kyc_name'] ) : ( isset( $_POST['customer_name'] ) ? sanitize_text_field( $_POST['customer_name'] ) : '' );
     $kana       = isset( $_POST['kyc_kana'] ) ? sanitize_text_field( $_POST['kyc_kana'] ) : '';
@@ -438,10 +434,15 @@ add_action( 'wp_ajax_nopriv_kaitori_filter_devices', 'kaitoriakiba_ajax_filter_d
  * Handle Member Registration via AJAX
  */
 function kaitoriakiba_ajax_register_user() {
+    // Non-fatal nonce check: a stale nonce (e.g. a cached page) returns a clear,
+    // readable message instead of a cryptic "-1" that surfaces as a generic error.
     if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
-        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'Your session expired. Please reload the page and try again.',
+            'セッションの有効期限が切れました。ページを再読み込みしてお試しください。'
+        ) ) );
     }
-    kaitoriakiba_guard_public_form( 'register', 15 );
+    kaitoriakiba_guard_public_form( 'register', 20 );
 
     $email      = isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : '';
     $password   = isset( $_POST['password'] ) ? $_POST['password'] : '';
@@ -450,19 +451,19 @@ function kaitoriakiba_ajax_register_user() {
     $phone      = isset( $_POST['phone'] ) ? sanitize_text_field( $_POST['phone'] ) : '';
 
     if ( ! is_email( $email ) ) {
-        wp_send_json_error( array( 'message' => __( '有効なメールアドレスを入力してください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'Please enter a valid email address.', '有効なメールアドレスを入力してください。' ) ) );
     }
 
     if ( email_exists( $email ) ) {
-        wp_send_json_error( array( 'message' => __( 'このメールアドレスは既に登録されています。ログインしてください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'This email address is already registered. Please log in instead.', 'このメールアドレスは既に登録されています。ログインしてください。' ) ) );
     }
 
     if ( strlen( $password ) < 8 ) {
-        wp_send_json_error( array( 'message' => __( 'パスワードは8文字以上で設定してください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'Your password must be at least 8 characters.', 'パスワードは8文字以上で設定してください。' ) ) );
     }
     // Require a mix of letters and numbers for basic strength.
     if ( ! preg_match( '/[A-Za-z]/', $password ) || ! preg_match( '/\d/', $password ) ) {
-        wp_send_json_error( array( 'message' => __( 'パスワードは英字と数字を組み合わせてください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'Your password must contain both letters and numbers.', 'パスワードは英字と数字を組み合わせてください。' ) ) );
     }
 
     $username = sanitize_user( current( explode( '@', $email ) ) );
@@ -494,7 +495,7 @@ function kaitoriakiba_ajax_register_user() {
 
     wp_send_json_success( array(
         'user_id' => $user_id,
-        'message' => __( '会員登録が完了いたしました！マイページへ移動します。', 'kaitoriakiba' ),
+        'message' => kaitori_t( 'Registration complete! Redirecting you now.', '会員登録が完了いたしました！マイページへ移動します。' ),
         'redirect_url' => home_url( '/sell-apply/' ),
     ) );
 }
@@ -505,15 +506,27 @@ add_action( 'wp_ajax_nopriv_kaitori_register_user', 'kaitoriakiba_ajax_register_
  * Handle Member Login via AJAX
  */
 function kaitoriakiba_ajax_login_user() {
+    // Non-fatal nonce check (clear message instead of a cryptic "-1").
     if ( ! check_ajax_referer( 'kaitori_nonce', 'security', false ) ) {
-        wp_send_json_error( array( 'message' => __( 'セッションの有効期限が切れました。ページを再読み込みしてから再度お試しください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'Your session expired. Please reload the page and try again.',
+            'セッションの有効期限が切れました。ページを再読み込みしてお試しください。'
+        ) ) );
     }
-    // Brute-force throttle: 10 attempts / 10 min per IP.
-    if ( ! kaitoriakiba_rate_limit( 'login', 10, 600 ) ) {
-        wp_send_json_error( array( 'message' => __( 'ログイン試行回数が多すぎます。しばらく待ってから再度お試しください。', 'kaitoriakiba' ) ) );
+    // Brute-force throttle (filterable). 10 attempts / 10 min per IP by default —
+    // raised from 5 so repeated legitimate/in-house attempts aren't locked out too soon.
+    $login_max = (int) apply_filters( 'kaitori_login_rate_max', 10 );
+    if ( ! kaitoriakiba_rate_limit( 'login', $login_max, 600 ) ) {
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'Too many login attempts. Please wait about 10 minutes and try again.',
+            'ログイン試行回数が多すぎます。10分ほど待って再度お試しください。'
+        ) ) );
     }
     if ( ! kaitoriakiba_check_honeypot() || ! kaitoriakiba_captcha_ok() ) {
-        wp_send_json_error( array( 'message' => __( '不正な送信が検出されました。ページを再読み込みしてお試しください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'An invalid submission was detected. Please reload the page and try again.',
+            '不正な送信が検出されました。ページを再読み込みしてお試しください。'
+        ) ) );
     }
 
     $user_login = isset( $_POST['log'] ) ? sanitize_text_field( $_POST['log'] ) : '';
@@ -521,7 +534,7 @@ function kaitoriakiba_ajax_login_user() {
     $remember   = ! empty( $_POST['rememberme'] );
 
     if ( empty( $user_login ) || empty( $user_pass ) ) {
-        wp_send_json_error( array( 'message' => __( 'メールアドレス（またはユーザー名）とパスワードを入力してください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'Please enter your email address (or username) and password.', 'メールアドレス（またはユーザー名）とパスワードを入力してください。' ) ) );
     }
 
     $creds = array(
@@ -533,11 +546,11 @@ function kaitoriakiba_ajax_login_user() {
     $user = wp_signon( $creds, is_ssl() );
 
     if ( is_wp_error( $user ) ) {
-        wp_send_json_error( array( 'message' => __( 'ログイン情報が正しくありません。パスワードまたはメールアドレスをご確認ください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'The login details are incorrect. Please check your email address and password.', 'ログイン情報が正しくありません。パスワードまたはメールアドレスをご確認ください。' ) ) );
     }
 
     wp_send_json_success( array(
-        'message'      => __( 'ログインに成功しました！マイページへ移動します。', 'kaitoriakiba' ),
+        'message'      => kaitori_t( 'Logged in successfully! Redirecting you now.', 'ログインに成功しました！マイページへ移動します。' ),
         'redirect_url' => home_url( '/sell-apply/' ),
     ) );
 }

@@ -1145,200 +1145,118 @@ textarea:focus-visible {
 /* Favorite star keyboard affordance. */
 .collect { cursor: pointer; }
 
-/* ====================== Header Mobile Responsiveness ====================== */
-@media (max-width: 767px) {
-  html, body {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-  .top-utility-bar {
-    padding: 5px 0 !important;
-  }
-  .top-bar-inner {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-  }
-  .top-bar-notice {
-    flex-shrink: 0 !important;
-  }
-  .badge-official {
-    font-size: 10px !important;
-    padding: 2px 7px !important;
-  }
-  .top-nav-links {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 4px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-  .top-nav-links::-webkit-scrollbar {
-    display: none !important;
-  }
-  .top-nav-links li {
-    flex-shrink: 0 !important;
-  }
-  .top-nav-links li a {
-    font-size: 11px !important;
-    padding: 2px 6px !important;
-    white-space: nowrap !important;
-  }
-  .kaitori-lang-switch {
-    font-size: 11px !important;
-    color: #94a3b8 !important;
-    white-space: nowrap !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 3px !important;
-  }
+/* ============================================================
+   Auth portal (register / login) — mobile responsiveness.
+   The register/login markup carries heavy inline styles, so the
+   mobile overrides below need !important to take effect.
+   ============================================================ */
+.auth-container,
+.auth-container * { box-sizing: border-box; }
 
-  .site-header-modern {
-    padding: 10px 0 !important;
-  }
-  .header-main-row {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-  }
-  .header-brand {
-    flex: 0 1 auto !important;
-    min-width: 0 !important;
-  }
-  .brand-logo-img {
-    max-height: 38px !important;
-    max-width: 165px !important;
-    width: auto !important;
-    height: auto !important;
-    object-fit: contain !important;
-  }
-  .header-actions {
-    display: flex !important;
-    align-items: center !important;
-    flex-shrink: 0 !important;
-    gap: 6px !important;
-    flex-wrap: nowrap !important;
-  }
-  .header-cta-btn {
-    font-size: 12px !important;
-    padding: 8px 12px !important;
-    border-radius: 8px !important;
-    white-space: nowrap !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-  }
+/* Inputs are already width:100% inline; this just makes them wrap safely. */
+.auth-container .form-control-custom { max-width: 100% !important; }
 
-  /* Authentic Mobile Bottom Navigation (Search / Menu / Account) */
-  .navbar-header.visible-xs {
-    position: fixed !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    background-color: #ffffff !important;
-    border-top: 2px solid #ef4444 !important;
-    padding: 6px 4px !important;
-    z-index: 100001 !important;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08) !important;
-  }
-  .navbar-header.visible-xs .header-menu {
-    height: auto !important;
-    background: none !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
-  .navbar-header.visible-xs .header-menu ul {
-    display: flex !important;
-    justify-content: space-around !important;
-    align-items: center !important;
-    width: 100% !important;
-    max-width: 480px !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-    list-style: none !important;
-  }
-  .navbar-header.visible-xs .header-menu ul li {
-    float: none !important;
-    flex: 1 !important;
-    max-width: 120px !important;
-    margin: 0 4px !important;
-    height: 36px !important;
-    line-height: 36px !important;
-    border-radius: 6px !important;
-    text-align: center !important;
-  }
-  .navbar-header.visible-xs .header-menu .btn-dt {
-    background-color: #FC9A00 !important;
-  }
-  .navbar-header.visible-xs .header-menu .btn-dt:hover,
-  .navbar-header.visible-xs .header-menu .btn-dt.active {
-    background-color: #FC8200 !important;
-  }
-  .navbar-header.visible-xs .header-menu .btn-yj {
-    background-color: #319F2D !important;
-  }
-  .navbar-header.visible-xs .header-menu .btn-yj:hover,
-  .navbar-header.visible-xs .header-menu .btn-yj.active {
-    background-color: #2C9028 !important;
-  }
-  .navbar-header.visible-xs .header-menu .btn-fr {
-    background-color: #0589E6 !important;
-  }
-  .navbar-header.visible-xs .header-menu .btn-fr:hover,
-  .navbar-header.visible-xs .header-menu .btn-fr.active {
-    background-color: #037ACD !important;
-  }
-  .navbar-header.visible-xs .header-menu ul li a {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    text-decoration: none !important;
-    line-height: 1 !important;
-  }
-  body {
-    padding-bottom: 54px !important;
-  }
-
-  .auth-container, .kyc-container, .sell-apply-container {
-    padding: 20px 14px !important;
-    margin: 15px auto !important;
+@media (max-width: 575px) {
+  .auth-container {
+    padding: 22px 16px !important;
     border-radius: 12px !important;
+    max-width: 100% !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
   }
-  .id-type-grid {
-    grid-template-columns: 1fr !important;
+  .auth-container .auth-header h2 { font-size: 18px !important; }
+  .auth-container .auth-header p { font-size: 13px !important; }
+  /* 16px font on inputs stops iOS Safari from auto-zooming on focus. */
+  .auth-container .form-control-custom {
+    height: 44px !important;
+    font-size: 16px !important;
   }
+  .auth-container button[type="submit"],
+  .auth-container .btn-block {
+    font-size: 15px !important;
+    padding: 13px !important;
+  }
+  /* Register first/last-name columns: keep comfortable spacing when stacked. */
+  .auth-container .row > [class*="col-"] { margin-bottom: 0 !important; }
 }
 
-@media (max-width: 375px) {
-  .brand-logo-img {
-    max-height: 32px !important;
-    max-width: 135px !important;
-  }
-  .header-cta-btn {
-    font-size: 11px !important;
-    padding: 6px 9px !important;
-    gap: 4px !important;
-  }
-  .navbar-header.visible-xs .header-menu ul li {
-    margin: 0 2px !important;
-    height: 34px !important;
-    line-height: 34px !important;
-  }
-  .navbar-header.visible-xs .header-menu ul li a {
-    font-size: 12px !important;
-  }
+/* Safety net: prevent accidental horizontal scrolling on phones. */
+@media (max-width: 575px) {
+  body { overflow-x: hidden; }
+}
+
+/* ============================================================
+   Modal popup — replaces native alert() for all form responses
+   (success / error). Driven by kaitoriPopup() in theme-app.js.
+   ============================================================ */
+.kaitori-popup-overlay {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.kaitori-popup-overlay.kaitori-popup-shown { opacity: 1; }
+.kaitori-popup-overlay.kaitori-popup-closing { opacity: 0; }
+
+.kaitori-popup-card {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  transform: translateY(14px) scale(0.97);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kaitori-popup-shown .kaitori-popup-card { transform: translateY(0) scale(1); }
+
+.kaitori-popup-icon {
+  width: 60px; height: 60px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+.kaitori-popup-success .kaitori-popup-icon { background: #16a34a; }
+.kaitori-popup-error .kaitori-popup-icon { background: #ef4444; }
+
+.kaitori-popup-msg {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #0f172a;
+  margin-bottom: 22px;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.kaitori-popup-ok {
+  min-width: 130px;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.kaitori-popup-success .kaitori-popup-ok { background: #16a34a; }
+.kaitori-popup-error .kaitori-popup-ok { background: #ef4444; }
+.kaitori-popup-ok:hover { opacity: 0.92; }
+
+@media (max-width: 575px) {
+  .kaitori-popup-card { padding: 22px 18px; border-radius: 14px; }
+  .kaitori-popup-icon { width: 54px; height: 54px; font-size: 27px; }
 }

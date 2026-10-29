@@ -6,6 +6,61 @@
 (function($) {
     'use strict';
 
+    /**
+     * Styled modal popup that replaces the browser's native alert() for all
+     * form responses. type = 'success' (green ✓) or 'error' (red !).
+     * Returns the overlay element. Plain text only (XSS-safe via textContent).
+     */
+    function kaitoriPopup(message, type) {
+        type = (type === 'success') ? 'success' : 'error';
+
+        var existing = document.getElementById('kaitori-popup-overlay');
+        if (existing && existing.parentNode) { existing.parentNode.removeChild(existing); }
+
+        var okText = (window.kaitori_ajax && kaitori_ajax.i18n && kaitori_ajax.i18n.popup_ok) || 'OK';
+        var icon   = (type === 'success') ? '✓' : '!';
+
+        var overlay = document.createElement('div');
+        overlay.id = 'kaitori-popup-overlay';
+        overlay.className = 'kaitori-popup-overlay';
+
+        var card = document.createElement('div');
+        card.className = 'kaitori-popup-card kaitori-popup-' + type;
+        card.setAttribute('role', 'alertdialog');
+        card.setAttribute('aria-modal', 'true');
+        card.innerHTML =
+            '<div class="kaitori-popup-icon" aria-hidden="true"></div>' +
+            '<div class="kaitori-popup-msg"></div>' +
+            '<button type="button" class="kaitori-popup-ok"></button>';
+        card.querySelector('.kaitori-popup-icon').textContent = icon;
+        card.querySelector('.kaitori-popup-msg').textContent = message || '';
+        card.querySelector('.kaitori-popup-ok').textContent = okText;
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
+
+        function close() {
+            document.removeEventListener('keydown', onKey);
+            overlay.classList.remove('kaitori-popup-shown');
+            overlay.classList.add('kaitori-popup-closing');
+            setTimeout(function() { if (overlay.parentNode) { overlay.parentNode.removeChild(overlay); } }, 200);
+        }
+        function onKey(e) { if (e.key === 'Escape' || e.keyCode === 27) { close(); } }
+
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) { close(); } });
+        card.querySelector('.kaitori-popup-ok').addEventListener('click', close);
+        document.addEventListener('keydown', onKey);
+
+        requestAnimationFrame(function() {
+            overlay.classList.add('kaitori-popup-shown');
+            var btn = card.querySelector('.kaitori-popup-ok');
+            if (btn) { btn.focus(); }
+        });
+
+        return { close: close, overlay: overlay };
+    }
+    // Expose for inline/other scripts that may want it.
+    window.kaitoriPopup = kaitoriPopup;
+
     $(document).ready(function() {
 
         // 1. AJAX Buyback Application Form Submission
@@ -19,7 +74,7 @@
             // Validate mandatory fields
             var imei = $form.find('input[name="imei"]').val();
             if (imei && imei.length !== 15) {
-                alert((kaitori_ajax.i18n && kaitori_ajax.i18n.imei_error) || 'Invalid IMEI');
+                kaitoriPopup((kaitori_ajax.i18n && kaitori_ajax.i18n.imei_error) || 'Invalid IMEI', 'error');
                 return false;
             }
 
@@ -51,15 +106,15 @@
                             var kycUrl = kaitori_ajax.home_url + 'kyc-verify/?order=' + encodeURIComponent(response.data.order_code) + '&name=' + encodeURIComponent(appName) + '&email=' + encodeURIComponent(appEmail) + '&phone=' + encodeURIComponent(appPhone);
                             $('#btnGoToKyc, .btn-goto-kyc').attr('href', kycUrl);
                         }
-                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.app_success) || 'Done');
+                        kaitoriPopup(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.app_success) || 'Done', 'success');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {
-                        alert(response.data.message || kaitori_ajax.i18n_error);
+                        kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
-                    alert(kaitori_ajax.i18n_error);
+                    kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
         });
@@ -89,15 +144,15 @@
                     if (response.success) {
                         $form.hide();
                         $('#kyc-success-message').fadeIn();
-                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.kyc_success) || 'Done');
+                        kaitoriPopup(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.kyc_success) || 'Done', 'success');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {
-                        alert(response.data.message || kaitori_ajax.i18n_error);
+                        kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
-                    alert(kaitori_ajax.i18n_error);
+                    kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
         });
@@ -125,17 +180,18 @@
                 success: function(response) {
                     $submitBtn.prop('disabled', false).html(originalText);
                     if (response.success) {
-                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.reg_success) || 'Done');
+                        kaitoriPopup(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.reg_success) || 'Done', 'success');
                         if (response.data.redirect_url) {
-                            window.location.href = response.data.redirect_url;
+                            // Give the success popup a moment before redirecting.
+                            setTimeout(function() { window.location.href = response.data.redirect_url; }, 1400);
                         }
                     } else {
-                        alert(response.data.message || kaitori_ajax.i18n_error);
+                        kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
-                    alert(kaitori_ajax.i18n_error);
+                    kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
         });
@@ -163,19 +219,22 @@
                 success: function(response) {
                     $submitBtn.prop('disabled', false).html(originalText);
                     if (response.success) {
-                        alert(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.login_success) || 'Done');
-                        if (response.data.redirect_url) {
-                            window.location.href = response.data.redirect_url;
-                        } else {
-                            window.location.reload();
-                        }
+                        kaitoriPopup(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.login_success) || 'Done', 'success');
+                        // Give the success popup a moment before redirecting / reloading.
+                        setTimeout(function() {
+                            if (response.data.redirect_url) {
+                                window.location.href = response.data.redirect_url;
+                            } else {
+                                window.location.reload();
+                            }
+                        }, 1400);
                     } else {
-                        alert(response.data.message || kaitori_ajax.i18n_error);
+                        kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
-                    alert(kaitori_ajax.i18n_error);
+                    kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
         });
@@ -230,7 +289,7 @@
                 device_id: id
             }, function(res) {
                 if (!res || !res.success) {
-                    alert((res && res.data && res.data.message) || kaitori_ajax.i18n_error);
+                    kaitoriPopup((res && res.data && res.data.message) || kaitori_ajax.i18n_error, 'error');
                     return;
                 }
                 if (res.data.guest) {
@@ -250,7 +309,7 @@
                     $el.attr('data-isok', res.data.active ? 'true' : 'false');
                 }
             }).fail(function() {
-                alert(kaitori_ajax.i18n_error);
+                kaitoriPopup(kaitori_ajax.i18n_error, 'error');
             });
         });
 
@@ -267,18 +326,6 @@
                 $.get(kaitori_ajax.ajax_url, queryData, function(html) {
                     $('#live-device-results').html(html);
                 });
-            }
-        });
-
-        // 5. Mobile Bottom Bar Search Smooth Scroll
-        $(document).on('click', '.header-menu .btn-dt a', function(e) {
-            var $target = $('#index-search');
-            if ($target.length) {
-                e.preventDefault();
-                $('html, body').animate({
-                    scrollTop: $target.offset().top - 20
-                }, 400);
-                $target.find('.keyword_search_text').focus();
             }
         });
 

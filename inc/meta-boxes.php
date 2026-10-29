@@ -421,6 +421,15 @@ function kaitoriakiba_order_meta_box_render( $post ) {
     $est_price      = get_post_meta( $post->ID, '_estimated_price', true );
     $accessories    = get_post_meta( $post->ID, '_accessories', true );
     ?>
+    <?php if ( function_exists( 'kaitoriakiba_invoice_url' ) ) : ?>
+        <div style="margin:4px 0 16px; padding:12px 14px; background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <strong style="color:#9a3412;"><span class="dashicons dashicons-media-document" style="vertical-align:middle;"></span> <?php echo esc_html( kaitori_t( 'Buyback Invoice', '買取伝票' ) ); ?></strong>
+            <a href="<?php echo esc_url( kaitoriakiba_invoice_url( $post->ID, true ) ); ?>" target="_blank" class="button button-primary" style="background:#ef4444; border-color:#ef4444; font-weight:700;">
+                <span class="dashicons dashicons-printer" style="vertical-align:middle;"></span> <?php echo esc_html( kaitori_t( 'Print / Save as PDF', '印刷 / PDF保存' ) ); ?>
+            </a>
+            <a href="<?php echo esc_url( kaitoriakiba_invoice_url( $post->ID, false ) ); ?>" target="_blank" class="button"><?php echo esc_html( kaitori_t( 'Preview (Shop + Customer copy)', 'プレビュー（店舗控え・お客様控え）' ) ); ?></a>
+        </div>
+    <?php endif; ?>
     <table class="form-table">
         <tr>
             <th style="width:200px;"><label><?php echo kaitori_t( 'Order Processing Status', '注文処理ステータス' ); ?></label></th>

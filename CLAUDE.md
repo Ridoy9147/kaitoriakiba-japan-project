@@ -54,7 +54,9 @@ AJAX permission checks, never a hand-rolled cap string.
   _color/_carrier/_imei`, `_screen_condition`, `_body_condition`, `_battery_health`,
   `_estimated_price` (server-computed), `_estimated_price_client` (ref only),
   `_bank_account_number` + `_bank_holder_kana` (**encrypted**), `_order_kyc_status`,
-  `_customer_user_id`, `_kaitori_demo`.
+  `_customer_user_id`, `_kaitori_demo`. Walk-in/invoice extras: `_kaitori_walkin` (1),
+  `_final_buyback_price` (agreed amount; invoice prefers it over `_estimated_price`),
+  `_payment_method` (cash|bank), `_admin_memo`.
 - eKYC: `_kyc_status` (pending/verified/rejected), `_kyc_name/_kana/_email/_phone/_dob/
   _address...`, `_kyc_id_front_file` / `_kyc_id_back_file` / `_kyc_selfie_file` (secure
   relative paths; legacy `_kyc_*_attach` = attachment ids), `_kyc_user_id`, `_kyc_order_id`.
@@ -78,6 +80,8 @@ Order statuses: single source of truth `kaitoriakiba_order_statuses()` in `inc/c
 | `emails.php` | Customer order-confirmation + status-change emails (HTML `wp_mail`) |
 | `seo.php` | OG/Twitter meta + JSON-LD (LocalBusiness, Product/Offer, FAQPage) |
 | `admin-customers.php` | **Customers admin page** (aggregate list + filters + detail + edit) and admin AJAX (status update, customer update, save-scan) |
+| `invoice.php` | **Buyback invoice** (買取明細書): printable A4 HTML with **two copies** (店舗控え + お客様控え), served via `admin-post.php?action=kaitori_print_invoice` (cap + nonce). PDF = browser Print→Save as PDF (no library). Helper `kaitoriakiba_invoice_url($order_id,$auto)` |
+| `admin-order-create.php` | **Walk-in order page** (店頭買取登録, submenu under Buyback Orders): staff create a `buyback_order` by hand → issue invoice. Reuses order meta keys; encrypts bank; "Suggest price" uses `kaitori_live_estimate` |
 | `sell-gate.php` | **Login + eKYC gate** for the buyback form + its settings page |
 | `demo-data.php` | Seeder: taxonomies, 6 sample devices, pages, nav menu (runs on theme switch / admin_init) |
 | `demo-import.php` | **One-click Demo Import admin page** (import / add sample orders+eKYC / remove demo) |
@@ -141,7 +145,9 @@ Admins bypass (for previews). Helper: `kaitoriakiba_user_can_sell()` → `[bool,
 ## 8. Admin pages (wp-admin)
 
 - **Buyback Devices / Buyback Orders / eKYC Verifications** (CPT menus)
-- **Customers** (`admin.php?page=kaitori-customers`)
+- **Customers** (`admin.php?page=kaitori-customers`) — has a **＋ New Walk-in Buyback** button
+- **Buyback Orders → New Walk-in** (`edit.php?post_type=buyback_order&page=kaitori-new-order`) — create an order by hand + issue invoice
+- **Invoice** — "Print / Save as PDF" button on the order edit screen and in the Customers detail order list
 - **Appearance → Demo Import** (`themes.php?page=kaitori-demo-import`) — 1-click seed / sample orders / reset
 - **Appearance → Buyback Gate** (`themes.php?page=kaitori-sell-gate`) — eKYC gate mode
 - **Users → (any user)** — Kaitori section shows their eKYC + orders

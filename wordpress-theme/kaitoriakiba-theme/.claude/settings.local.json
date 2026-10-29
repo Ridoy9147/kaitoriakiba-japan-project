@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/laragon/bin/**)",
+      "Read(//f/laragon/laragon/bin/php/**)"
+    ]
+  }
+}

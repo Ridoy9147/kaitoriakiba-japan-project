@@ -20,10 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function kaitoriakiba_honeypot_fields() {
     $ts = time();
-    // Hidden honeypot with un-autofillable attributes to prevent false positives from password managers/autofill.
-    echo '<div aria-hidden="true" style="display:none!important;position:absolute!important;left:-9999px!important;top:auto!important;width:1px;height:1px;overflow:hidden;opacity:0!important;pointer-events:none!important;">';
-    echo '<input type="text" name="kaitori_hp_val" tabindex="-1" autocomplete="new-password" value="" style="display:none!important;">';
-    echo '<input type="text" name="kaitori_hp_url" tabindex="-1" autocomplete="new-password" value="" style="display:none!important;">';
+    // Visually hidden, not display:none (some bots skip display:none), labelled to look real.
+    echo '<div aria-hidden="true" style="position:absolute!important;left:-9999px!important;top:auto!important;width:1px;height:1px;overflow:hidden;">';
+    echo '<label>Website <input type="text" name="kaitori_hp_url" tabindex="-1" autocomplete="off" value=""></label>';
     echo '</div>';
     echo '<input type="hidden" name="kaitori_form_ts" value="' . esc_attr( $ts ) . '">';
 }
@@ -34,21 +33,18 @@ function kaitoriakiba_honeypot_fields() {
  * @param int $min_seconds Minimum seconds a human needs before submit.
  * @return bool True if it looks human.
  */
-function kaitoriakiba_check_honeypot( $min_seconds = 0 ) {
-    // Honeypot fields must remain empty.
-    if ( ! empty( $_POST['kaitori_hp_val'] ) && trim( (string) $_POST['kaitori_hp_val'] ) !== '' ) {
+function kaitoriakiba_check_honeypot( $min_seconds = 2 ) {
+    // Honeypot must be empty.
+    if ( ! empty( $_POST['kaitori_hp_url'] ) ) {
         return false;
     }
-    // Backward compatibility for kaitori_hp_url (only fail if non-empty string).
-    if ( ! empty( $_POST['kaitori_hp_url'] ) && trim( (string) $_POST['kaitori_hp_url'] ) !== '' ) {
-        return false;
-    }
-
-    // Timing check: Never block on cached pages ($elapsed > DAY_IN_SECONDS).
-    // Only check if min_seconds > 0 and elapsed is unrealistically fast (e.g. 0 or negative).
-    if ( ! empty( $_POST['kaitori_form_ts'] ) && (int) $min_seconds > 0 ) {
+    // Timing: only reject clearly-instant (bot) submits. A missing OR stale timestamp
+    // (cached page, long-open tab, clock skew) is TOLERATED so real users are never
+    // blocked — the earlier "> 24h = bot" rule falsely blocked anyone on a cached form.
+    $min_seconds = (int) apply_filters( 'kaitori_form_min_seconds', $min_seconds );
+    if ( $min_seconds > 0 && ! empty( $_POST['kaitori_form_ts'] ) ) {
         $elapsed = time() - (int) $_POST['kaitori_form_ts'];
-        if ( $elapsed < (int) $min_seconds && $elapsed >= 0 ) {
+        if ( $elapsed >= 0 && $elapsed < $min_seconds ) {
             return false;
         }
     }
@@ -97,10 +93,21 @@ function kaitoriakiba_captcha_ok() {
  * @param int    $max_attempts Attempts allowed per window.
  */
 function kaitoriakiba_guard_public_form( $action, $max_attempts = 8 ) {
-    if ( ! kaitoriakiba_check_honeypot() || ! kaitoriakiba_captcha_ok() ) {
-        wp_send_json_error( array( 'message' => __( '不正な送信が検出されました。ページを再読み込みしてお試しください。', 'kaitoriakiba' ) ) );
+    // Staff/admins are exempt (so repeated in-house testing is never locked out).
+    if ( current_user_can( 'manage_options' ) ) {
+        return;
     }
+    if ( ! kaitoriakiba_check_honeypot() || ! kaitoriakiba_captcha_ok() ) {
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'An invalid submission was detected. Please reload the page and try again.',
+            '不正な送信が検出されました。ページを再読み込みしてお試しください。'
+        ) ) );
+    }
+    $max_attempts = (int) apply_filters( 'kaitori_rate_limit_max', $max_attempts, $action );
     if ( ! kaitoriakiba_rate_limit( $action, $max_attempts ) ) {
-        wp_send_json_error( array( 'message' => __( '試行回数が多すぎます。しばらく時間をおいて再度お試しください。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'Too many attempts. Please wait a little while and try again.',
+            '試行回数が多すぎます。しばらく時間をおいて再度お試しください。'
+        ) ) );
     }
 }

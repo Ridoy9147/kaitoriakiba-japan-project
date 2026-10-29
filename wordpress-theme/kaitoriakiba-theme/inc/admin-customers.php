@@ -34,9 +34,10 @@ add_action( 'admin_menu', 'kaitoriakiba_customers_menu' );
 function kaitoriakiba_admin_assets( $hook ) {
     global $post;
     $on_customers = ( isset( $_GET['page'] ) && 'kaitori-customers' === $_GET['page'] );
+    $on_walkin    = ( isset( $_GET['page'] ) && 'kaitori-new-order' === $_GET['page'] );
     $on_order     = in_array( $hook, array( 'post.php', 'post-new.php' ), true ) && isset( $post->post_type ) && 'buyback_order' === $post->post_type;
 
-    if ( ! $on_customers && ! $on_order ) {
+    if ( ! $on_customers && ! $on_walkin && ! $on_order ) {
         return;
     }
     $uri = KAITORIAKIBA_URI;
@@ -211,6 +212,7 @@ function kaitoriakiba_render_customers_list() {
     ?>
     <div class="wrap kaitori-admin">
         <h1 class="wp-heading-inline"><span class="dashicons dashicons-groups"></span> <?php echo esc_html( kaitori_t( 'Customers', '顧客管理' ) ); ?></h1>
+        <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=buyback_order&page=kaitori-new-order' ) ); ?>" class="page-title-action"><?php echo esc_html( kaitori_t( '+ New Walk-in Buyback', '＋ 店頭買取を登録' ) ); ?></a>
         <p class="kaitori-sub"><?php printf( esc_html( kaitori_t( '%d customers total', '合計 %d 名の顧客' ) ), $total ); ?></p>
 
         <form method="get" class="kaitori-filters">
@@ -382,7 +384,12 @@ function kaitoriakiba_render_customer_detail( $key ) {
                                 <?php endforeach; ?>
                             </select>
                         </td>
-                        <td><a class="button button-small" href="<?php echo esc_url( get_edit_post_link( $o->ID ) ); ?>"><?php echo esc_html( kaitori_t( 'Edit →', '編集 →' ) ); ?></a></td>
+                        <td>
+                            <a class="button button-small" href="<?php echo esc_url( get_edit_post_link( $o->ID ) ); ?>"><?php echo esc_html( kaitori_t( 'Edit →', '編集 →' ) ); ?></a>
+                            <?php if ( function_exists( 'kaitoriakiba_invoice_url' ) ) : ?>
+                                <a class="button button-small" href="<?php echo esc_url( kaitoriakiba_invoice_url( $o->ID, true ) ); ?>" target="_blank" title="<?php echo esc_attr( kaitori_t( 'Print / Save as PDF', '印刷 / PDF保存' ) ); ?>">🧾 <?php echo esc_html( kaitori_t( 'Invoice', '伝票' ) ); ?></a>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

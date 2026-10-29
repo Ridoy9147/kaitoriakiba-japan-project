@@ -78,6 +78,10 @@
             var $btn = $(this);
             var orderId = $btn.data('order');
             var field = $btn.data('field') || 'imei';
+            // "Fill-only" mode: when data-target is a selector (e.g. on the walk-in
+            // create form, where no order exists yet), the scanned value is written
+            // into that input instead of being saved to an order via AJAX.
+            var target = $btn.data('target');
             var $row = $btn.closest('tr');
 
             var modalHtml =
@@ -98,12 +102,17 @@
             var $status = $modal.find('.kaitori-scan-status');
             var $manual = $modal.find('.kaitori-scan-manual');
 
-            function commitManual() {
-                var code = ($manual.val() || '').trim();
+            function commit(code) {
+                code = (code || '').trim();
                 if (!code) { return; }
-                saveScan(orderId, field, code, $row);
+                if (target) {
+                    $(target).val(code).trigger('change').focus();
+                } else {
+                    saveScan(orderId, field, code, $row);
+                }
                 stopScan();
             }
+            function commitManual() { commit($manual.val()); }
 
             // USB HID (keyboard-wedge) scanners type the code + Enter into the focused
             // field. Auto-focus the input so a scan lands here, and Enter saves it.
@@ -145,8 +154,7 @@
                                 if (val) {
                                     $status.text('✓ ' + val);
                                     $manual.val(val);
-                                    saveScan(orderId, field, val, $row);
-                                    stopScan();
+                                    commit(val);
                                 }
                             }
                         }).catch(function () {});
