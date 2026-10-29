@@ -484,16 +484,16 @@ else :
                     <!-- 4.3 Featured Buyback Devices Showcase Grid -->
                     <div class="mainpage-box xs-pad0">
                         <div class="sub-box" id="layout_y">
-                            <div class="kaitori-section-header">
-                                <div class="section-badge">
-                                    <span class="badge-dot"></span>
+                            <div class="kaitori-section-header" style="text-align: center; margin-bottom: 25px; padding: 15px 0;">
+                                <div class="section-badge" style="display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 12px; font-weight: 800; padding: 4px 16px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 8px;">
+                                    <span class="badge-dot" style="width: 7px; height: 7px; background-color: #ef4444; border-radius: 50%; display: inline-block;"></span>
                                     <span class="badge-text"><?php kaitori_te( 'HIGH PRICE GUARANTEED', '高価買取強化中' ); ?></span>
                                 </div>
-                                <h2 class="section-title">
-                                    <span class="title-highlight"><?php kaitori_te( 'Featured Buyback Models', '買取強化商品一覧' ); ?></span>
+                                <h2 class="section-title" style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 4px 0 6px 0; letter-spacing: -0.5px;">
+                                    <span class="title-highlight" style="background: linear-gradient(135deg, #0f172a 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><?php kaitori_te( 'Featured Buyback Models', '買取強化商品一覧' ); ?></span>
                                 </h2>
-                                <p class="section-subtitle"><?php kaitori_te( 'iPhone, Android Smartphones & Tablets - Top Market Rates Updated Daily', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' ); ?></p>
-                                <div class="section-title-line"></div>
+                                <p class="section-subtitle" style="font-size: 13px; color: #64748b; margin: 0 auto; font-weight: 500; max-width: 600px;"><?php kaitori_te( 'iPhone, Android Smartphones & Tablets - Top Market Rates Updated Daily', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' ); ?></p>
+                                <div class="section-title-line" style="width: 48px; height: 3px; background: linear-gradient(90deg, #ef4444, #f59e0b); border-radius: 2px; margin: 12px auto 0 auto;"></div>
                             </div>
                             <div class="sub-pro-box">
                                 <?php
@@ -503,7 +503,7 @@ else :
                                     'post_status'    => 'publish',
                                     'orderby'        => 'date',
                                     'order'          => 'DESC',
-                                );
+                                    );
                                 $device_query = new WP_Query( $args );
 
                                 if ( $device_query->have_posts() ) :
@@ -519,12 +519,12 @@ else :
                                         <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
                                             <div class="pro-border gutter-10 row pro_list">
                                                 <div data-isok="false" data-value="<?php echo esc_attr( $p_id ); ?>" class="collect"></div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center" style="padding:10px 0;">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding:10px 0;">
                                                     <a href="<?php the_permalink(); ?>">
                                                         <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php the_title_attribute(); ?>" class="img-responsive" style="max-height:160px; margin:0 auto; object-fit:contain;">
                                                     </a>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box">
                                                     <ul style="list-style:none; padding:0; margin:0;">
                                                         <div class="sub-pro">
                                                             <li class="sub-pro-career">
@@ -533,10 +533,10 @@ else :
                                                             <li class="sub-pro-name">
                                                                 <a title="<?php the_title_attribute(); ?>" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                                                             </li>
-                                                            <li class="sub-pro-notice">
-                                                                <span><?php kaitori_te( 'Installment balance (△) accepted with no reduction', '分割残債あり(△)も減額なし対応' ); ?></span>
+                                                            <li class="sub-pro-name">
+                                                                <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php the_permalink(); ?>">分割残債あり(△)も減額なし対応</a>
                                                             </li>
-                                                            <li class="sub-pro-jan">JAN：<?php echo esc_html( $jan ); ?></li>
+                                                            <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $jan ); ?></li>
                                                         </div>
                                                         <li class="sub-pro-jia"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span></li>
                                                         <li>
@@ -572,12 +572,12 @@ else :
                                         <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
                                             <div class="pro-border gutter-10 row pro_list">
                                                 <div data-isok="false" class="collect"></div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center" style="padding:10px 0;">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding:10px 0;">
                                                     <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
                                                         <img src="<?php echo esc_url( $theme_uri . '/upload/goods/20260911/' . $dev['img'] ); ?>" alt="<?php echo esc_attr( $dev['title'] ); ?>" class="img-responsive" style="max-height:160px; margin:0 auto; object-fit:contain;">
                                                     </a>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box">
                                                     <ul style="list-style:none; padding:0; margin:0;">
                                                         <div class="sub-pro">
                                                             <li class="sub-pro-career">
@@ -586,10 +586,10 @@ else :
                                                             <li class="sub-pro-name">
                                                                 <a title="<?php echo esc_attr( $dev['title'] ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php echo esc_html( $dev['title'] ); ?></a>
                                                             </li>
-                                                            <li class="sub-pro-notice">
-                                                                <span><?php kaitori_te( 'Installment balance (△) accepted with no reduction', '分割残債あり(△)も減額なし対応' ); ?></span>
+                                                            <li class="sub-pro-name">
+                                                                <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">分割残債あり(△)も減額なし対応</a>
                                                             </li>
-                                                            <li class="sub-pro-jan">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
+                                                            <li class="sub-pro-name" style="font-size:11px; color:#64748b;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
                                                         </div>
                                                         <li class="sub-pro-jia"><?php kaitori_te( 'Buyback Price:', '買取価格:' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span></li>
                                                         <li>

@@ -245,20 +245,20 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
         <div class="mainpage-box xs-pad0 kaitori-device-grid-wrapper">
             <div class="sub-box" id="layout_y">
                 <?php if ( 'yes' === $show_header ) : ?>
-                    <div class="kaitori-section-header">
+                    <div class="kaitori-section-header" style="text-align: center; margin-bottom: 25px; padding: 15px 0;">
                         <?php if ( ! empty( $section_badge ) ) : ?>
-                            <div class="section-badge">
-                                <span class="badge-dot"></span>
+                            <div class="section-badge" style="display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 12px; font-weight: 800; padding: 4px 16px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 8px;">
+                                <span class="badge-dot" style="width: 7px; height: 7px; background-color: #ef4444; border-radius: 50%; display: inline-block;"></span>
                                 <span class="badge-text"><?php echo esc_html( $section_badge ); ?></span>
                             </div>
                         <?php endif; ?>
-                        <h2 class="section-title">
-                            <span class="title-highlight"><?php echo esc_html( $section_title ); ?></span>
+                        <h2 class="section-title" style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 4px 0 6px 0; letter-spacing: -0.5px;">
+                            <span class="title-highlight" style="background: linear-gradient(135deg, #0f172a 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><?php echo esc_html( $section_title ); ?></span>
                         </h2>
                         <?php if ( ! empty( $section_sub ) ) : ?>
-                            <p class="section-subtitle"><?php echo esc_html( $section_sub ); ?></p>
+                            <p class="section-subtitle" style="font-size: 13px; color: #64748b; margin: 0 auto; font-weight: 500; max-width: 600px;"><?php echo esc_html( $section_sub ); ?></p>
                         <?php endif; ?>
-                        <div class="section-title-line"></div>
+                        <div class="section-title-line" style="width: 48px; height: 3px; background: linear-gradient(90deg, #ef4444, #f59e0b); border-radius: 2px; margin: 12px auto 0 auto;"></div>
                     </div>
                 <?php endif; ?>
                 <div class="sub-pro-box">
@@ -291,10 +291,10 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                     <li class="sub-pro-name">
                                                         <a title="<?php the_title_attribute(); ?>" href="<?php echo esc_url( $permalink ); ?>"><?php the_title(); ?></a>
                                                     </li>
-                                                    <li class="sub-pro-notice">
-                                                        <span><?php _e( 'Installment balance (△) accepted with no reduction', 'kaitoriakiba' ); ?></span>
+                                                    <li class="sub-pro-name">
+                                                        <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( $permalink ); ?>">分割残債あり(△)も減額なし対応</a>
                                                     </li>
-                                                    <li class="sub-pro-jan">JAN：<?php echo esc_html( $jan ); ?></li>
+                                                    <li class="sub-pro-name" style="font-size: 11px; color: #64748b;">JAN：<?php echo esc_html( $jan ); ?></li>
                                                 </div>
                                                 <li class="sub-pro-jia">
                                                     <?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span>
@@ -321,14 +321,14 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                             foreach ( $sample_devices as $dev ) :
                                 ?>
                                 <div class="<?php echo esc_attr( $col_class ); ?>">
-                                    <div class="pro-border gutter-10 row pro_list" style="margin-bottom: 20px;">
+                                    <div class="pro-border gutter-10 row pro_list">
                                         <div data-isok="false" class="collect"></div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center" style="padding: 10px 0;">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-5 text-center pro-img-box" style="padding: 10px 0;">
                                             <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">
                                                 <img src="<?php echo esc_url( $theme_uri . '/upload/goods/20260911/' . $dev['img'] ); ?>" alt="<?php echo esc_attr( $dev['title'] ); ?>" class="img-responsive" style="max-height: 160px; margin: 0 auto; object-fit: contain;">
                                             </a>
                                         </div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-7 pro-info-box">
                                             <ul style="list-style: none; padding: 0; margin: 0;">
                                                 <div class="sub-pro">
                                                     <li class="sub-pro-career">
@@ -337,10 +337,10 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                     <li class="sub-pro-name">
                                                         <a title="<?php echo esc_attr( $dev['title'] ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php echo esc_html( $dev['title'] ); ?></a>
                                                     </li>
-                                                    <li class="sub-pro-notice">
-                                                        <span><?php _e( 'Installment balance (△) accepted with no reduction', 'kaitoriakiba' ); ?></span>
+                                                    <li class="sub-pro-name">
+                                                        <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">分割残債あり(△)も減額なし対応</a>
                                                     </li>
-                                                    <li class="sub-pro-jan">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
+                                                    <li class="sub-pro-name" style="font-size: 11px; color: #64748b;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
                                                 </div>
                                                 <li class="sub-pro-jia">
                                                     <?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span>

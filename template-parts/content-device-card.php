@@ -30,8 +30,8 @@ $thumb_url = has_post_thumbnail() ? get_the_post_thumbnail_url( $dev_id, 'medium
                     <li class="sub-pro-name">
                         <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                     </li>
-                    <li class="sub-pro-notice">
-                        <?php kaitori_te( 'Installment balance (△) accepted with no reduction', '分割残債あり(△)も減額査定なし対応' ); ?>
+                    <li class="sub-pro-name">
+                        <a style="color:#ec1600;" title="分割残債あり(△)も減額なし対応" href="<?php the_permalink(); ?>">分割残債あり(△)も減額なし対応</a>
                     </li>
                     <li class="sub-pro-jan">JAN：<?php echo esc_html( $jan ); ?></li>
                 </div>
