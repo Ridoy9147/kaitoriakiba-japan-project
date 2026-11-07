@@ -63,11 +63,21 @@ add_action( 'add_meta_boxes', 'kaitoriakiba_add_meta_boxes' );
  */
 function kaitoriakiba_admin_enqueue_media( $hook ) {
     global $post;
-    if ( ( $hook === 'post-new.php' || $hook === 'post.php' ) && isset( $post->post_type ) && $post->post_type === 'kaitori_device' ) {
+    if ( ( $hook === 'post-new.php' || $hook === 'post.php' ) && isset( $post->post_type ) && in_array( $post->post_type, array( 'kaitori_device', 'kyc_record', 'buyback_order' ), true ) ) {
         wp_enqueue_media();
     }
 }
 add_action( 'admin_enqueue_scripts', 'kaitoriakiba_admin_enqueue_media' );
+
+/**
+ * Enable multipart/form-data on post edit form for KYC documents & orders
+ */
+function kaitoriakiba_post_edit_form_multipart( $post ) {
+    if ( $post && in_array( $post->post_type, array( 'kyc_record', 'buyback_order' ), true ) ) {
+        echo ' enctype="multipart/form-data"';
+    }
+}
+add_action( 'post_edit_form_tag', 'kaitoriakiba_post_edit_form_multipart' );
 
 /**
  * Render Device Pricing Meta Box (100% English)
@@ -973,46 +983,248 @@ function kaitoriakiba_kyc_meta_box_render( $post ) {
         </div>
     </div>
 
-    <!-- 5. Document Images / Evidence -->
+    <!-- 5. Document Images / Evidence (With Replace & Upload Feature) -->
     <div class="kyc-admin-card">
-        <h4><span class="dashicons dashicons-camera" style="color:#ec4899;"></span> <?php echo kaitori_t( 'Uploaded Document Images & Evidence', 'アップロードされた書類画像・証跡' ); ?></h4>
-        <div style="display:flex; flex-wrap:wrap; gap:16px;">
-            <?php if ( $front_url ) : ?>
-                <div class="kyc-doc-card">
-                    <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Front Side Photo', '表面の写真' ); ?></div>
-                    <a href="<?php echo esc_url($front_url); ?>" target="_blank" title="Click to view full size">
-                        <img src="<?php echo esc_url($front_url); ?>" alt="Front ID">
-                    </a>
-                    <a href="<?php echo esc_url($front_url); ?>" target="_blank" class="button button-small" style="width:100%;">
-                        <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
-                    </a>
-                </div>
-            <?php else : ?>
-                <div style="color:#64748b; font-size:12.5px;"><em><?php echo kaitori_t( 'No front side image uploaded.', '表面画像なし' ); ?></em></div>
-            <?php endif; ?>
+        <h4><span class="dashicons dashicons-camera" style="color:#ec4899;"></span> <?php echo kaitori_t( 'Uploaded Document Images & Evidence (Replace / Upload)', '本人確認書類の画像・証跡（差し替え・新規アップロード可能）' ); ?></h4>
+        
+        <p style="margin:0 0 16px; color:#64748b; font-size:13px; line-height:1.5;">
+            <?php echo kaitori_t(
+                'Staff can replace or upload clearer identity documents if the customer submitted wrong, blurry, or expired photos. Choose a file from your computer/device or select from the Media Library. After selecting files, click the blue "Update" button to save changes.',
+                'お客様が提出した書類に不備（ピンボケ、有効期限切れ、別書類等）がある場合や、店頭で原本を確認した際は、こちらから正しい書類画像を差し替え・新規アップロードできます。ファイル選択後、必ず右上の青い「更新」ボタンをクリックして保存してください。'
+            ); ?>
+        </p>
 
-            <?php if ( $back_url ) : ?>
-                <div class="kyc-doc-card">
-                    <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Back Side Photo', '裏面の写真' ); ?></div>
-                    <a href="<?php echo esc_url($back_url); ?>" target="_blank" title="Click to view full size">
-                        <img src="<?php echo esc_url($back_url); ?>" alt="Back ID">
-                    </a>
-                    <a href="<?php echo esc_url($back_url); ?>" target="_blank" class="button button-small" style="width:100%;">
-                        <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
-                    </a>
-                </div>
-            <?php endif; ?>
+        <style>
+            .kyc-slot-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+                gap: 18px;
+            }
+            .kyc-slot-box {
+                background: #f8fafc;
+                border: 1.5px solid #cbd5e1;
+                border-radius: 10px;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                position: relative;
+            }
+            .kyc-slot-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 12px;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 8px;
+            }
+            .kyc-slot-title {
+                font-size: 13.5px;
+                font-weight: 800;
+                color: #0f172a;
+            }
+            .kyc-slot-badge {
+                font-size: 11px;
+                font-weight: 700;
+                padding: 2px 8px;
+                border-radius: 999px;
+            }
+            .kyc-slot-badge.has-file { background: #dcfce7; color: #15803d; }
+            .kyc-slot-badge.no-file  { background: #f1f5f9; color: #64748b; }
+            .kyc-preview-frame {
+                background: #fff;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                min-height: 160px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                margin-bottom: 14px;
+                padding: 8px;
+                text-align: center;
+            }
+            .kyc-preview-frame img {
+                max-width: 100%;
+                max-height: 200px;
+                object-fit: contain;
+                border-radius: 4px;
+            }
+            .kyc-btn-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+        </style>
 
-            <?php if ( $selfie_url ) : ?>
-                <div class="kyc-doc-card">
-                    <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Selfie Photo', 'セルフィー写真' ); ?></div>
-                    <a href="<?php echo esc_url($selfie_url); ?>" target="_blank">
-                        <img src="<?php echo esc_url($selfie_url); ?>" alt="Selfie">
-                    </a>
+        <div class="kyc-slot-grid">
+
+            <?php
+            $slots = array(
+                'front' => array(
+                    'title'    => kaitori_t( '1. Front Side Photo (表面の写真)', '1. 表面の写真（免許証・マイナンバー・在留カード等）' ),
+                    'file_src' => $front_url,
+                    'file_raw' => $front_store,
+                    'desc'     => kaitori_t( 'Driver License front, My Number Card front, Residence Card, or Passport photo page.', '運転免許証表面、マイナンバーカード表面、在留カード表面、パスポート等' ),
+                ),
+                'back' => array(
+                    'title'    => kaitori_t( '2. Back Side Photo (裏面の写真)', '2. 裏面の写真（住所変更欄・裏面事項）' ),
+                    'file_src' => $back_url,
+                    'file_raw' => $back_store,
+                    'desc'     => kaitori_t( 'Back of Driver License, Residence Card, or Health Insurance card.', '運転免許証裏面（住所変更記載等）、在留カード裏面等' ),
+                ),
+                'selfie' => array(
+                    'title'    => kaitori_t( '3. Thickness / Selfie Photo (厚み・セルフィー)', '3. 厚み・斜め写真 / セルフィー確認' ),
+                    'file_src' => $selfie_url,
+                    'file_raw' => $selfie_store,
+                    'desc'     => kaitori_t( 'Optional card thickness angle shot or applicant selfie holding ID.', 'カードの厚み斜め撮影または顔写真付き本人撮影画像' ),
+                ),
+            );
+
+            foreach ( $slots as $slot_key => $slot ) :
+                $has_file = ! empty( $slot['file_src'] );
+                $is_pdf   = $has_file && ( strtolower( substr( parse_url( $slot['file_src'], PHP_URL_PATH ) ?: '', -4 ) ) === '.pdf' || ( is_string( $slot['file_raw'] ) && strtolower( substr( $slot['file_raw'], -4 ) ) === '.pdf' ) );
+            ?>
+                <div class="kyc-slot-box">
+                    <div>
+                        <div class="kyc-slot-header">
+                            <span class="kyc-slot-title"><?php echo esc_html( $slot['title'] ); ?></span>
+                            <?php if ( $has_file ) : ?>
+                                <span class="kyc-slot-badge has-file"><i class="dashicons dashicons-yes-alt" style="font-size:12px; vertical-align:middle;"></i> <?php echo esc_html( kaitori_t( 'Attached', '登録済' ) ); ?></span>
+                            <?php else : ?>
+                                <span class="kyc-slot-badge no-file"><?php echo esc_html( kaitori_t( 'Missing', '未登録' ) ); ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="kyc-preview-frame" id="kyc_current_frame_<?php echo esc_attr( $slot_key ); ?>">
+                            <?php if ( $has_file ) : ?>
+                                <?php if ( $is_pdf ) : ?>
+                                    <div style="padding:20px 10px;">
+                                        <span class="dashicons dashicons-pdf" style="font-size:48px; width:48px; height:48px; color:#ef4444; margin-bottom:8px;"></span>
+                                        <div style="font-weight:700; color:#1e293b; font-size:13px;"><?php echo kaitori_t( 'PDF Document Attached', 'PDF書類が登録されています' ); ?></div>
+                                        <a href="<?php echo esc_url( $slot['file_src'] ); ?>" target="_blank" class="button button-small" style="margin-top:8px;">
+                                            <i class="dashicons dashicons-external"></i> <?php echo kaitori_t( 'Open / View PDF &rarr;', 'PDFを開いて確認 &rarr;' ); ?>
+                                        </a>
+                                    </div>
+                                <?php else : ?>
+                                    <a href="<?php echo esc_url( $slot['file_src'] ); ?>" target="_blank" title="<?php echo esc_attr( kaitori_t( 'Click to view full image', 'クリックで拡大表示' ) ); ?>">
+                                        <img src="<?php echo esc_url( $slot['file_src'] ); ?>" alt="<?php echo esc_attr( $slot_key ); ?>">
+                                    </a>
+                                    <div style="margin-top:6px;">
+                                        <a href="<?php echo esc_url( $slot['file_src'] ); ?>" target="_blank" class="button button-small">
+                                            <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '拡大表示' ); ?>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            <?php else : ?>
+                                <div style="color:#94a3b8; padding:30px 10px;">
+                                    <span class="dashicons dashicons-format-image" style="font-size:38px; width:38px; height:38px;"></span>
+                                    <div style="font-size:12px; margin-top:4px;"><?php echo kaitori_t( 'No document on file', '書類がまだありません' ); ?></div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Live preview for newly selected replacement file -->
+                        <div id="kyc_preview_<?php echo esc_attr( $slot_key ); ?>"></div>
+                    </div>
+
+                    <!-- Upload / Replace Controls -->
+                    <div style="margin-top:12px; border-top:1px dashed #cbd5e1; padding-top:12px;">
+                        <div style="font-size:12px; font-weight:700; color:#334155; margin-bottom:6px;">
+                            <?php echo kaitori_t( 'Replace / Upload Document:', '書類の差し替え・新規アップロード:' ); ?>
+                        </div>
+
+                        <!-- Direct File Input (Hidden, triggered via button) -->
+                        <input type="file" name="kyc_replace_<?php echo esc_attr( $slot_key ); ?>" id="kyc_file_input_<?php echo esc_attr( $slot_key ); ?>" accept="image/jpeg,image/png,image/webp,application/pdf" class="kyc-file-input" data-slot="<?php echo esc_attr( $slot_key ); ?>" style="display:none;">
+
+                        <!-- Media Library Hidden Inputs -->
+                        <input type="hidden" name="kyc_media_<?php echo esc_attr( $slot_key ); ?>_id" id="kyc_media_<?php echo esc_attr( $slot_key ); ?>_id" value="">
+                        <input type="hidden" name="kyc_media_<?php echo esc_attr( $slot_key ); ?>_url" id="kyc_media_<?php echo esc_attr( $slot_key ); ?>_url" value="">
+
+                        <div class="kyc-btn-group">
+                            <button type="button" class="button button-secondary" onclick="document.getElementById('kyc_file_input_<?php echo esc_attr( $slot_key ); ?>').click();" style="font-weight:600;">
+                                <span class="dashicons dashicons-upload" style="vertical-align:middle; font-size:16px;"></span> <?php echo kaitori_t( 'Choose File...', 'ファイル選択...' ); ?>
+                            </button>
+                            <button type="button" class="button button-secondary kyc-media-picker-btn" data-slot="<?php echo esc_attr( $slot_key ); ?>" style="font-weight:600;">
+                                <span class="dashicons dashicons-admin-media" style="vertical-align:middle; font-size:16px;"></span> <?php echo kaitori_t( 'Media Library', 'メディアから選択' ); ?>
+                            </button>
+                        </div>
+
+                        <?php if ( $has_file ) : ?>
+                            <label style="font-size:12px; color:#dc2626; display:inline-flex; align-items:center; gap:5px; margin-top:4px; cursor:pointer;">
+                                <input type="checkbox" name="kyc_remove_<?php echo esc_attr( $slot_key ); ?>" value="1">
+                                <?php echo kaitori_t( 'Remove this document', 'この書類を削除する' ); ?>
+                            </label>
+                        <?php endif; ?>
+
+                        <div style="font-size:11px; color:#64748b; margin-top:6px; line-height:1.4;">
+                            <?php echo esc_html( $slot['desc'] ); ?>
+                        </div>
+                    </div>
                 </div>
-            <?php endif; ?>
+            <?php endforeach; ?>
+
         </div>
     </div>
+
+    <!-- Client-side script for instant preview & Media Library -->
+    <script>
+    jQuery(document).ready(function($){
+        // Direct file input change handler
+        $('.kyc-file-input').on('change', function(){
+            var input = this;
+            var slot = $(input).data('slot');
+            var container = $('#kyc_preview_' + slot);
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+                var isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var html = '<div style="margin-top:10px; padding:10px 12px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; font-size:12px; color:#166534; box-shadow:0 2px 6px rgba(0,0,0,0.04);">';
+                    html += '<div style="font-weight:800; display:flex; align-items:center; gap:6px;"><span class="dashicons dashicons-yes-alt" style="color:#16a34a;"></span> ' + (isPdf ? 'New PDF Selected:' : 'New File Selected:') + '</div>';
+                    html += '<div style="font-family:monospace; margin-top:2px;">' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)</div>';
+                    if (!isPdf) {
+                        html += '<img src="' + e.target.result + '" style="max-width:180px; max-height:120px; object-fit:contain; border-radius:4px; margin-top:8px; display:block; border:1px solid #bbf7d0; background:#fff;">';
+                    }
+                    html += '<div style="color:#dc2626; font-weight:700; margin-top:6px; font-size:11.5px;">⚠️ ' + <?php echo json_encode( kaitori_t( 'Click "Update" above to save this replacement.', '右上の「更新」ボタンをクリックすると差し替えが完了します。' ) ); ?> + '</div>';
+                    html += '</div>';
+                    container.html(html);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // WP Media Library modal
+        $('.kyc-media-picker-btn').on('click', function(e){
+            e.preventDefault();
+            var btn = $(this);
+            var slot = btn.data('slot');
+            var frame = wp.media({
+                title: <?php echo json_encode( kaitori_t( 'Select or Upload KYC Document', '本人確認書類を選択またはアップロード' ) ); ?>,
+                button: { text: <?php echo json_encode( kaitori_t( 'Use This Document', 'この書類を適用する' ) ); ?> },
+                multiple: false
+            });
+            frame.on('select', function(){
+                var attachment = frame.state().get('selection').first().toJSON();
+                $('#kyc_media_' + slot + '_id').val(attachment.id);
+                $('#kyc_media_' + slot + '_url').val(attachment.url);
+                var isPdf = attachment.subtype === 'pdf' || (attachment.url && attachment.url.toLowerCase().endsWith('.pdf'));
+                var html = '<div style="margin-top:10px; padding:10px 12px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; font-size:12px; color:#166534; box-shadow:0 2px 6px rgba(0,0,0,0.04);">';
+                html += '<div style="font-weight:800; display:flex; align-items:center; gap:6px;"><span class="dashicons dashicons-yes-alt" style="color:#16a34a;"></span> ' + <?php echo json_encode( kaitori_t( 'Selected from Media Library:', 'メディアライブラリから選択:' ) ); ?> + '</div>';
+                html += '<div style="font-family:monospace; margin-top:2px;">' + (attachment.filename || 'Document') + ' (#' + attachment.id + ')</div>';
+                if (!isPdf && attachment.url) {
+                    html += '<img src="' + attachment.url + '" style="max-width:180px; max-height:120px; object-fit:contain; border-radius:4px; margin-top:8px; display:block; border:1px solid #bbf7d0; background:#fff;">';
+                }
+                html += '<div style="color:#dc2626; font-weight:700; margin-top:6px; font-size:11.5px;">⚠️ ' + <?php echo json_encode( kaitori_t( 'Click "Update" above to save this replacement.', '右上の「更新」ボタンをクリックすると差し替えが完了します。' ) ); ?> + '</div>';
+                html += '</div>';
+                $('#kyc_preview_' + slot).html(html);
+            });
+            frame.open();
+        });
+    });
+    </script>
 
     <!-- 6. Staff Internal Notes -->
     <div class="kyc-admin-card">
@@ -1063,6 +1275,100 @@ function kaitoriakiba_save_kyc_meta( $post_id ) {
 
     if ( isset( $_POST['_kyc_admin_notes'] ) ) {
         update_post_meta( $post_id, '_kyc_admin_notes', sanitize_textarea_field( wp_unslash( $_POST['_kyc_admin_notes'] ) ) );
+    }
+
+    // -------------------------------------------------------------
+    // Handle eKYC Document Replacement, Direct Upload & Removal
+    // -------------------------------------------------------------
+    $doc_slots = array(
+        'front'  => array(
+            'file_key'    => 'kyc_replace_front',
+            'meta_file'   => '_kyc_id_front_file',
+            'meta_attach' => '_kyc_id_front_attach',
+            'media_id'    => 'kyc_media_front_id',
+            'media_url'   => 'kyc_media_front_url',
+            'remove'      => 'kyc_remove_front',
+            'label'       => 'Front ID (表面)',
+        ),
+        'back'   => array(
+            'file_key'    => 'kyc_replace_back',
+            'meta_file'   => '_kyc_id_back_file',
+            'meta_attach' => '_kyc_id_back_attach',
+            'media_id'    => 'kyc_media_back_id',
+            'media_url'   => 'kyc_media_back_url',
+            'remove'      => 'kyc_remove_back',
+            'label'       => 'Back ID (裏面)',
+        ),
+        'selfie' => array(
+            'file_key'    => 'kyc_replace_selfie',
+            'meta_file'   => '_kyc_selfie_file',
+            'meta_attach' => '_kyc_selfie_attach',
+            'media_id'    => 'kyc_media_selfie_id',
+            'media_url'   => 'kyc_media_selfie_url',
+            'remove'      => 'kyc_remove_selfie',
+            'label'       => 'Selfie / Thickness (厚み・セルフィー)',
+        ),
+    );
+
+    $audit_actions = array();
+
+    foreach ( $doc_slots as $slot_key => $slot_cfg ) {
+        // 1. Check removal request
+        if ( ! empty( $_POST[ $slot_cfg['remove'] ] ) ) {
+            delete_post_meta( $post_id, $slot_cfg['meta_file'] );
+            delete_post_meta( $post_id, $slot_cfg['meta_attach'] );
+            $audit_actions[] = $slot_cfg['label'] . ' removed';
+            continue;
+        }
+
+        // 2. Check direct file upload in $_FILES
+        if ( ! empty( $_FILES[ $slot_cfg['file_key'] ] ) && ! empty( $_FILES[ $slot_cfg['file_key'] ]['tmp_name'] ) ) {
+            if ( function_exists( 'kaitoriakiba_kyc_store_upload' ) ) {
+                $stored = kaitoriakiba_kyc_store_upload( $slot_cfg['file_key'], $post_id );
+                if ( ! is_wp_error( $stored ) && ! empty( $stored ) ) {
+                    update_post_meta( $post_id, $slot_cfg['meta_file'], $stored );
+                    delete_post_meta( $post_id, $slot_cfg['meta_attach'] );
+                    $audit_actions[] = $slot_cfg['label'] . ' replaced via direct upload';
+                    continue;
+                }
+            }
+        }
+
+        // 3. Check Media Library selection
+        if ( ! empty( $_POST[ $slot_cfg['media_id'] ] ) ) {
+            $att_id = (int) $_POST[ $slot_cfg['media_id'] ];
+            if ( $att_id > 0 ) {
+                update_post_meta( $post_id, $slot_cfg['meta_attach'], $att_id );
+                $att_url = wp_get_attachment_url( $att_id );
+                if ( $att_url ) {
+                    update_post_meta( $post_id, $slot_cfg['meta_file'], $att_url );
+                }
+                $audit_actions[] = $slot_cfg['label'] . ' replaced via Media Library (#' . $att_id . ')';
+                continue;
+            }
+        } elseif ( ! empty( $_POST[ $slot_cfg['media_url'] ] ) ) {
+            $url = esc_url_raw( wp_unslash( $_POST[ $slot_cfg['media_url'] ] ) );
+            if ( $url ) {
+                update_post_meta( $post_id, $slot_cfg['meta_file'], $url );
+                delete_post_meta( $post_id, $slot_cfg['meta_attach'] );
+                $audit_actions[] = $slot_cfg['label'] . ' replaced via Media URL';
+                continue;
+            }
+        }
+    }
+
+    // Automatically append an audit note if documents were modified
+    if ( ! empty( $audit_actions ) ) {
+        $cur_user = wp_get_current_user();
+        $staff_title = ( $cur_user && $cur_user->exists() ) ? $cur_user->display_name : 'Staff';
+        $audit_line  = sprintf(
+            "\n[%s] %s: %s",
+            current_time( 'Y/m/d H:i' ),
+            $staff_title,
+            implode( ', ', $audit_actions )
+        );
+        $cur_notes = get_post_meta( $post_id, '_kyc_admin_notes', true );
+        update_post_meta( $post_id, '_kyc_admin_notes', trim( $cur_notes . $audit_line ) );
     }
 
     // Synchronize Status with linked Customer Account and Order
