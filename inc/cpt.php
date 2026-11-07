@@ -258,6 +258,7 @@ function kaitoriakiba_order_columns( $columns ) {
         'title'           => kaitori_t( 'Application ID / Title', '申込ID / タイトル' ),
         'applicant_name'  => kaitori_t( 'Customer Name', 'お客様名' ),
         'device_model'    => kaitori_t( 'Device & Storage', '端末・容量' ),
+        'device_imei'     => kaitori_t( 'IMEI Number (15 Digits)', 'IMEI番号（15桁）' ),
         'estimated_price' => kaitori_t( 'Estimated Payout', '概算査定額' ),
         'delivery_method' => kaitori_t( 'Delivery Method', '受取方法' ),
         'order_status'    => kaitori_t( 'Status', 'ステータス' ),
@@ -283,6 +284,14 @@ function kaitoriakiba_order_custom_column( $column, $post_id ) {
                 echo '<br><small style="color:#64748b;">' . esc_html( $color ) . '</small>';
             }
             break;
+        case 'device_imei':
+            $imei = get_post_meta( $post_id, '_device_imei', true );
+            if ( $imei ) {
+                echo '<code style="font-family:monospace; font-weight:700; color:#0f172a; background:#f1f5f9; padding:3px 7px; border-radius:4px; font-size:12px; display:inline-block; border:1px solid #cbd5e1;" title="' . esc_attr( kaitori_t( 'Click to search this IMEI', 'このIMEIで検索' ) ) . '">' . esc_html( $imei ) . '</code>';
+            } else {
+                echo '<span style="color:#94a3b8;">—</span>';
+            }
+            break;
         case 'estimated_price':
             $price = get_post_meta( $post_id, '_estimated_price', true );
             echo $price ? '<strong style="color:#dc2626;">¥' . number_format( (int)$price ) . '</strong>' : '—';
@@ -303,6 +312,17 @@ function kaitoriakiba_order_custom_column( $column, $post_id ) {
     }
 }
 add_action( 'manage_buyback_order_posts_custom_column', 'kaitoriakiba_order_custom_column', 10, 2 );
+
+/**
+ * Make IMEI and Status columns sortable in Buyback Orders
+ */
+function kaitoriakiba_order_sortable_columns( $columns ) {
+    $columns['device_imei']     = 'device_imei';
+    $columns['estimated_price'] = 'estimated_price';
+    $columns['order_status']    = 'order_status';
+    return $columns;
+}
+add_filter( 'manage_edit-buyback_order_sortable_columns', 'kaitoriakiba_order_sortable_columns' );
 
 /**
  * Custom Admin Columns for Devices
@@ -473,15 +493,20 @@ function kaitoriakiba_kyc_custom_column( $column, $post_id ) {
 add_action( 'manage_kyc_record_posts_custom_column', 'kaitoriakiba_kyc_custom_column', 10, 2 );
 
 /**
- * Enable Full-Text Search in eKYC Records (Search by Name, Furigana, Email, Phone, Order Code)
+ * Enable Full-Text Search in eKYC Records & Buyback Orders
+ * Allows searching orders by IMEI Number (15 Digits), Customer Name, Phone, Email, Model, Serial, Order Code.
  */
-function kaitoriakiba_kyc_search_query( $query ) {
+function kaitoriakiba_admin_meta_search_query( $query ) {
     global $pagenow, $wpdb;
-    if ( is_admin() && $pagenow === 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] === 'kyc_record' && ! empty( $_GET['s'] ) ) {
+    if ( ! is_admin() || $pagenow !== 'edit.php' || empty( $_GET['s'] ) ) {
+        return;
+    }
+
+    $post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '';
+
+    if ( $post_type === 'kyc_record' ) {
         $search = sanitize_text_field( $_GET['s'] );
-        // Custom search across meta fields
         add_filter( 'posts_search', function( $search_sql, $wp_query ) use ( $search, $wpdb ) {
-            global $wpdb;
             if ( ! is_admin() || ! $wp_query->is_main_query() ) {
                 return $search_sql;
             }
@@ -496,6 +521,34 @@ function kaitoriakiba_kyc_search_query( $query ) {
 
             return preg_replace( '/\)\s*$/', $meta_sql . ')', $search_sql );
         }, 10, 2 );
+    } elseif ( $post_type === 'buyback_order' ) {
+        $raw_search = sanitize_text_field( $_GET['s'] );
+        $clean_imei = preg_replace( '/[^0-9A-Za-z]/', '', $raw_search );
+
+        add_filter( 'posts_search', function( $search_sql, $wp_query ) use ( $raw_search, $clean_imei, $wpdb ) {
+            if ( ! is_admin() || ! $wp_query->is_main_query() ) {
+                return $search_sql;
+            }
+            $term = '%' . $wpdb->esc_like( $raw_search ) . '%';
+            $imei_extra = '';
+            if ( ! empty( $clean_imei ) && strlen( $clean_imei ) >= 3 ) {
+                $imei_term = '%' . $wpdb->esc_like( $clean_imei ) . '%';
+                $imei_extra = $wpdb->prepare( " OR (meta_key = '_device_imei' AND meta_value LIKE %s) ", $imei_term );
+            }
+
+            $meta_sql = $wpdb->prepare( "
+                OR {$wpdb->posts}.ID IN (
+                    SELECT post_id FROM {$wpdb->postmeta} 
+                    WHERE (
+                        meta_key IN ('_device_imei', '_device_serial', '_applicant_name', '_applicant_kana', '_applicant_phone', '_applicant_email', '_device_model')
+                        AND meta_value LIKE %s
+                    )
+                    {$imei_extra}
+                )
+            ", $term );
+
+            return preg_replace( '/\)\s*$/', $meta_sql . ')', $search_sql );
+        }, 10, 2 );
     }
 }
-add_action( 'pre_get_posts', 'kaitoriakiba_kyc_search_query' );
+add_action( 'pre_get_posts', 'kaitoriakiba_admin_meta_search_query' );

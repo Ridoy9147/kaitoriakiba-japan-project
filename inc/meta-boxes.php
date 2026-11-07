@@ -386,6 +386,8 @@ add_action( 'save_post_kaitori_device', 'kaitoriakiba_save_device_meta' );
  * Render Buyback Order Meta Box (100% English Admin)
  */
 function kaitoriakiba_order_meta_box_render( $post ) {
+    wp_nonce_field( 'kaitori_order_meta_save', 'kaitori_order_meta_nonce' );
+
     $order_status   = get_post_meta( $post->ID, '_order_status', true ) ?: 'pending';
     $name           = get_post_meta( $post->ID, '_applicant_name', true );
     $kana           = get_post_meta( $post->ID, '_applicant_kana', true );
@@ -399,30 +401,45 @@ function kaitoriakiba_order_meta_box_render( $post ) {
     $serial         = get_post_meta( $post->ID, '_device_serial', true );
     $screen_cond    = get_post_meta( $post->ID, '_screen_condition', true );
     $body_cond      = get_post_meta( $post->ID, '_body_condition', true );
-    $battery_health = get_post_meta( $post->ID, '_battery_health', true );
-    $powers_on      = get_post_meta( $post->ID, '_powers_on', true );
-    $face_touch_id  = get_post_meta( $post->ID, '_face_touch_id', true );
-    $camera_works   = get_post_meta( $post->ID, '_camera_works', true );
-    $water_history  = get_post_meta( $post->ID, '_water_damage_repair', true );
+    $battery_health = get_post_meta( $post->ID, '_battery_health', true ) ?: '95';
+    $powers_on      = get_post_meta( $post->ID, '_powers_on', true ) ?: 'yes';
+    $face_touch_id  = get_post_meta( $post->ID, '_face_touch_id', true ) ?: 'yes';
+    $camera_works   = get_post_meta( $post->ID, '_camera_works', true ) ?: 'yes';
+    $water_history  = get_post_meta( $post->ID, '_water_damage_repair', true ) ?: 'none';
     $extra_issues   = get_post_meta( $post->ID, '_extra_issues', true );
     $find_my_off    = get_post_meta( $post->ID, '_find_my_off', true );
     $apple_id_out   = get_post_meta( $post->ID, '_apple_id_signout', true );
     $no_mdm_lock    = get_post_meta( $post->ID, '_no_mdm_lock', true );
-    $installment_st = get_post_meta( $post->ID, '_installment_status', true );
+    $installment_st = get_post_meta( $post->ID, '_installment_status', true ) ?: 'no';
     $installment_due= get_post_meta( $post->ID, '_installment_due_amount', true );
-    $delivery_meth  = get_post_meta( $post->ID, '_delivery_method', true );
+    $delivery_meth  = get_post_meta( $post->ID, '_delivery_method', true ) ?: 'mail';
     $pickup_dt      = get_post_meta( $post->ID, '_pickup_datetime', true );
-    $shipping_kit   = get_post_meta( $post->ID, '_shipping_kit_needed', true );
+    $shipping_kit   = get_post_meta( $post->ID, '_shipping_kit_needed', true ) ?: 'no';
     $bank_name      = get_post_meta( $post->ID, '_bank_name', true );
     $branch_name    = get_post_meta( $post->ID, '_bank_branch', true );
-    $acc_type       = get_post_meta( $post->ID, '_bank_account_type', true );
+    $acc_type       = get_post_meta( $post->ID, '_bank_account_type', true ) ?: '普通';
     $acc_number     = function_exists( 'kaitoriakiba_decrypt' ) ? kaitoriakiba_decrypt( get_post_meta( $post->ID, '_bank_account_number', true ) ) : get_post_meta( $post->ID, '_bank_account_number', true );
     $holder_kana    = function_exists( 'kaitoriakiba_decrypt' ) ? kaitoriakiba_decrypt( get_post_meta( $post->ID, '_bank_holder_kana', true ) ) : get_post_meta( $post->ID, '_bank_holder_kana', true );
     $est_price      = get_post_meta( $post->ID, '_estimated_price', true );
     $accessories    = get_post_meta( $post->ID, '_accessories', true );
     ?>
+    <style>
+        .kaitori-admin-card { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
+        .kaitori-admin-card h4 { margin: 0 0 12px 0; font-size: 14.5px; font-weight: 800; color: #1e293b; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .kaitori-admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+        .kaitori-admin-field { display: flex; flex-direction: column; gap: 4px; }
+        .kaitori-admin-field label { font-size: 12.5px; font-weight: 700; color: #475569; }
+        .kaitori-admin-field input, .kaitori-admin-field select, .kaitori-admin-field textarea { border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 6px 10px; font-size: 13px; }
+        .kaitori-admin-field input:focus, .kaitori-admin-field select:focus, .kaitori-admin-field textarea:focus { border-color: #ef4444; outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
+    </style>
+
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-left:4px solid #3b82f6; border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:13px; color:#1e40af; line-height:1.5;">
+        <strong><i class="dashicons dashicons-info" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'Staff Management & Editing Notice:', '店舗スタッフ向け編集のご案内:' ); ?></strong><br>
+        <?php echo kaitori_t( 'All customer, device, condition, and payout fields below are directly editable. If a customer entered incorrect information online or brings the device in-store for re-assessment, modify the details below and click the blue "Update" button on the right to save.', 'Web申込時にお客様が誤った情報を入力した場合や、店頭での実機確認後に査定額・状態・IMEI・振込先口座等を変更する場合は、以下の項目を直接修正して画面右上の「更新」ボタンをクリックしてください。' ); ?>
+    </div>
+
     <?php if ( function_exists( 'kaitoriakiba_invoice_url' ) ) : ?>
-        <div style="margin:4px 0 16px; padding:12px 14px; background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div style="margin:4px 0 20px; padding:12px 16px; background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
             <strong style="color:#9a3412;"><span class="dashicons dashicons-media-document" style="vertical-align:middle;"></span> <?php echo esc_html( kaitori_t( 'Buyback Invoice', '買取伝票' ) ); ?></strong>
             <a href="<?php echo esc_url( kaitoriakiba_invoice_url( $post->ID, true ) ); ?>" target="_blank" class="button button-primary" style="background:#ef4444; border-color:#ef4444; font-weight:700;">
                 <span class="dashicons dashicons-printer" style="vertical-align:middle;"></span> <?php echo esc_html( kaitori_t( 'Print / Save as PDF', '印刷 / PDF保存' ) ); ?>
@@ -430,189 +447,369 @@ function kaitoriakiba_order_meta_box_render( $post ) {
             <a href="<?php echo esc_url( kaitoriakiba_invoice_url( $post->ID, false ) ); ?>" target="_blank" class="button"><?php echo esc_html( kaitori_t( 'Preview (Shop + Customer copy)', 'プレビュー（店舗控え・お客様控え）' ) ); ?></a>
         </div>
     <?php endif; ?>
-    <table class="form-table">
-        <tr>
-            <th style="width:200px;"><label><?php echo kaitori_t( 'Order Processing Status', '注文処理ステータス' ); ?></label></th>
-            <td>
-                <select name="_order_status" style="padding:6px 14px; font-weight:bold; font-size:13px; border-radius:6px; border:1.5px solid #cbd5e1;">
+
+    <!-- 1. Order Status & Valuation -->
+    <div class="kaitori-admin-card" style="background:linear-gradient(135deg, #fef2f2 0%, #fff 100%); border-color:#fecaca;">
+        <h4><span class="dashicons dashicons-cart" style="color:#ef4444;"></span> <?php echo kaitori_t( 'Order Status & Final Valuation Amount', '注文ステータス・最終買取確定査定額' ); ?></h4>
+        <div class="kaitori-admin-form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Order Processing Status', '注文処理ステータス' ); ?></label>
+                <select name="_order_status" style="padding:8px 14px; font-weight:bold; font-size:14px; border-radius:8px; border:2px solid #cbd5e1;">
                     <?php foreach ( kaitoriakiba_order_statuses() as $st_key => $st ) : ?>
                         <option value="<?php echo esc_attr( $st_key ); ?>" <?php selected( $order_status, $st_key ); ?>><?php echo esc_html( $st['label'] . ' (' . $st['label_ja'] . ')' ); ?></option>
                     <?php endforeach; ?>
                 </select>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Estimated Buyback Quote', '概算買取査定額' ); ?></label></th>
-            <td><strong style="color:#ef4444; font-size:22px; font-weight:900;">¥<?php echo number_format((int)$est_price); ?></strong></td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Customer Information', 'お客様情報' ); ?></label></th>
-            <td>
-                <strong><?php echo kaitori_t( 'Full Name:', '氏名:' ); ?></strong> <?php echo esc_html($name); ?> (<?php echo esc_html($kana); ?>)<br>
-                <strong><?php echo kaitori_t( 'Phone Number:', '電話番号:' ); ?></strong> <a href="tel:<?php echo esc_attr($phone); ?>"><?php echo esc_html($phone); ?></a><br>
-                <strong><?php echo kaitori_t( 'Email Address:', 'メールアドレス:' ); ?></strong> <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
-                <?php
-                // Check connected WP User
-                $customer_user_id = get_post_meta( $post->ID, '_customer_user_id', true );
-                if ( ! $customer_user_id && $email ) {
-                    $u = get_user_by( 'email', $email );
-                    if ( $u ) {
-                        $customer_user_id = $u->ID;
-                    }
-                }
-                if ( $customer_user_id ) :
-                    $u_data = get_userdata( $customer_user_id );
-                    if ( $u_data ) :
-                    ?>
-                    <div style="margin-top:6px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 10px; display:inline-block;">
-                        <i class="dashicons dashicons-admin-users" style="color:#2563eb; vertical-align:middle;"></i>
-                        <strong><?php echo kaitori_t( 'Linked Customer Account:', '紐付け会員アカウント:' ); ?></strong>
-                        <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $customer_user_id ) ); ?>" target="_blank" style="font-weight:bold; color:#1d4ed8; text-decoration:underline;">
-                            <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html( $customer_user_id ); ?>)
-                        </a>
-                    </div>
-                    <?php
-                    endif;
-                endif;
-                ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Identity Verification (eKYC) Status', '本人確認 (eKYC) ステータス' ); ?></label></th>
-            <td>
-                <?php
-                // Check linked eKYC
-                $kyc_id = get_post_meta( $post->ID, '_order_kyc_record_id', true );
-                if ( ! $kyc_id && $email ) {
-                    $found_kyc = get_posts( array(
-                        'post_type'   => 'kyc_record',
-                        'meta_key'    => '_kyc_email',
-                        'meta_value'  => $email,
-                        'numberposts' => 1,
-                        'post_status' => 'any',
-                    ) );
-                    if ( ! empty( $found_kyc ) ) {
-                        $kyc_id = $found_kyc[0]->ID;
-                    }
-                }
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Confirmed / Final Buyback Price (¥)', '買取金額（円）※実機確認後の確定金額' ); ?></label>
+                <div style="position:relative;">
+                    <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:900; font-size:16px; color:#ef4444;">¥</span>
+                    <input type="number" name="_estimated_price" value="<?php echo esc_attr( $est_price ); ?>" style="padding-left:28px; font-size:18px; font-weight:900; color:#dc2626; width:100%;">
+                </div>
+            </div>
+        </div>
+    </div>
 
-                if ( $kyc_id ) :
-                    $k_status = get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending';
-                    $k_doc    = get_post_meta( $kyc_id, '_kyc_doc_type', true );
-                    if ( $k_status === 'verified' ) {
-                        $badge_bg = '#dcfce7'; $badge_col = '#15803d'; $badge_txt = kaitori_t( '✓ Verified & Approved', '✓ 承認完了・本人確認済' );
-                    } elseif ( $k_status === 'rejected' ) {
-                        $badge_bg = '#fee2e2'; $badge_col = '#b91c1c'; $badge_txt = kaitori_t( '✗ Rejected (Invalid ID)', '✗ 却下（書類不備）' );
-                    } else {
-                        $badge_bg = '#fef3c7'; $badge_col = '#b45309'; $badge_txt = kaitori_t( '⏳ Pending Verification', '⏳ 確認中・未承認' );
-                    }
+    <!-- 2. Customer Information (Editable) -->
+    <div class="kaitori-admin-card">
+        <h4><span class="dashicons dashicons-admin-users" style="color:#3b82f6;"></span> <?php echo kaitori_t( 'Customer Contact Information (Editable)', 'お客様連絡先情報（編集可能）' ); ?></h4>
+        <div class="kaitori-admin-form-grid">
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Full Name (Kanji)', '氏名（漢字）' ); ?></label>
+                <input type="text" name="_applicant_name" value="<?php echo esc_attr( $name ); ?>" placeholder="山田 太郎">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Furigana (Katakana)', 'フリガナ（カタカナ）' ); ?></label>
+                <input type="text" name="_applicant_kana" value="<?php echo esc_attr( $kana ); ?>" placeholder="ヤマダ タロウ">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Phone Number', '電話番号' ); ?></label>
+                <input type="text" name="_applicant_phone" value="<?php echo esc_attr( $phone ); ?>" placeholder="09012345678">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Email Address', 'メールアドレス' ); ?></label>
+                <input type="email" name="_applicant_email" value="<?php echo esc_attr( $email ); ?>" placeholder="user@example.com">
+            </div>
+        </div>
+
+        <div style="margin-top:14px; padding-top:10px; border-top:1px dashed #e2e8f0; display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px;">
+            <?php
+            // Check connected WP User
+            $customer_user_id = get_post_meta( $post->ID, '_customer_user_id', true );
+            if ( ! $customer_user_id && $email ) {
+                $u = get_user_by( 'email', $email );
+                if ( $u ) { $customer_user_id = $u->ID; }
+            }
+            if ( $customer_user_id ) :
+                $u_data = get_userdata( $customer_user_id );
+                if ( $u_data ) :
                 ?>
-                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                        <span style="background:<?php echo esc_attr( $badge_bg ); ?>; color:<?php echo esc_attr( $badge_col ); ?>; font-weight:800; padding:4px 12px; border-radius:12px; font-size:12.5px;">
-                            <?php echo esc_html( $badge_txt ); ?>
-                        </span>
-                        <span style="color:#64748b; font-size:13px;">(<?php echo esc_html( $k_doc ?: 'ID Document' ); ?>)</span>
-                        <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $kyc_id . '&action=edit' ) ); ?>" class="button button-primary" target="_blank" style="font-weight:700;">
-                            <i class="dashicons dashicons-id-alt" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'Review / Inspect Customer\'s eKYC Document &rarr;', 'お客様の eKYC 書類を審査 &rarr;' ); ?>
-                        </a>
-                    </div>
-                <?php else : ?>
-                    <span style="background:#f1f5f9; color:#64748b; font-weight:700; padding:4px 12px; border-radius:12px; font-size:12.5px;">
-                        <?php echo kaitori_t( '⚠ No eKYC Submitted Yet', '⚠ eKYC 未提出' ); ?>
-                    </span>
-                    <small style="color:#94a3b8; margin-left:8px;"><?php echo kaitori_t( 'Customer has not yet uploaded identification documents for this order.', 'この注文について、お客様はまだ本人確認書類をアップロードしていません。' ); ?></small>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Device Model & Identifiers', '端末モデル・識別情報' ); ?></label></th>
-            <td>
-                <strong><?php echo kaitori_t( 'Model:', 'モデル:' ); ?></strong> <?php echo esc_html($model); ?><br>
-                <strong><?php echo kaitori_t( 'Capacity & Color:', '容量・カラー:' ); ?></strong> <?php echo esc_html($storage); ?> / <?php echo esc_html($color); ?><br>
-                <strong><?php echo kaitori_t( 'Carrier:', 'キャリア:' ); ?></strong> <?php echo esc_html($carrier); ?><br>
-                <strong><?php echo kaitori_t( 'IMEI Number (15 Digits):', 'IMEI番号（15桁）:' ); ?></strong>
-                <input type="text" id="kaitori_order_imei" name="_device_imei" value="<?php echo esc_attr( $imei ); ?>" style="font-family:monospace; font-weight:bold; width:200px; border:1.5px solid #cbd5e1; border-radius:6px; padding:4px 8px;">
-                <button type="button" class="button button-small kaitori-scan" data-order="<?php echo esc_attr( $post->ID ); ?>" data-field="imei">📷 <?php echo kaitori_t( 'Scan', 'スキャン' ); ?></button><br>
-                <strong><?php echo kaitori_t( 'Serial Number:', 'シリアル番号:' ); ?></strong> <?php echo esc_html($serial ?: '—'); ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Condition Checklist Reported', '申告された状態チェックリスト' ); ?></label></th>
-            <td>
-                • <strong><?php echo kaitori_t( 'Screen Condition:', '画面の状態:' ); ?></strong> <?php echo esc_html($screen_cond); ?><br>
-                • <strong><?php echo kaitori_t( 'Body / Frame Condition:', '本体・フレームの状態:' ); ?></strong> <?php echo esc_html($body_cond); ?><br>
-                • <strong><?php echo kaitori_t( 'Battery Maximum Health:', 'バッテリー最大容量:' ); ?></strong> <?php echo esc_html($battery_health); ?>%<br>
-                • <strong><?php echo kaitori_t( 'Powers On Correctly:', '正常に起動する:' ); ?></strong> <?php echo esc_html($powers_on); ?><br>
-                • <strong><?php echo kaitori_t( 'Biometrics (Face ID / Touch ID):', '生体認証（Face ID / Touch ID）:' ); ?></strong> <?php echo esc_html($face_touch_id); ?><br>
-                • <strong><?php echo kaitori_t( 'Camera Operation:', 'カメラ動作:' ); ?></strong> <?php echo esc_html($camera_works); ?><br>
-                • <strong><?php echo kaitori_t( 'Water Damage / Past Repairs:', '水没・修理履歴:' ); ?></strong> <?php echo esc_html($water_history); ?><br>
-                • <strong><?php echo kaitori_t( 'Included Accessories:', '付属品:' ); ?></strong> <?php echo esc_html(is_array($accessories) ? implode(', ', $accessories) : $accessories); ?><br>
-                • <strong><?php echo kaitori_t( 'Other Reported Issues:', 'その他の申告事項:' ); ?></strong> <?php echo esc_html($extra_issues ?: 'None'); ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Carrier Installment Status', 'キャリア分割払いの状況' ); ?></label></th>
-            <td>
-                <strong><?php echo kaitori_t( 'Status:', '状況:' ); ?></strong> <?php echo esc_html($installment_st === 'yes' ? kaitori_t( 'Under Installment (△)', '分割残債あり (△)' ) : kaitori_t( 'Fully Paid Off (○)', '完済 (○)' ) ); ?><br>
-                <?php if ($installment_st === 'yes'): ?>
-                    <strong><?php echo kaitori_t( 'Remaining Balance Due:', '残債額:' ); ?></strong> <span style="color:#dc2626; font-weight:bold;">¥<?php echo number_format((int)$installment_due); ?></span>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Security & iCloud Lock Verification', 'セキュリティ・iCloudロック確認' ); ?></label></th>
-            <td>
-                • <?php echo kaitori_t( '"Find My" (Activation Lock) Disabled:', '「探す」（アクティベーションロック）解除済み:' ); ?> <?php echo $find_my_off ? '<span style="color:#16a34a; font-weight:bold;">✓ ' . esc_html( kaitori_t( 'Confirmed', '確認済み' ) ) . '</span>' : '<span style="color:#dc2626;">' . esc_html( kaitori_t( 'Not Confirmed', '未確認' ) ) . '</span>'; ?><br>
-                • <?php echo kaitori_t( 'Apple ID Signed Out:', 'Apple ID サインアウト済み:' ); ?> <?php echo $apple_id_out ? '<span style="color:#16a34a; font-weight:bold;">✓ ' . esc_html( kaitori_t( 'Confirmed', '確認済み' ) ) . '</span>' : '<span style="color:#dc2626;">' . esc_html( kaitori_t( 'Not Confirmed', '未確認' ) ) . '</span>'; ?><br>
-                • <?php echo kaitori_t( 'No MDM / Corporate Profile Lock:', 'MDM・法人プロファイルロックなし:' ); ?> <?php echo $no_mdm_lock ? '<span style="color:#16a34a; font-weight:bold;">✓ ' . esc_html( kaitori_t( 'Confirmed', '確認済み' ) ) . '</span>' : '<span style="color:#dc2626;">' . esc_html( kaitori_t( 'Not Confirmed', '未確認' ) ) . '</span>'; ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Handover & Delivery Method', '受け渡し・配送方法' ); ?></label></th>
-            <td>
-                <strong><?php echo kaitori_t( 'Method:', '方法:' ); ?></strong> <?php echo esc_html($delivery_meth === 'store' ? kaitori_t( 'In-Store Drop-off (Akihabara Store)', '店頭持ち込み（秋葉原店）' ) : kaitori_t( 'Mail-in Buyback (Free Courier)', '郵送買取（送料無料）' ) ); ?><br>
-                <strong><?php echo kaitori_t( 'Free Shipping Kit Needed:', '無料梱包キット希望:' ); ?></strong> <?php echo esc_html($shipping_kit ?: kaitori_t( 'Not Needed (Self Packed)', '不要（自己梱包）' ) ); ?><br>
-                <strong><?php echo kaitori_t( 'Preferred Pickup / Visit Date:', '希望集荷・来店日:' ); ?></strong> <?php echo esc_html($pickup_dt ?: kaitori_t( 'Not Specified', '指定なし' ) ); ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label><?php echo kaitori_t( 'Customer Bank Payout Details', 'お客様の振込先口座情報' ); ?></label></th>
-            <td>
-                <strong><?php echo kaitori_t( 'Bank Name:', '銀行名:' ); ?></strong> <?php echo esc_html($bank_name); ?><br>
-                <strong><?php echo kaitori_t( 'Branch Name:', '支店名:' ); ?></strong> <?php echo esc_html($branch_name); ?><br>
-                <strong><?php echo kaitori_t( 'Account Type:', '口座種別:' ); ?></strong> <?php echo esc_html($acc_type); ?><br>
-                <strong><?php echo kaitori_t( 'Account Number:', '口座番号:' ); ?></strong>
-                <?php $acc_mask = function_exists( 'kaitoriakiba_mask_account' ) ? kaitoriakiba_mask_account( $acc_number ) : $acc_number; ?>
-                <span class="kaitori-acc-masked"><?php echo esc_html( $acc_mask ); ?></span>
-                <span class="kaitori-acc-full" style="display:none;"><?php echo esc_html( $acc_number ); ?></span>
-                <?php if ( $acc_number ) : ?>
-                    <a href="#" class="kaitori-acc-reveal" style="font-size:11px; margin-left:6px;" onclick="var b=this.parentNode;b.querySelector('.kaitori-acc-masked').style.display='none';b.querySelector('.kaitori-acc-full').style.display='inline';this.style.display='none';return false;"><?php echo kaitori_t( 'Reveal', '表示' ); ?></a>
-                <?php endif; ?>
-                <br>
-                <strong><?php echo kaitori_t( 'Account Holder (Katakana):', '口座名義（カナ）:' ); ?></strong> <?php echo esc_html($holder_kana); ?>
-            </td>
-        </tr>
-    </table>
+                <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 12px;">
+                    <i class="dashicons dashicons-admin-users" style="color:#2563eb; vertical-align:middle;"></i>
+                    <strong><?php echo kaitori_t( 'Linked WP Account:', '紐付け会員アカウント:' ); ?></strong>
+                    <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $customer_user_id ) ); ?>" target="_blank" style="font-weight:bold; color:#1d4ed8;">
+                        <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html( $customer_user_id ); ?>)
+                    </a>
+                </div>
+                <?php
+                endif;
+            endif;
+            ?>
+
+            <?php
+            // Check linked eKYC
+            $kyc_id = get_post_meta( $post->ID, '_order_kyc_record_id', true );
+            if ( ! $kyc_id && $email ) {
+                $found_kyc = get_posts( array(
+                    'post_type'   => 'kyc_record',
+                    'meta_key'    => '_kyc_email',
+                    'meta_value'  => $email,
+                    'numberposts' => 1,
+                    'post_status' => 'any',
+                ) );
+                if ( ! empty( $found_kyc ) ) {
+                    $kyc_id = $found_kyc[0]->ID;
+                }
+            }
+            if ( $kyc_id ) :
+                $k_status = get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending';
+                $k_doc    = get_post_meta( $kyc_id, '_kyc_doc_type', true );
+            ?>
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:6px 12px;">
+                    <i class="dashicons dashicons-id-alt" style="color:#16a34a; vertical-align:middle;"></i>
+                    <strong><?php echo kaitori_t( 'eKYC Status:', '本人確認状況:' ); ?></strong>
+                    <span style="font-weight:800; color:#15803d;"><?php echo esc_html( ucfirst($k_status) ); ?></span>
+                    <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $kyc_id . '&action=edit' ) ); ?>" target="_blank" style="margin-left:8px; text-decoration:underline; font-weight:bold;">
+                        <?php echo kaitori_t( 'Review KYC Record &rarr;', '本人確認レコードを開く &rarr;' ); ?>
+                    </a>
+                </div>
+            <?php else : ?>
+                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:6px; padding:6px 12px; color:#854d0e;">
+                    <i class="dashicons dashicons-warning" style="vertical-align:middle;"></i>
+                    <?php echo kaitori_t( 'eKYC Record: Unverified / Not Uploaded Yet', 'eKYC: 未提出・未承認' ); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- 3. Device Details & Identifiers (Editable) -->
+    <div class="kaitori-admin-card">
+        <h4><span class="dashicons dashicons-smartphone" style="color:#10b981;"></span> <?php echo kaitori_t( 'Device Details & IMEI / Serial (Editable)', '端末情報・IMEI・シリアル（編集可能）' ); ?></h4>
+        <div class="kaitori-admin-form-grid">
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Device Model Name', '機種名（モデル）' ); ?></label>
+                <input type="text" name="_device_model" value="<?php echo esc_attr( $model ); ?>" placeholder="iPhone 16 Pro">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Storage Capacity', 'ストレージ容量' ); ?></label>
+                <input type="text" name="_device_storage" value="<?php echo esc_attr( $storage ); ?>" placeholder="256GB">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Device Color', '本体カラー' ); ?></label>
+                <input type="text" name="_device_color" value="<?php echo esc_attr( $color ); ?>" placeholder="Desert Titanium">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Carrier / SIM Status', 'キャリア・SIM状態' ); ?></label>
+                <input type="text" name="_device_carrier" value="<?php echo esc_attr( $carrier ); ?>" placeholder="SIMフリー">
+            </div>
+            <div class="kaitori-admin-field" style="background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:8px;">
+                <label style="color:#b91c1c; font-weight:800;"><?php echo kaitori_t( 'IMEI Number (15 Digits) — Searchable', 'IMEI番号（15桁・検索対象）' ); ?></label>
+                <div style="display:flex; gap:6px;">
+                    <input type="text" id="kaitori_order_imei" name="_device_imei" value="<?php echo esc_attr( $imei ); ?>" maxlength="15" style="font-family:monospace; font-weight:bold; font-size:14px; flex:1;">
+                    <button type="button" class="button button-small kaitori-scan" data-order="<?php echo esc_attr( $post->ID ); ?>" data-field="imei">📷 <?php echo kaitori_t( 'Scan', 'スキャン' ); ?></button>
+                </div>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Serial Number', 'シリアル番号' ); ?></label>
+                <input type="text" name="_device_serial" value="<?php echo esc_attr( $serial ); ?>" placeholder="F2LDXXXX">
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Condition Checklist (Editable) -->
+    <div class="kaitori-admin-card">
+        <h4><span class="dashicons dashicons-yes" style="color:#f59e0b;"></span> <?php echo kaitori_t( 'Condition & Inspection Checklist (Editable)', '状態・動作検品チェック項目（編集可能）' ); ?></h4>
+        <div class="kaitori-admin-form-grid">
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Screen Condition', '画面の状態' ); ?></label>
+                <input type="text" name="_screen_condition" value="<?php echo esc_attr( $screen_cond ); ?>" placeholder="傷なし・美品 (Sランク/Aランク)">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Body & Frame Condition', '外装・フレームの状態' ); ?></label>
+                <input type="text" name="_body_condition" value="<?php echo esc_attr( $body_cond ); ?>" placeholder="目立つ傷なし (Flawless)">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Battery Health (%)', 'バッテリー最大容量 (%)' ); ?></label>
+                <input type="number" name="_battery_health" value="<?php echo esc_attr( $battery_health ); ?>" min="50" max="100">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Powers On Correctly', '電源・正常起動' ); ?></label>
+                <select name="_powers_on">
+                    <option value="yes" <?php selected($powers_on, 'yes'); ?>><?php echo kaitori_t( 'Yes - Normal', '正常に起動する' ); ?></option>
+                    <option value="no" <?php selected($powers_on, 'no'); ?>><?php echo kaitori_t( 'No - Does not boot', '起動しない' ); ?></option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Biometrics (Face ID / Touch ID)', '生体認証' ); ?></label>
+                <select name="_face_touch_id">
+                    <option value="yes" <?php selected($face_touch_id, 'yes'); ?>><?php echo kaitori_t( 'Yes - Works', '正常作動' ); ?></option>
+                    <option value="no" <?php selected($face_touch_id, 'no'); ?>><?php echo kaitori_t( 'No - Unusable / Faulty', '使用不可・不良' ); ?></option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Camera Operation', 'カメラ動作' ); ?></label>
+                <select name="_camera_works">
+                    <option value="yes" <?php selected($camera_works, 'yes'); ?>><?php echo kaitori_t( 'Yes - Normal', '正常作動' ); ?></option>
+                    <option value="no" <?php selected($camera_works, 'no'); ?>><?php echo kaitori_t( 'No - Spots / Shake / Faulty', '斑点・手ぶれ不良' ); ?></option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Water Damage / Past Repairs', '水没・修理歴' ); ?></label>
+                <input type="text" name="_water_damage_repair" value="<?php echo esc_attr( $water_history ); ?>" placeholder="none">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Included Accessories', '付属品' ); ?></label>
+                <input type="text" name="_accessories_text" value="<?php echo esc_attr( is_array($accessories) ? implode(', ', $accessories) : $accessories ); ?>" placeholder="箱、ケーブル、説明書">
+            </div>
+        </div>
+        <div class="kaitori-admin-field" style="margin-top:12px;">
+            <label><?php echo kaitori_t( 'Other Reported Issues / Staff Inspection Notes', 'その他の申告事項・検品備考' ); ?></label>
+            <textarea name="_extra_issues" rows="2" style="width:100%;"><?php echo esc_textarea( $extra_issues ); ?></textarea>
+        </div>
+    </div>
+
+    <!-- 5. Bank Account & Payout Details (Editable) -->
+    <div class="kaitori-admin-card">
+        <h4><span class="dashicons dashicons-bank" style="color:#6366f1;"></span> <?php echo kaitori_t( 'Customer Payout Bank Account (Editable & Encrypted at rest)', 'お振込先銀行口座情報（編集可能・暗号化保管）' ); ?></h4>
+        <div class="kaitori-admin-form-grid">
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Bank Name', '金融機関名（銀行名）' ); ?></label>
+                <input type="text" name="_bank_name" value="<?php echo esc_attr( $bank_name ); ?>" placeholder="三菱UFJ銀行">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Branch Name', '支店名' ); ?></label>
+                <input type="text" name="_bank_branch" value="<?php echo esc_attr( $branch_name ); ?>" placeholder="秋葉原支店">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Account Type', '口座種別' ); ?></label>
+                <select name="_bank_account_type">
+                    <option value="普通" <?php selected($acc_type, '普通'); ?>>普通 (Ordinary)</option>
+                    <option value="当座" <?php selected($acc_type, '当座'); ?>>当座 (Current)</option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Account Number (7 digits)', '口座番号（7桁）' ); ?></label>
+                <input type="text" name="_bank_account_number" value="<?php echo esc_attr( $acc_number ); ?>" placeholder="1234567">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Account Holder (Katakana)', '口座名義（カタカナ）' ); ?></label>
+                <input type="text" name="_bank_holder_kana" value="<?php echo esc_attr( $holder_kana ); ?>" placeholder="ヤマダ タロウ">
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Delivery & Security Details (Editable) -->
+    <div class="kaitori-admin-card">
+        <h4><span class="dashicons dashicons-car" style="color:#0ea5e9;"></span> <?php echo kaitori_t( 'Delivery, Installment & Security Verification', '受取方法・分割残債・セキュリティ確認' ); ?></h4>
+        <div class="kaitori-admin-form-grid">
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Delivery / Handover Method', '受取・引渡方法' ); ?></label>
+                <select name="_delivery_method">
+                    <option value="mail" <?php selected($delivery_meth, 'mail'); ?>><?php echo kaitori_t( 'Mail-in Delivery (郵送)', '郵送買取（送料無料）' ); ?></option>
+                    <option value="store" <?php selected($delivery_meth, 'store'); ?>><?php echo kaitori_t( 'In-Store Drop-off (店頭)', '店頭持込（秋葉原店）' ); ?></option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Free Packing Kit Needed', '無料梱包キット希望' ); ?></label>
+                <select name="_shipping_kit_needed">
+                    <option value="no" <?php selected($shipping_kit, 'no'); ?>><?php echo kaitori_t( 'Not Needed (不要)', '不要（自己梱包）' ); ?></option>
+                    <option value="yes" <?php selected($shipping_kit, 'yes'); ?>><?php echo kaitori_t( 'Kit Requested (希望する)', '希望する' ); ?></option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Pickup / Store Visit Datetime', '集荷・来店希望日時' ); ?></label>
+                <input type="text" name="_pickup_datetime" value="<?php echo esc_attr( $pickup_dt ); ?>" placeholder="例: 2026-11-10 14:00">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Carrier Installment Status', '分割残債状況' ); ?></label>
+                <select name="_installment_status">
+                    <option value="no" <?php selected($installment_st, 'no'); ?>><?php echo kaitori_t( 'Fully Paid Off (完済 ◯)', '完済（残債なし ◯）' ); ?></option>
+                    <option value="yes" <?php selected($installment_st, 'yes'); ?>><?php echo kaitori_t( 'Under Installment (残債あり △)', '分割支払い中（残債あり △）' ); ?></option>
+                </select>
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'Remaining Due Balance (¥)', '分割残債金額（円）' ); ?></label>
+                <input type="number" name="_installment_due_amount" value="<?php echo esc_attr( $installment_due ); ?>" placeholder="0">
+            </div>
+            <div class="kaitori-admin-field">
+                <label><?php echo kaitori_t( 'iCloud Lock / Find My Disabled', '「探す」ロック解除' ); ?></label>
+                <select name="_find_my_off">
+                    <option value="1" <?php selected($find_my_off, 1); ?>><?php echo kaitori_t( '✓ Confirmed (解除済み)', '解除済み' ); ?></option>
+                    <option value="0" <?php selected($find_my_off, 0); ?>><?php echo kaitori_t( '✗ Not Confirmed (未解除)', '未解除・要確認' ); ?></option>
+                </select>
+            </div>
+        </div>
+    </div>
     <?php
 }
 
 function kaitoriakiba_save_order_meta( $post_id ) {
-    if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {
+    if ( ! isset( $_POST['kaitori_order_meta_nonce'] ) || ! wp_verify_nonce( $_POST['kaitori_order_meta_nonce'], 'kaitori_order_meta_save' ) ) {
+        if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {
+            return;
+        }
+    }
+
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return;
     }
-    if ( isset( $_POST['_order_status'] ) ) {
-        update_post_meta( $post_id, '_order_status', sanitize_text_field( $_POST['_order_status'] ) );
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
     }
+
+    $text_fields = array(
+        '_order_status',
+        '_applicant_name',
+        '_applicant_kana',
+        '_applicant_phone',
+        '_device_model',
+        '_device_storage',
+        '_device_color',
+        '_device_carrier',
+        '_device_serial',
+        '_screen_condition',
+        '_body_condition',
+        '_powers_on',
+        '_face_touch_id',
+        '_camera_works',
+        '_water_damage_repair',
+        '_delivery_method',
+        '_pickup_datetime',
+        '_shipping_kit_needed',
+        '_installment_status',
+        '_bank_name',
+        '_bank_branch',
+        '_bank_account_type',
+    );
+
+    foreach ( $text_fields as $tf ) {
+        if ( isset( $_POST[ $tf ] ) ) {
+            update_post_meta( $post_id, $tf, sanitize_text_field( wp_unslash( $_POST[ $tf ] ) ) );
+        }
+    }
+
+    if ( isset( $_POST['_applicant_email'] ) ) {
+        update_post_meta( $post_id, '_applicant_email', sanitize_email( wp_unslash( $_POST['_applicant_email'] ) ) );
+    }
+
     if ( isset( $_POST['_device_imei'] ) ) {
         update_post_meta( $post_id, '_device_imei', preg_replace( '/[^0-9A-Za-z]/', '', wp_unslash( $_POST['_device_imei'] ) ) );
+    }
+
+    if ( isset( $_POST['_estimated_price'] ) ) {
+        update_post_meta( $post_id, '_estimated_price', intval( $_POST['_estimated_price'] ) );
+    }
+
+    if ( isset( $_POST['_battery_health'] ) ) {
+        update_post_meta( $post_id, '_battery_health', intval( $_POST['_battery_health'] ) );
+    }
+
+    if ( isset( $_POST['_installment_due_amount'] ) ) {
+        update_post_meta( $post_id, '_installment_due_amount', intval( $_POST['_installment_due_amount'] ) );
+    }
+
+    if ( isset( $_POST['_find_my_off'] ) ) {
+        update_post_meta( $post_id, '_find_my_off', intval( $_POST['_find_my_off'] ) );
+    }
+
+    if ( isset( $_POST['_extra_issues'] ) ) {
+        update_post_meta( $post_id, '_extra_issues', sanitize_textarea_field( wp_unslash( $_POST['_extra_issues'] ) ) );
+    }
+
+    if ( isset( $_POST['_accessories_text'] ) ) {
+        $acc_raw = sanitize_text_field( wp_unslash( $_POST['_accessories_text'] ) );
+        $acc_arr = array_filter( array_map( 'trim', explode( ',', $acc_raw ) ) );
+        update_post_meta( $post_id, '_accessories', $acc_arr );
+    }
+
+    // Encrypt financial PII at rest
+    if ( isset( $_POST['_bank_account_number'] ) ) {
+        $clean_num = sanitize_text_field( wp_unslash( $_POST['_bank_account_number'] ) );
+        update_post_meta( $post_id, '_bank_account_number', function_exists( 'kaitoriakiba_encrypt' ) ? kaitoriakiba_encrypt( $clean_num ) : $clean_num );
+    }
+    if ( isset( $_POST['_bank_holder_kana'] ) ) {
+        $clean_holder = sanitize_text_field( wp_unslash( $_POST['_bank_holder_kana'] ) );
+        update_post_meta( $post_id, '_bank_holder_kana', function_exists( 'kaitoriakiba_encrypt' ) ? kaitoriakiba_encrypt( $clean_holder ) : $clean_holder );
     }
 }
 add_action( 'save_post_buyback_order', 'kaitoriakiba_save_order_meta' );
 
 /**
- * Render eKYC Verification Meta Box (100% English Admin with Full Customer & Order Linking)
+ * Render eKYC Verification Meta Box (Editable & Reviewable)
  */
 function kaitoriakiba_kyc_meta_box_render( $post ) {
+    wp_nonce_field( 'kaitori_kyc_meta_save', 'kaitori_kyc_meta_nonce' );
+
     $kyc_status   = get_post_meta( $post->ID, '_kyc_status', true ) ?: 'pending';
     $name         = get_post_meta( $post->ID, '_kyc_name', true );
     $kana         = get_post_meta( $post->ID, '_kyc_kana', true );
@@ -628,18 +825,16 @@ function kaitoriakiba_kyc_meta_box_render( $post ) {
     $order_code   = get_post_meta( $post->ID, '_kyc_order_code', true );
     $order_id     = get_post_meta( $post->ID, '_kyc_order_id', true );
     $user_id      = get_post_meta( $post->ID, '_kyc_user_id', true );
-    // Prefer new secure files; fall back to legacy attachment ids/urls.
+
     $front_store  = get_post_meta( $post->ID, '_kyc_id_front_file', true ) ?: get_post_meta( $post->ID, '_kyc_id_front_attach', true );
     $back_store   = get_post_meta( $post->ID, '_kyc_id_back_file', true )  ?: get_post_meta( $post->ID, '_kyc_id_back_attach', true );
     $selfie_store = get_post_meta( $post->ID, '_kyc_selfie_file', true )   ?: get_post_meta( $post->ID, '_kyc_selfie_attach', true );
     $admin_notes  = get_post_meta( $post->ID, '_kyc_admin_notes', true );
 
-    // Resolve through the permission-checked endpoint (new) or legacy resolver.
     $front_url  = function_exists( 'kaitoriakiba_kyc_resolve_src' ) ? kaitoriakiba_kyc_resolve_src( $front_store )  : $front_store;
     $back_url   = function_exists( 'kaitoriakiba_kyc_resolve_src' ) ? kaitoriakiba_kyc_resolve_src( $back_store )   : $back_store;
     $selfie_url = function_exists( 'kaitoriakiba_kyc_resolve_src' ) ? kaitoriakiba_kyc_resolve_src( $selfie_store ) : $selfie_store;
 
-    // Auto-detect matching user if not explicitly linked
     if ( ! $user_id && ! empty( $email ) ) {
         $u = get_user_by( 'email', $email );
         if ( $u ) {
@@ -648,7 +843,6 @@ function kaitoriakiba_kyc_meta_box_render( $post ) {
         }
     }
 
-    // Auto-detect matching order if not explicitly linked
     if ( ! $order_id && ! empty( $email ) ) {
         $orders = get_posts( array(
             'post_type'   => 'buyback_order',
@@ -666,205 +860,175 @@ function kaitoriakiba_kyc_meta_box_render( $post ) {
     }
     ?>
     <style>
-        .kyc-meta-table th { width: 220px; font-size: 13.5px; color: #1e293b; padding: 14px 10px; vertical-align: top; }
-        .kyc-meta-table td { font-size: 13.5px; padding: 14px 10px; vertical-align: top; }
-        .kyc-box-panel { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 6px; }
+        .kyc-admin-card { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
+        .kyc-admin-card h4 { margin: 0 0 12px 0; font-size: 14.5px; font-weight: 800; color: #1e293b; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .kyc-admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+        .kyc-admin-field { display: flex; flex-direction: column; gap: 4px; }
+        .kyc-admin-field label { font-size: 12.5px; font-weight: 700; color: #475569; }
+        .kyc-admin-field input, .kyc-admin-field select, .kyc-admin-field textarea { border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 6px 10px; font-size: 13px; }
+        .kyc-admin-field input:focus, .kyc-admin-field select:focus, .kyc-admin-field textarea:focus { border-color: #ef4444; outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
         .kyc-doc-card { display: inline-block; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-right: 14px; margin-bottom: 10px; text-align: center; }
         .kyc-doc-card img { max-width: 260px; max-height: 180px; object-fit: contain; border-radius: 6px; display: block; margin-bottom: 8px; background: #f1f5f9; }
     </style>
 
-    <table class="form-table kyc-meta-table">
-        <!-- 1. Status Selection -->
-        <tr style="background:#f8fafc;">
-            <th><label><?php echo kaitori_t( 'Verification Status', '審査判定' ); ?></label></th>
-            <td>
-                <select name="_kyc_status" style="padding:8px 16px; font-weight:800; font-size:14px; border-radius:8px; border:2px solid <?php echo $kyc_status === 'verified' ? '#16a34a' : ( $kyc_status === 'rejected' ? '#dc2626' : '#f59e0b' ); ?>;">
-                    <option value="pending" <?php selected($kyc_status, 'pending'); ?>><?php echo kaitori_t( '⏳ Pending Review', '⏳ 確認中・未承認' ); ?></option>
-                    <option value="verified" <?php selected($kyc_status, 'verified'); ?>><?php echo kaitori_t( '✓ Verified & Approved', '✓ 承認完了・本人確認済' ); ?></option>
-                    <option value="rejected" <?php selected($kyc_status, 'rejected'); ?>><?php echo kaitori_t( '✗ Rejected', '✗ 不備・再提出要請' ); ?></option>
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-left:4px solid #3b82f6; border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:13px; color:#1e40af; line-height:1.5;">
+        <strong><i class="dashicons dashicons-info" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'Staff Management & Editing Notice:', '店舗スタッフ向け本人確認編集のご案内:' ); ?></strong><br>
+        <?php echo kaitori_t( 'Customer personal details and address below can be directly edited and corrected. If a customer visits the store with their original ID and needs corrections, update the fields below and click "Update".', 'お客様がWebから提出した情報に誤りがある場合や、店頭で原本書類を確認して修正・更新が必要な場合は、以下の各項目（氏名・住所・生年月日等）を直接編集して「更新」ボタンをクリックしてください。' ); ?>
+    </div>
+
+    <!-- 1. Verification Decision -->
+    <div class="kyc-admin-card" style="background:<?php echo $kyc_status === 'verified' ? '#f0fdf4' : ( $kyc_status === 'rejected' ? '#fef2f2' : '#fffbeb' ); ?>; border-color:<?php echo $kyc_status === 'verified' ? '#bbf7d0' : ( $kyc_status === 'rejected' ? '#fecaca' : '#fde68a' ); ?>;">
+        <h4><span class="dashicons dashicons-shield"></span> <?php echo kaitori_t( 'Verification Decision (審査判定)', '本人確認審査ステータス' ); ?></h4>
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <select name="_kyc_status" style="padding:8px 16px; font-weight:800; font-size:14px; border-radius:8px; border:2px solid <?php echo $kyc_status === 'verified' ? '#16a34a' : ( $kyc_status === 'rejected' ? '#dc2626' : '#f59e0b' ); ?>;">
+                <option value="pending" <?php selected($kyc_status, 'pending'); ?>><?php echo kaitori_t( '⏳ Pending Review', '⏳ 確認中・未承認' ); ?></option>
+                <option value="verified" <?php selected($kyc_status, 'verified'); ?>><?php echo kaitori_t( '✓ Verified & Approved', '✓ 承認完了・本人確認済' ); ?></option>
+                <option value="rejected" <?php selected($kyc_status, 'rejected'); ?>><?php echo kaitori_t( '✗ Rejected (Invalid)', '✗ 不備・再提出要請' ); ?></option>
+            </select>
+            <span style="font-size: 12.5px; color: #475569;">
+                <?php echo kaitori_t( 'When set to "Verified", the customer user account and all connected buyback orders are automatically marked as verified.', '「承認完了」に設定すると、お客様の会員アカウントおよび紐付く買取注文が自動的に本人確認完了ステータスに同期されます。' ); ?>
+            </span>
+        </div>
+    </div>
+
+    <!-- 2. Personal Details (Editable) -->
+    <div class="kyc-admin-card">
+        <h4><span class="dashicons dashicons-id-alt" style="color:#ef4444;"></span> <?php echo kaitori_t( 'Applicant Identity Details (Editable)', '申請者の本人情報（編集可能）' ); ?></h4>
+        <div class="kyc-admin-grid">
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Full Name (Kanji)', '氏名（漢字）' ); ?></label>
+                <input type="text" name="_kyc_name" value="<?php echo esc_attr( $name ); ?>" placeholder="山田 太郎">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Furigana (Katakana)', 'フリガナ（カタカナ）' ); ?></label>
+                <input type="text" name="_kyc_kana" value="<?php echo esc_attr( $kana ); ?>" placeholder="ヤマダ タロウ">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Email Address', 'メールアドレス' ); ?></label>
+                <input type="email" name="_kyc_email" value="<?php echo esc_attr( $email ); ?>" placeholder="user@example.com">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Phone Number', '電話番号' ); ?></label>
+                <input type="text" name="_kyc_phone" value="<?php echo esc_attr( $phone ); ?>" placeholder="09012345678">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Date of Birth', '生年月日' ); ?></label>
+                <input type="date" name="_kyc_dob" value="<?php echo esc_attr( $dob ); ?>">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Occupation', 'ご職業' ); ?></label>
+                <input type="text" name="_kyc_job" value="<?php echo esc_attr( $job ); ?>" placeholder="会社員">
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Current Residential Address (Editable) -->
+    <div class="kyc-admin-card">
+        <h4><span class="dashicons dashicons-location" style="color:#f59e0b;"></span> <?php echo kaitori_t( 'Current Residential Address (Editable)', '現住所情報（編集可能）' ); ?></h4>
+        <div class="kyc-admin-grid">
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Postal Code', '郵便番号' ); ?></label>
+                <input type="text" name="_kyc_postal" value="<?php echo esc_attr( $postal ); ?>" placeholder="101-0021">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Prefecture', '都道府県' ); ?></label>
+                <input type="text" name="_kyc_prefecture" value="<?php echo esc_attr( $pref ); ?>" placeholder="東京都">
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'City / Ward', '市区町村' ); ?></label>
+                <input type="text" name="_kyc_city" value="<?php echo esc_attr( $city ); ?>" placeholder="千代田区">
+            </div>
+            <div class="kyc-admin-field" style="grid-column: span 2;">
+                <label><?php echo kaitori_t( 'Street Address, Building & Room', '番地・建物名・部屋番号' ); ?></label>
+                <input type="text" name="_kyc_address" value="<?php echo esc_attr( $address ); ?>" placeholder="外神田1-2-3 アキバビル4F">
+            </div>
+        </div>
+        <?php if ( $pref || $city || $address ) : ?>
+            <div style="margin-top:10px;">
+                <a href="https://www.google.com/maps/search/<?php echo urlencode( $pref . ' ' . $city . ' ' . $address ); ?>" target="_blank" class="button button-small">
+                    <i class="dashicons dashicons-location-alt" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'Verify Address on Google Maps &rarr;', 'Google マップで住所を照合 &rarr;' ); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- 4. Document Type & Order Reference -->
+    <div class="kyc-admin-card">
+        <h4><span class="dashicons dashicons-media-document" style="color:#8b5cf6;"></span> <?php echo kaitori_t( 'Document Type & Order Association (Editable)', '書類種別・紐付け注文' ); ?></h4>
+        <div class="kyc-admin-grid">
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Document Type', '提出書類の種別' ); ?></label>
+                <select name="_kyc_doc_type">
+                    <option value="運転免許証" <?php selected($doc_type, '運転免許証'); ?>>運転免許証 (Driver License)</option>
+                    <option value="マイナンバーカード" <?php selected($doc_type, 'マイナンバーカード'); ?>>マイナンバーカード (My Number Card)</option>
+                    <option value="在留カード" <?php selected($doc_type, '在留カード'); ?>>在留カード (Residence Card)</option>
+                    <option value="パスポート" <?php selected($doc_type, 'パスポート'); ?>>パスポート (Passport)</option>
+                    <option value="その他" <?php selected($doc_type, 'その他'); ?>>その他 (Other ID)</option>
                 </select>
-                <span style="margin-left: 10px; font-size: 12px; color: #64748b;">
-                    <?php echo kaitori_t( 'When "Verified", customer and linked orders are automatically marked as verified.', '「承認」にすると、お客様および紐付く注文が自動的に本人確認済みになります。' ); ?>
-                </span>
-            </td>
-        </tr>
+            </div>
+            <div class="kyc-admin-field">
+                <label><?php echo kaitori_t( 'Linked Order Code / Reference', '紐付け買取受付番号' ); ?></label>
+                <input type="text" name="_kyc_order_code" value="<?php echo esc_attr( $order_code ); ?>" placeholder="KB-20261107-1234">
+            </div>
+        </div>
+    </div>
 
-        <!-- 2. Customer User Account Link -->
-        <tr>
-            <th><label><?php echo kaitori_t( 'Connected Customer Account', '紐付け会員アカウント' ); ?></label></th>
-            <td>
-                <?php if ( $user_id ) : 
-                    $u_data = get_userdata( $user_id );
-                ?>
-                    <div class="kyc-box-panel" style="background:#eff6ff; border-color:#bfdbfe;">
-                        <i class="dashicons dashicons-admin-users" style="color:#2563eb; font-size:20px; vertical-align:middle;"></i>
-                        <strong><?php echo kaitori_t( 'Registered WordPress User:', '登録済み WordPress ユーザー:' ); ?></strong>
-                        <span style="font-weight:700; color:#1e40af; margin-left:4px;">
-                            <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html($user_id); ?>)
-                        </span>
-                        <div style="margin-top:6px; font-size:12.5px; color:#475569;">
-                            Email: <code><?php echo esc_html( $u_data->user_email ); ?></code> | Registered: <?php echo esc_html( $u_data->user_registered ); ?>
-                        </div>
-                        <div style="margin-top:8px;">
-                            <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $user_id ) ); ?>" target="_blank" class="button button-secondary" style="font-weight:700;">
-                                <i class="dashicons dashicons-external" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'Open Customer User Profile &rarr;', 'お客様のユーザープロフィールを開く &rarr;' ); ?>
-                            </a>
-                        </div>
-                    </div>
-                <?php else : ?>
-                    <div class="kyc-box-panel" style="color:#64748b;">
-                        <em><?php echo kaitori_t( 'Guest Customer (No WordPress account created yet with this email).', 'ゲストのお客様（このメールで作成された WordPress アカウントはまだありません）。' ); ?></em>
-                    </div>
-                <?php endif; ?>
-            </td>
-        </tr>
-
-        <!-- 3. Connected Buyback Order(s) -->
-        <tr>
-            <th><label><?php echo kaitori_t( 'Connected Buyback Order', '紐付け買取申込' ); ?></label></th>
-            <td>
-                <?php if ( $order_id ) : 
-                    $order_post = get_post( $order_id );
-                    $order_model = get_post_meta( $order_id, '_device_model', true );
-                    $order_quote = get_post_meta( $order_id, '_estimated_price', true );
-                    $order_st    = get_post_meta( $order_id, '_order_status', true ) ?: 'pending';
-                ?>
-                    <div class="kyc-box-panel" style="background:#fef2f2; border-color:#fecaca;">
-                        <i class="dashicons dashicons-clipboard" style="color:#ef4444; font-size:20px; vertical-align:middle;"></i>
-                        <strong><?php echo kaitori_t( 'Application Order ID:', '申込注文ID:' ); ?></strong>
-                        <span style="font-weight:800; color:#dc2626; margin-left:4px; font-size:14px;">
-                            <?php echo esc_html( $order_code ?: ( $order_post ? $order_post->post_title : 'KB-Order' ) ); ?>
-                        </span>
-                        <div style="margin-top:4px; font-size:12.5px; color:#475569;">
-                            Device: <strong><?php echo esc_html( $order_model ?: '—' ); ?></strong> | Quote: <strong style="color:#dc2626;">¥<?php echo number_format((int)$order_quote); ?></strong> | Status: <strong><?php echo esc_html( ucfirst($order_st) ); ?></strong>
-                        </div>
-                        <div style="margin-top:8px;">
-                            <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $order_id . '&action=edit' ) ); ?>" target="_blank" class="button button-primary" style="background:#ef4444; border-color:#ef4444; font-weight:700;">
-                                <i class="dashicons dashicons-visibility" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'View Full Buyback Order Details &rarr;', '買取注文の詳細を表示 &rarr;' ); ?>
-                            </a>
-                        </div>
-                    </div>
-                <?php elseif ( ! empty( $order_code ) ) : ?>
-                    <div class="kyc-box-panel">
-                        <strong>Order Reference:</strong> <code><?php echo esc_html( $order_code ); ?></code>
-                    </div>
-                <?php else : ?>
-                    <div class="kyc-box-panel" style="color:#64748b;">
-                        <em><?php echo kaitori_t( 'Direct / In-store eKYC submission (no order code attached).', '直接・店頭での eKYC 提出（注文コードの紐付けなし）。' ); ?></em>
-                    </div>
-                <?php endif; ?>
-            </td>
-        </tr>
-
-        <!-- 4. Applicant Identity Details -->
-        <tr>
-            <th><label><?php echo kaitori_t( 'Applicant Personal Details', '申請者の個人情報' ); ?></label></th>
-            <td>
-                <div style="line-height:1.8;">
-                    <strong><?php echo kaitori_t( 'Full Name:', '氏名:' ); ?></strong> <span style="font-size:15px; font-weight:800; color:#0f172a;"><?php echo esc_html( $name ?: '—' ); ?></span>
-                    <?php if ( $kana ) : ?>
-                        <span style="color:#64748b; font-size:13px;">(<?php echo esc_html( $kana ); ?>)</span>
-                    <?php endif; ?><br>
-                    <strong><?php echo kaitori_t( 'Email Address:', 'メールアドレス:' ); ?></strong> <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email ?: '—'); ?></a><br>
-                    <strong><?php echo kaitori_t( 'Phone Number:', '電話番号:' ); ?></strong> <a href="tel:<?php echo esc_attr($phone); ?>"><?php echo esc_html($phone ?: '—'); ?></a><br>
-                    <strong><?php echo kaitori_t( 'Date of Birth:', '生年月日:' ); ?></strong> <?php echo esc_html($dob ?: '—'); ?><br>
-                    <strong><?php echo kaitori_t( 'Occupation:', 'ご職業:' ); ?></strong> <?php echo esc_html($job ?: '—'); ?>
+    <!-- 5. Document Images / Evidence -->
+    <div class="kyc-admin-card">
+        <h4><span class="dashicons dashicons-camera" style="color:#ec4899;"></span> <?php echo kaitori_t( 'Uploaded Document Images & Evidence', 'アップロードされた書類画像・証跡' ); ?></h4>
+        <div style="display:flex; flex-wrap:wrap; gap:16px;">
+            <?php if ( $front_url ) : ?>
+                <div class="kyc-doc-card">
+                    <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Front Side Photo', '表面の写真' ); ?></div>
+                    <a href="<?php echo esc_url($front_url); ?>" target="_blank" title="Click to view full size">
+                        <img src="<?php echo esc_url($front_url); ?>" alt="Front ID">
+                    </a>
+                    <a href="<?php echo esc_url($front_url); ?>" target="_blank" class="button button-small" style="width:100%;">
+                        <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
+                    </a>
                 </div>
-            </td>
-        </tr>
+            <?php else : ?>
+                <div style="color:#64748b; font-size:12.5px;"><em><?php echo kaitori_t( 'No front side image uploaded.', '表面画像なし' ); ?></em></div>
+            <?php endif; ?>
 
-        <!-- 5. Current Residential Address -->
-        <tr>
-            <th><label><?php echo kaitori_t( 'Current Residential Address', '現住所' ); ?></label></th>
-            <td>
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; line-height:1.7;">
-                    <strong><?php echo kaitori_t( 'Postal Code:', '郵便番号:' ); ?></strong> <?php echo esc_html($postal ? '〒' . $postal : '—'); ?><br>
-                    <strong><?php echo kaitori_t( 'Address:', '住所:' ); ?></strong>
-                    <span style="font-weight:700; color:#1e293b;">
-                        <?php echo esc_html( $pref . ' ' . $city . ' ' . $address ); ?>
-                    </span>
-                    <div style="margin-top:6px;">
-                        <a href="https://www.google.com/maps/search/<?php echo urlencode( $pref . ' ' . $city . ' ' . $address ); ?>" target="_blank" class="button button-small">
-                            <i class="dashicons dashicons-location-alt" style="vertical-align:middle;"></i> <?php echo kaitori_t( 'Verify Address on Google Maps', 'Google マップで住所を確認' ); ?>
-                        </a>
-                    </div>
+            <?php if ( $back_url ) : ?>
+                <div class="kyc-doc-card">
+                    <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Back Side Photo', '裏面の写真' ); ?></div>
+                    <a href="<?php echo esc_url($back_url); ?>" target="_blank" title="Click to view full size">
+                        <img src="<?php echo esc_url($back_url); ?>" alt="Back ID">
+                    </a>
+                    <a href="<?php echo esc_url($back_url); ?>" target="_blank" class="button button-small" style="width:100%;">
+                        <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
+                    </a>
                 </div>
-            </td>
-        </tr>
+            <?php endif; ?>
 
-        <!-- 6. Uploaded ID Photos -->
-        <tr>
-            <th><label><?php echo kaitori_t( 'Document Photos & Evidence', '書類写真・証跡' ); ?></label></th>
-            <td>
-                <div style="margin-bottom:10px;">
-                    <strong><?php echo kaitori_t( 'Document Type Submitted:', '提出された書類種別:' ); ?></strong>
-                    <span style="display:inline-block; font-weight:800; color:#ef4444; background:#fef2f2; padding:3px 10px; border-radius:6px; font-size:13px;">
-                        <i class="dashicons dashicons-id" style="vertical-align:middle;"></i> <?php echo esc_html( $doc_type ); ?>
-                    </span>
+            <?php if ( $selfie_url ) : ?>
+                <div class="kyc-doc-card">
+                    <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Selfie Photo', 'セルフィー写真' ); ?></div>
+                    <a href="<?php echo esc_url($selfie_url); ?>" target="_blank">
+                        <img src="<?php echo esc_url($selfie_url); ?>" alt="Selfie">
+                    </a>
                 </div>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                <div style="display:flex; flex-wrap:wrap; gap:16px;">
-                    <?php if ( $front_url ) : ?>
-                        <div class="kyc-doc-card">
-                            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Front Side Photo', '表面の写真' ); ?></div>
-                            <a href="<?php echo esc_url($front_url); ?>" target="_blank" title="Click to view full size">
-                                <img src="<?php echo esc_url($front_url); ?>" alt="Front ID">
-                            </a>
-                            <a href="<?php echo esc_url($front_url); ?>" target="_blank" class="button button-small" style="width:100%;">
-                                <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
-                            </a>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ( $back_url ) : ?>
-                        <div class="kyc-doc-card">
-                            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Back Side Photo', '裏面の写真' ); ?></div>
-                            <a href="<?php echo esc_url($back_url); ?>" target="_blank" title="Click to view full size">
-                                <img src="<?php echo esc_url($back_url); ?>" alt="Back ID">
-                            </a>
-                            <a href="<?php echo esc_url($back_url); ?>" target="_blank" class="button button-small" style="width:100%;">
-                                <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
-                            </a>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ( $selfie_url ) : ?>
-                        <div class="kyc-doc-card">
-                            <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:#1e293b;"><?php echo kaitori_t( 'Selfie / Face Photo', '本人顔写真' ); ?></div>
-                            <a href="<?php echo esc_url($selfie_url); ?>" target="_blank" title="Click to view full size">
-                                <img src="<?php echo esc_url($selfie_url); ?>" alt="Selfie">
-                            </a>
-                            <a href="<?php echo esc_url($selfie_url); ?>" target="_blank" class="button button-small" style="width:100%;">
-                                <i class="dashicons dashicons-search"></i> <?php echo kaitori_t( 'Open Full Image', '画像を拡大表示' ); ?>
-                            </a>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ( ! $front_url && ! $back_url && ! $selfie_url ) : ?>
-                        <div style="color:#dc2626; font-style:italic;">
-                            <?php echo kaitori_t( 'No photo attachments found for this submission.', 'この提出に写真の添付が見つかりませんでした。' ); ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </td>
-        </tr>
-
-        <!-- 7. Reviewer Notes -->
-        <tr>
-            <th><label><?php echo kaitori_t( 'Reviewer Internal Notes', '審査者 社内メモ' ); ?></label></th>
-            <td>
-                <textarea name="_kyc_admin_notes" rows="4" style="width:100%; border:1.5px solid #cbd5e1; border-radius:6px; padding:8px;" placeholder="<?php echo esc_attr( kaitori_t( 'Enter verification remarks, reason for rejection, or compliance notes...', '審査コメント・却下理由・コンプライアンスメモを入力…' ) ); ?>"><?php echo esc_textarea($admin_notes); ?></textarea>
-                <small style="color:#64748b;"><?php echo kaitori_t( 'Only visible to administrators and staff.', '管理者・スタッフのみ閲覧できます。' ); ?></small>
-            </td>
-        </tr>
-    </table>
+    <!-- 6. Staff Internal Notes -->
+    <div class="kyc-admin-card">
+        <h4><span class="dashicons dashicons-edit" style="color:#475569;"></span> <?php echo kaitori_t( 'Staff Internal Review Notes (店舗スタッフ内部メモ)', '審査メモ・確認記録' ); ?></h4>
+        <textarea name="_kyc_admin_notes" rows="3" style="width:100%; border:1.5px solid #cbd5e1; border-radius:6px; padding:8px 12px; font-size:13px;" placeholder="<?php echo esc_attr( kaitori_t( 'e.g. Verified in-store on 2026/11/07. Customer presented original driver license. Address and photo match.', '例: 2026/11/07 店頭にて原本確認完了。住所・氏名一致、検品OK。' ) ); ?>"><?php echo esc_textarea( $admin_notes ); ?></textarea>
+    </div>
     <?php
 }
 
-/**
- * Save eKYC Meta and Synchronize with Connected User & Order
- */
 function kaitoriakiba_save_kyc_meta( $post_id ) {
+    if ( ! isset( $_POST['kaitori_kyc_meta_nonce'] ) || ! wp_verify_nonce( $_POST['kaitori_kyc_meta_nonce'], 'kaitori_kyc_meta_save' ) ) {
+        if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {
+            return;
+        }
+    }
+
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return;
     }
@@ -872,26 +1036,48 @@ function kaitoriakiba_save_kyc_meta( $post_id ) {
         return;
     }
 
+    $text_fields = array(
+        '_kyc_status',
+        '_kyc_name',
+        '_kyc_kana',
+        '_kyc_phone',
+        '_kyc_dob',
+        '_kyc_job',
+        '_kyc_postal',
+        '_kyc_prefecture',
+        '_kyc_city',
+        '_kyc_address',
+        '_kyc_doc_type',
+        '_kyc_order_code',
+    );
+
+    foreach ( $text_fields as $tf ) {
+        if ( isset( $_POST[ $tf ] ) ) {
+            update_post_meta( $post_id, $tf, sanitize_text_field( wp_unslash( $_POST[ $tf ] ) ) );
+        }
+    }
+
+    if ( isset( $_POST['_kyc_email'] ) ) {
+        update_post_meta( $post_id, '_kyc_email', sanitize_email( wp_unslash( $_POST['_kyc_email'] ) ) );
+    }
+
+    if ( isset( $_POST['_kyc_admin_notes'] ) ) {
+        update_post_meta( $post_id, '_kyc_admin_notes', sanitize_textarea_field( wp_unslash( $_POST['_kyc_admin_notes'] ) ) );
+    }
+
+    // Synchronize Status with linked Customer Account and Order
     if ( isset( $_POST['_kyc_status'] ) ) {
         $status = sanitize_text_field( $_POST['_kyc_status'] );
-        update_post_meta( $post_id, '_kyc_status', $status );
-
-        // Synchronize with User Account
         $user_id = get_post_meta( $post_id, '_kyc_user_id', true );
         if ( $user_id ) {
             update_user_meta( $user_id, '_kaitori_kyc_status', $status );
             update_user_meta( $user_id, '_kaitori_kyc_verified', $status === 'verified' ? 'yes' : 'no' );
         }
 
-        // Synchronize with Buyback Order
         $order_id = get_post_meta( $post_id, '_kyc_order_id', true );
         if ( $order_id ) {
             update_post_meta( $order_id, '_order_kyc_status', $status );
         }
-    }
-
-    if ( isset( $_POST['_kyc_admin_notes'] ) ) {
-        update_post_meta( $post_id, '_kyc_admin_notes', sanitize_textarea_field( $_POST['_kyc_admin_notes'] ) );
     }
 }
 add_action( 'save_post_kyc_record', 'kaitoriakiba_save_kyc_meta' );
