@@ -80,7 +80,7 @@ else :
             </div>
 
             <!-- Form -->
-            <form id="sellForm" method="post" enctype="multipart/form-data">
+            <form id="sellForm" method="post" enctype="multipart/form-data" novalidate>
                 <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                 <input type="hidden" name="estimated_price" id="hidden_estimated_price" value="195000">
                 <input type="hidden" name="find_my_off" value="1">
@@ -499,6 +499,26 @@ else :
 
         function goToStep(step) {
             if (step < 1 || step > 2) return;
+
+            // Advancing forward: validate Step 1 before allowing transition
+            if (step > currentStep && currentStep === 1) {
+                var imeiInput = document.getElementById('imei_num');
+                if (imeiInput && imeiInput.value.trim() !== '') {
+                    var clean = imeiInput.value.trim().replace(/[-\s]/g, '');
+                    if (clean.length !== 15 || !/^\d{15}$/.test(clean)) {
+                        imeiInput.classList.add('kaitori-field-error');
+                        var parentGrp = imeiInput.closest('.form-group');
+                        if (parentGrp && !parentGrp.querySelector('.kaitori-field-error-text')) {
+                            var errDiv = document.createElement('div');
+                            errDiv.className = 'kaitori-field-error-text';
+                            errDiv.innerHTML = '<i class="fa fa-times-circle"></i> IMEI番号は15桁の半角数字で入力してください。';
+                            imeiInput.parentNode.appendChild(errDiv);
+                        }
+                        imeiInput.focus();
+                        return;
+                    }
+                }
+            }
 
             // Hide old step
             document.getElementById('sec-' + currentStep).style.display = 'none';

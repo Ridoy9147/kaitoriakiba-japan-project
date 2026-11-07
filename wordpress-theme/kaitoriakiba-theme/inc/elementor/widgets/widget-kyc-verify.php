@@ -156,7 +156,7 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                 <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn btn-default" style="font-weight:700; border-radius:8px; padding:10px 24px;"><?php kaitori_te( 'Back to home', 'トップページへ戻る' ); ?></a>
             </div>
 
-            <form id="kycForm" method="post" enctype="multipart/form-data">
+            <form id="kycForm" method="post" enctype="multipart/form-data" novalidate>
                 <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                 <!-- Document Type Select Cards -->
                 <div class="form-group" style="margin-bottom:20px;">
@@ -272,11 +272,11 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                             <span id="frontLabel"><?php kaitori_te( 'Front Side image', '表面の画像 (Front Side)' ); ?></span>
                             <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                         </label>
-                        <div class="upload-dropzone" onclick="document.getElementById('kyc_id_front').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; cursor:pointer; background:#f8fafc; transition:all 0.2s;">
+                        <div class="upload-dropzone" id="front_dropzone" onclick="document.getElementById('kyc_id_front').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; cursor:pointer; background:#f8fafc; transition:all 0.2s;">
                             <i class="fa fa-cloud-upload" style="font-size:32px; color:#ef4444; margin-bottom:8px;"></i>
                             <div style="font-weight:700; font-size:13px; color:#1e293b;"><?php kaitori_te( 'Select or take a photo', '写真を選択または撮影' ); ?></div>
-                            <small id="frontFileName" style="color:#64748b; display:block; margin-top:4px;"><?php kaitori_te( 'JPG, PNG, HEIC (max 10MB)', 'JPG, PNG, HEIC (最大10MB)' ); ?></small>
-                            <input type="file" name="kyc_id_front" id="kyc_id_front" accept="image/*" required style="display:none;" onchange="previewKycFile(this, 'frontFileName');">
+                            <small id="frontFileName" style="color:#64748b; display:block; margin-top:4px;"><?php kaitori_te( 'JPG, PNG, PDF (max 10MB)', 'JPG, PNG, PDF (最大10MB)' ); ?></small>
+                            <input type="file" name="kyc_id_front" id="kyc_id_front" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="previewKycFile(this, 'frontFileName', 'front_dropzone');">
                         </div>
                     </div>
 
@@ -285,11 +285,11 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                             <span><?php kaitori_te( 'Back Side image', '裏面の画像 (Back Side)' ); ?></span>
                             <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                         </label>
-                        <div class="upload-dropzone" onclick="document.getElementById('kyc_id_back').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; cursor:pointer; background:#f8fafc; transition:all 0.2s;">
+                        <div class="upload-dropzone" id="back_dropzone" onclick="document.getElementById('kyc_id_back').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; cursor:pointer; background:#f8fafc; transition:all 0.2s;">
                             <i class="fa fa-cloud-upload" style="font-size:32px; color:#ef4444; margin-bottom:8px;"></i>
                             <div style="font-weight:700; font-size:13px; color:#1e293b;"><?php kaitori_te( 'Select or take a photo', '写真を選択または撮影' ); ?></div>
                             <small id="backFileName" style="color:#64748b; display:block; margin-top:4px;"><?php kaitori_te( 'Back side / address-change page', '裏面・住所変更記載面' ); ?></small>
-                            <input type="file" name="kyc_id_back" id="kyc_id_back" accept="image/*" style="display:none;" onchange="previewKycFile(this, 'backFileName');">
+                            <input type="file" name="kyc_id_back" id="kyc_id_back" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="previewKycFile(this, 'backFileName', 'back_dropzone');">
                         </div>
                     </div>
                 </div>
@@ -331,9 +331,15 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                 }
             }
 
-            function previewKycFile(input, targetId) {
+            function previewKycFile(input, targetId, dropzoneId) {
+                if (dropzoneId) {
+                    var dz = document.getElementById(dropzoneId);
+                    if (dz) dz.classList.remove('kaitori-field-error');
+                }
                 if (input.files && input.files[0]) {
-                    document.getElementById(targetId).innerHTML = '<span style="color:#16a34a; font-weight:bold;">✓ ' + input.files[0].name + '</span>';
+                    var f = input.files[0];
+                    var mb = (f.size / (1024 * 1024)).toFixed(1);
+                    document.getElementById(targetId).innerHTML = '<span class="file-chosen-badge"><i class="fa fa-check-circle"></i> ' + f.name + ' (' + mb + 'MB)</span>';
                 }
             }
         </script>

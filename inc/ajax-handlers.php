@@ -92,6 +92,33 @@ function kaitoriakiba_ajax_submit_application() {
     $phone          = isset( $_POST['applicant_phone'] ) ? sanitize_text_field( $_POST['applicant_phone'] ) : '';
     $accessories    = isset( $_POST['accessories'] ) && is_array( $_POST['accessories'] ) ? array_map( 'sanitize_text_field', $_POST['accessories'] ) : array();
 
+    // Server-side validation for Application Fields
+    $invalid_app_fields = array();
+    if ( empty( $model ) ) {
+        $invalid_app_fields['model'] = __( '機種名を選択してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $storage ) ) {
+        $invalid_app_fields['storage'] = __( 'ストレージ容量を選択してください。', 'kaitoriakiba' );
+    }
+    if ( ! empty( $imei ) ) {
+        $clean_imei = preg_replace( '/[\s\-]/', '', $imei );
+        if ( strlen( $clean_imei ) !== 15 || ! ctype_digit( $clean_imei ) ) {
+            $invalid_app_fields['imei'] = __( 'IMEI番号は15桁の半角数字で入力してください。', 'kaitoriakiba' );
+        }
+    }
+    if ( ! empty( $email ) && ! is_email( $email ) ) {
+        $invalid_app_fields['applicant_email'] = __( '有効なメールアドレスの形式で入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $_POST['agree_terms'] ) ) {
+        $invalid_app_fields['agree_terms'] = __( '利用規約への同意にチェックを入れてください。', 'kaitoriakiba' );
+    }
+    if ( ! empty( $invalid_app_fields ) ) {
+        wp_send_json_error( array(
+            'message'        => __( '入力内容に不備があります。該当項目をご確認ください。', 'kaitoriakiba' ),
+            'invalid_fields' => $invalid_app_fields,
+        ) );
+    }
+
     // Generate Order Title
     $order_title = 'KB-' . date('Ymd') . '-' . wp_rand(1000, 9999) . ' [' . $model . ' ' . $storage . ']';
 
@@ -222,6 +249,59 @@ function kaitoriakiba_ajax_submit_kyc() {
     $doc_type   = isset( $_POST['kyc_doc_type'] ) ? sanitize_text_field( $_POST['kyc_doc_type'] ) : ( isset( $_POST['id_type'] ) ? sanitize_text_field( $_POST['id_type'] ) : 'Driver License (運転免許証)' );
     $order_code = isset( $_POST['kyc_order_code'] ) ? sanitize_text_field( $_POST['kyc_order_code'] ) : '';
 
+    // Field-level validation for eKYC submission
+    $invalid_kyc_fields = array();
+
+    if ( empty( $name ) ) {
+        $invalid_kyc_fields['kyc_name'] = __( '氏名（漢字）を入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $kana ) ) {
+        $invalid_kyc_fields['kyc_kana'] = __( 'フリガナ（カタカナ）を入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $email ) || ! is_email( $email ) ) {
+        $invalid_kyc_fields['kyc_email'] = __( '有効なメールアドレスを入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $phone ) ) {
+        $invalid_kyc_fields['kyc_phone'] = __( '電話番号を入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $dob ) ) {
+        $invalid_kyc_fields['kyc_dob'] = __( '生年月日を選択してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $postal ) ) {
+        $invalid_kyc_fields['kyc_postal'] = __( '郵便番号を入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $pref ) ) {
+        $invalid_kyc_fields['kyc_prefecture'] = __( '都道府県を入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $city ) ) {
+        $invalid_kyc_fields['kyc_city'] = __( '市区町村を入力してください。', 'kaitoriakiba' );
+    }
+    if ( empty( $address ) ) {
+        $invalid_kyc_fields['kyc_address'] = __( '番地・建物名を入力してください。', 'kaitoriakiba' );
+    }
+
+    // Check front ID file
+    $front_key = ! empty( $_FILES['kyc_id_front']['name'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front']['name'] ) ? 'kyc_front' : '' );
+    if ( empty( $front_key ) || empty( $_FILES[ $front_key ]['tmp_name'] ) ) {
+        $invalid_kyc_fields['kyc_id_front'] = __( '本人確認書類の表面画像を選択してください。', 'kaitoriakiba' );
+    } elseif ( ! empty( $_FILES[ $front_key ]['size'] ) && $_FILES[ $front_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
+        $invalid_kyc_fields['kyc_id_front'] = __( '表面画像のサイズが上限(10MB)を超えています。', 'kaitoriakiba' );
+    }
+
+    // Check back ID file
+    $is_my_number = ( false !== mb_strpos( $doc_type, 'マイナンバー' ) || false !== stripos( $doc_type, 'mynumber' ) );
+    $back_key     = ! empty( $_FILES['kyc_id_back']['name'] ) ? 'kyc_id_back' : ( ! empty( $_FILES['kyc_back']['name'] ) ? 'kyc_back' : '' );
+    if ( ! empty( $back_key ) && ! empty( $_FILES[ $back_key ]['size'] ) && $_FILES[ $back_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
+        $invalid_kyc_fields['kyc_id_back'] = __( '裏面画像のサイズが上限(10MB)を超えています。', 'kaitoriakiba' );
+    }
+
+    if ( ! empty( $invalid_kyc_fields ) ) {
+        wp_send_json_error( array(
+            'message'        => __( '本人確認データの入力内容または書類に不備があります。該当項目をご確認ください。', 'kaitoriakiba' ),
+            'invalid_fields' => $invalid_kyc_fields,
+        ) );
+    }
+
     // 1. Connect with WordPress User Profile
     $user_id = is_user_logged_in() ? get_current_user_id() : 0;
     if ( ! $user_id && ! empty( $email ) ) {
@@ -304,22 +384,37 @@ function kaitoriakiba_ajax_submit_kyc() {
     $front_key = ! empty( $_FILES['kyc_id_front']['name'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front']['name'] ) ? 'kyc_front' : '' );
     if ( $front_key ) {
         $front_path = kaitoriakiba_kyc_store_upload( $front_key, $kyc_id );
-        if ( ! is_wp_error( $front_path ) ) {
-            update_post_meta( $kyc_id, '_kyc_id_front_file', $front_path );
+        if ( is_wp_error( $front_path ) ) {
+            wp_delete_post( $kyc_id, true );
+            wp_send_json_error( array(
+                'message'        => $front_path->get_error_message(),
+                'invalid_fields' => array( 'kyc_id_front' => $front_path->get_error_message() ),
+            ) );
         }
+        update_post_meta( $kyc_id, '_kyc_id_front_file', $front_path );
     }
     $back_key = ! empty( $_FILES['kyc_id_back']['name'] ) ? 'kyc_id_back' : ( ! empty( $_FILES['kyc_back']['name'] ) ? 'kyc_back' : '' );
     if ( $back_key ) {
         $back_path = kaitoriakiba_kyc_store_upload( $back_key, $kyc_id );
-        if ( ! is_wp_error( $back_path ) ) {
-            update_post_meta( $kyc_id, '_kyc_id_back_file', $back_path );
+        if ( is_wp_error( $back_path ) ) {
+            wp_delete_post( $kyc_id, true );
+            wp_send_json_error( array(
+                'message'        => $back_path->get_error_message(),
+                'invalid_fields' => array( 'kyc_id_back' => $back_path->get_error_message() ),
+            ) );
         }
+        update_post_meta( $kyc_id, '_kyc_id_back_file', $back_path );
     }
     if ( ! empty( $_FILES['kyc_selfie']['name'] ) ) {
         $selfie_path = kaitoriakiba_kyc_store_upload( 'kyc_selfie', $kyc_id );
-        if ( ! is_wp_error( $selfie_path ) ) {
-            update_post_meta( $kyc_id, '_kyc_selfie_file', $selfie_path );
+        if ( is_wp_error( $selfie_path ) ) {
+            wp_delete_post( $kyc_id, true );
+            wp_send_json_error( array(
+                'message'        => $selfie_path->get_error_message(),
+                'invalid_fields' => array( 'kyc_selfie' => $selfie_path->get_error_message() ),
+            ) );
         }
+        update_post_meta( $kyc_id, '_kyc_selfie_file', $selfie_path );
     }
 
     wp_send_json_success( array(

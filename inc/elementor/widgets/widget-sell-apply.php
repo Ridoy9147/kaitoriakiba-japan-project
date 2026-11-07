@@ -184,7 +184,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
             </div>
 
             <!-- Form -->
-            <form id="sellForm" method="post" enctype="multipart/form-data">
+            <form id="sellForm" method="post" enctype="multipart/form-data" novalidate>
                 <?php if ( function_exists( 'kaitoriakiba_honeypot_fields' ) ) { kaitoriakiba_honeypot_fields(); } ?>
                 <input type="hidden" name="estimated_price" id="hidden_estimated_price" value="195000">
                 <input type="hidden" name="find_my_off" value="1">

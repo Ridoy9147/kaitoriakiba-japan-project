@@ -68,7 +68,7 @@ else :
                 <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn btn-default" style="font-weight:700; border-radius:8px; padding:10px 24px;">トップページへ戻る</a>
             </div>
 
-            <form id="kycForm" method="post" enctype="multipart/form-data">
+            <form id="kycForm" method="post" enctype="multipart/form-data" novalidate>
                 <!-- Document Type Select Cards -->
                 <div class="form-group" style="margin-bottom:20px;">
                     <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; margin-bottom:6px;">
@@ -183,12 +183,13 @@ else :
                         <span>書類の表面画像 (Front Side)</span>
                         <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                     </label>
-                    <div class="id-upload-frame" onclick="document.getElementById('kyc_id_front').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; background:#f8fafc; cursor:pointer;">
+                    <div class="id-upload-frame" id="frame_id_front" onclick="document.getElementById('kyc_id_front').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; background:#f8fafc; cursor:pointer; transition:all 0.2s;">
                         <i class="fa fa-camera" style="font-size:28px; color:#ef4444; margin-bottom:8px;"></i>
                         <div style="font-weight:700; color:#1e293b;">表面の写真を選択または撮影</div>
-                        <div style="font-size:12px; color:#64748b;">文字・顔写真がはっきりと読み取れるよう全体を撮影してください</div>
+                        <div style="font-size:12px; color:#64748b;">文字・顔写真がはっきりと読み取れるよう全体を撮影してください (JPG, PNG, PDF 最大10MB)</div>
+                        <div id="front_file_info" style="display:none; margin-top:8px;"></div>
                     </div>
-                    <input type="file" name="kyc_id_front" id="kyc_id_front" accept="image/*" style="display:none;" required onchange="handlePreview(this, 'preview_front');">
+                    <input type="file" name="kyc_id_front" id="kyc_id_front" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="handleKycFileSelect(this, 'preview_front', 'front_file_info', 'frame_id_front');">
                     <img id="preview_front" style="display:none; max-height:160px; margin:10px auto; border-radius:8px; border:1px solid #cbd5e1;">
                 </div>
 
@@ -197,19 +198,20 @@ else :
                         <span>書類の裏面画像 (Back Side)</span>
                         <span class="badge-req" id="back_req_badge" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;">必須</span>
                     </label>
-                    <div class="id-upload-frame" onclick="document.getElementById('kyc_id_back').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; background:#f8fafc; cursor:pointer;">
+                    <div class="id-upload-frame" id="frame_id_back" onclick="document.getElementById('kyc_id_back').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; background:#f8fafc; cursor:pointer; transition:all 0.2s;">
                         <i class="fa fa-refresh" style="font-size:28px; color:#64748b; margin-bottom:8px;"></i>
                         <div style="font-weight:700; color:#1e293b;">裏面の写真を選択または撮影</div>
-                        <div style="font-size:12px; color:#64748b;">裏面住所記載欄・更新履歴の確認に使用します</div>
+                        <div style="font-size:12px; color:#64748b;">裏面住所記載欄・更新履歴の確認に使用します (マイナンバーカードは裏面不要)</div>
+                        <div id="back_file_info" style="display:none; margin-top:8px;"></div>
                     </div>
-                    <input type="file" name="kyc_id_back" id="kyc_id_back" accept="image/*" style="display:none;" onchange="handlePreview(this, 'preview_back');">
+                    <input type="file" name="kyc_id_back" id="kyc_id_back" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="handleKycFileSelect(this, 'preview_back', 'back_file_info', 'frame_id_back');">
                     <img id="preview_back" style="display:none; max-height:160px; margin:10px auto; border-radius:8px; border:1px solid #cbd5e1;">
                 </div>
 
                 <div class="form-group" style="margin-bottom:20px;">
                     <label style="display:flex; gap:10px; cursor:pointer;">
-                        <input type="checkbox" id="kyc_consent" required style="margin-top:4px;">
-                        <span style="font-size:13px; color:#334155;">古物営業法に基づく身元確認のため個人情報を提供することに同意します。</span>
+                        <input type="checkbox" id="kyc_consent" name="kyc_consent" style="margin-top:4px;">
+                        <span style="font-size:13px; color:#334155;">古物営業法に基づく身元確認のため個人情報を提供することに同意します。 <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 6px; border-radius:4px;">必須</span></span>
                     </label>
                 </div>
 
@@ -250,25 +252,48 @@ else :
             };
             document.getElementById('kyc_doc_type').value = typeNames[type] || '運転免許証';
 
-            // MyNumber card back side is confidential and should not be uploaded
+            // MyNumber card back side is confidential and must NOT be uploaded
             var backGroup = document.getElementById('back_upload_group');
             if (type === 'mynumber') {
                 backGroup.style.display = 'none';
-                document.getElementById('kyc_id_back').required = false;
             } else {
                 backGroup.style.display = 'block';
             }
         }
 
-        function handlePreview(input, imgId) {
+        function handleKycFileSelect(input, imgId, infoId, frameId) {
+            var frame = document.getElementById(frameId);
+            var info = document.getElementById(infoId);
+            var img = document.getElementById(imgId);
+
+            if (frame) {
+                frame.classList.remove('kaitori-field-error');
+            }
+
             if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var img = document.getElementById(imgId);
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                };
-                reader.readAsDataURL(input.files[0]);
+                var file = input.files[0];
+                var sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+
+                if (info) {
+                    info.innerHTML = '<span class="file-chosen-badge"><i class="fa fa-check-circle"></i> ' + file.name + ' (' + sizeMb + 'MB) 選択完了</span>';
+                    info.style.display = 'block';
+                }
+
+                if (file.type && file.type.indexOf('image/') === 0) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (img) {
+                            img.src = e.target.result;
+                            img.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else if (img) {
+                    img.style.display = 'none';
+                }
+            } else {
+                if (info) info.style.display = 'none';
+                if (img) img.style.display = 'none';
             }
         }
     </script>

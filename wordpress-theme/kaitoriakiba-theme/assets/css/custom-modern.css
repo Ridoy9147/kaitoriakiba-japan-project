@@ -1824,3 +1824,120 @@ textarea:focus-visible {
   .kaitori-popup-card { padding: 22px 18px; border-radius: 14px; }
   .kaitori-popup-icon { width: 54px; height: 54px; font-size: 27px; }
 }
+
+
+/* ==========================================================================
+   Form Field-Level Validation & Error Feedback System (sell-apply & kyc-verify)
+   ========================================================================== */
+.kaitori-form-error-alert {
+  background: #fef2f2;
+  border: 1.5px solid #f87171;
+  border-left: 5px solid #ef4444;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.12);
+  animation: kaitoriShake 0.4s ease-in-out;
+}
+.kaitori-form-error-alert .alert-title {
+  font-weight: 800;
+  color: #991b1b;
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.kaitori-form-error-alert .alert-list {
+  margin: 0;
+  padding-left: 22px;
+  color: #b91c1c;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.kaitori-form-error-alert .alert-list li {
+  margin-bottom: 4px;
+}
+.kaitori-form-error-alert .alert-list a {
+  color: #b91c1c;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.kaitori-form-error-alert .alert-list a:hover {
+  color: #7f1d1d;
+  text-decoration: none;
+}
+
+/* Field Highlight Styles */
+.kaitori-field-error,
+input.kaitori-field-error,
+select.kaitori-field-error,
+textarea.kaitori-field-error {
+  border-color: #ef4444 !important;
+  background-color: #fff5f5 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+}
+
+.id-upload-frame.kaitori-field-error,
+.upload-dropzone.kaitori-field-error {
+  border-color: #ef4444 !important;
+  border-style: dashed !important;
+  border-width: 2px !important;
+  background-color: #fef2f2 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+}
+
+.radio-card.kaitori-field-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.kaitori-field-error-text {
+  color: #ef4444;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.4;
+  animation: kaitoriFadeIn 0.2s ease-in;
+}
+
+/* File selection badges */
+.file-chosen-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+.kaitori-gate-warning-banner {
+  background: #fffbeb;
+  border: 1.5px solid #f59e0b;
+  border-left: 5px solid #d97706;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+
+@keyframes kaitoriShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes kaitoriFadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
