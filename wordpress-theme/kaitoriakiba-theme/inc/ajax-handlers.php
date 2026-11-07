@@ -280,19 +280,43 @@ function kaitoriakiba_ajax_submit_kyc() {
         $invalid_kyc_fields['kyc_address'] = __( '番地・建物名を入力してください。', 'kaitoriakiba' );
     }
 
+    $allowed_exts = array( 'jpg', 'jpeg', 'png', 'webp', 'pdf' );
+
     // Check front ID file
     $front_key = ! empty( $_FILES['kyc_id_front']['name'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front']['name'] ) ? 'kyc_front' : '' );
     if ( empty( $front_key ) || empty( $_FILES[ $front_key ]['tmp_name'] ) ) {
-        $invalid_kyc_fields['kyc_id_front'] = __( '本人確認書類の表面画像を選択してください。', 'kaitoriakiba' );
-    } elseif ( ! empty( $_FILES[ $front_key ]['size'] ) && $_FILES[ $front_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
-        $invalid_kyc_fields['kyc_id_front'] = __( '表面画像のサイズが上限(10MB)を超えています。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_id_front'] = __( '本人確認書類の表面画像を選択してください。(必須)', 'kaitoriakiba' );
+    } else {
+        $front_ext = strtolower( pathinfo( $_FILES[ $front_key ]['name'], PATHINFO_EXTENSION ) );
+        if ( ! in_array( $front_ext, $allowed_exts, true ) ) {
+            $invalid_kyc_fields['kyc_id_front'] = sprintf(
+                __( '表面写真の形式（.%s）は未対応です。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）', 'kaitoriakiba' ),
+                esc_html( $front_ext ?: '不明' )
+            );
+        } elseif ( (int) $_FILES[ $front_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
+            $invalid_kyc_fields['kyc_id_front'] = sprintf(
+                __( '表面画像のサイズが上限（10MB）を超えています（%sMB）。10MB以下のファイルを選択してください。', 'kaitoriakiba' ),
+                number_format( (int) $_FILES[ $front_key ]['size'] / ( 1024 * 1024 ), 1 )
+            );
+        }
     }
 
     // Check back ID file
     $is_my_number = ( false !== mb_strpos( $doc_type, 'マイナンバー' ) || false !== stripos( $doc_type, 'mynumber' ) );
     $back_key     = ! empty( $_FILES['kyc_id_back']['name'] ) ? 'kyc_id_back' : ( ! empty( $_FILES['kyc_back']['name'] ) ? 'kyc_back' : '' );
-    if ( ! empty( $back_key ) && ! empty( $_FILES[ $back_key ]['size'] ) && $_FILES[ $back_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
-        $invalid_kyc_fields['kyc_id_back'] = __( '裏面画像のサイズが上限(10MB)を超えています。', 'kaitoriakiba' );
+    if ( ! empty( $back_key ) && ! empty( $_FILES[ $back_key ]['name'] ) ) {
+        $back_ext = strtolower( pathinfo( $_FILES[ $back_key ]['name'], PATHINFO_EXTENSION ) );
+        if ( ! in_array( $back_ext, $allowed_exts, true ) ) {
+            $invalid_kyc_fields['kyc_id_back'] = sprintf(
+                __( '裏面写真の形式（.%s）は未対応です。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）', 'kaitoriakiba' ),
+                esc_html( $back_ext ?: '不明' )
+            );
+        } elseif ( (int) $_FILES[ $back_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
+            $invalid_kyc_fields['kyc_id_back'] = sprintf(
+                __( '裏面画像のサイズが上限（10MB）を超えています（%sMB）。10MB以下のファイルを選択してください。', 'kaitoriakiba' ),
+                number_format( (int) $_FILES[ $back_key ]['size'] / ( 1024 * 1024 ), 1 )
+            );
+        }
     }
 
     if ( ! empty( $invalid_kyc_fields ) ) {

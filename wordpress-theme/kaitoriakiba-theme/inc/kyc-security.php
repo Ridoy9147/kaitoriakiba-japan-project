@@ -24,6 +24,7 @@ function kaitoriakiba_kyc_allowed_types() {
     return array(
         'jpg|jpeg' => 'image/jpeg',
         'png'      => 'image/png',
+        'webp'     => 'image/webp',
         'pdf'      => 'application/pdf',
     );
 }
@@ -97,16 +98,35 @@ function kaitoriakiba_kyc_store_upload( $file_key, $kyc_id ) {
         return new WP_Error( 'upload_error', __( 'File upload failed.', 'kaitoriakiba' ) );
     }
     if ( (int) $file['size'] > kaitoriakiba_kyc_max_size() ) {
-        return new WP_Error( 'too_large', __( 'File is too large (max 10MB).', 'kaitoriakiba' ) );
+        return new WP_Error(
+            'too_large',
+            sprintf(
+                kaitori_t(
+                    'File size exceeds 10MB limit (%s MB). Please upload a file within 10MB.',
+                    'ファイルサイズが上限（10MB）を超えています（%sMB）。10MB以内のファイルを選択してください。'
+                ),
+                number_format( (int) $file['size'] / ( 1024 * 1024 ), 1 )
+            )
+        );
     }
 
     // Validate real type (extension + content), not just the browser-sent MIME.
     $check = wp_check_filetype_and_ext( $file['tmp_name'], $file['name'], kaitoriakiba_kyc_allowed_types() );
-    $ext   = $check['ext'] ? $check['ext'] : '';
-    $type  = $check['type'] ? $check['type'] : '';
+    $ext   = ! empty( $check['ext'] ) ? $check['ext'] : strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
+    $type  = ! empty( $check['type'] ) ? $check['type'] : '';
 
-    if ( ! $ext || ! $type || ! in_array( $type, kaitoriakiba_kyc_allowed_types(), true ) ) {
-        return new WP_Error( 'bad_type', __( 'Only JPG, PNG, or PDF files are allowed.', 'kaitoriakiba' ) );
+    $allowed_exts = array( 'jpg', 'jpeg', 'png', 'webp', 'pdf' );
+    if ( ! in_array( $ext, $allowed_exts, true ) ) {
+        return new WP_Error(
+            'bad_type',
+            sprintf(
+                kaitori_t(
+                    'Invalid file format (.%s). Allowed formats: JPG, JPEG, PNG, WEBP, PDF (Max 10MB).',
+                    '未対応のファイル形式です（.%s）。許可されている形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）'
+                ),
+                esc_html( $ext ?: 'unknown' )
+            )
+        );
     }
 
     kaitoriakiba_kyc_ensure_secure_dir();

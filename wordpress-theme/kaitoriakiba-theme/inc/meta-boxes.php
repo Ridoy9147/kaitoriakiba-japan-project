@@ -1172,19 +1172,47 @@ function kaitoriakiba_kyc_meta_box_render( $post ) {
     <!-- Client-side script for instant preview & Media Library -->
     <script>
     jQuery(document).ready(function($){
-        // Direct file input change handler
+        // Direct file input change handler with format & size validation
         $('.kyc-file-input').on('change', function(){
             var input = this;
             var slot = $(input).data('slot');
             var container = $('#kyc_preview_' + slot);
             if (input.files && input.files[0]) {
                 var file = input.files[0];
-                var isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+                var ext = file.name.split('.').pop().toLowerCase();
+                var allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+                var sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+
+                // Check file format
+                if (allowedExts.indexOf(ext) === -1) {
+                    input.value = '';
+                    var errHtml = '<div style="margin-top:10px; padding:10px 12px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:8px; font-size:12px; color:#dc2626; box-shadow:0 2px 6px rgba(0,0,0,0.04);">';
+                    errHtml += '<div style="font-weight:800; display:flex; align-items:center; gap:6px;"><span class="dashicons dashicons-warning" style="color:#dc2626;"></span> ' + <?php echo json_encode( kaitori_t( 'Unsupported file format (.', '未対応のファイル形式です（.' ) ); ?> + ext + ')</div>';
+                    errHtml += '<div style="margin-top:4px; color:#991b1b;">' + <?php echo json_encode( kaitori_t( 'Allowed formats: JPG, JPEG, PNG, WEBP, PDF (Max 10MB)', '許可されている形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）' ) ); ?> + '</div>';
+                    errHtml += '</div>';
+                    container.html(errHtml);
+                    alert('⚠️ 許可されていないファイル形式です（.' + ext + '）。\n書類は JPG, PNG, WEBP, PDF 形式を選択してください。（最大10MB）');
+                    return false;
+                }
+
+                // Check file size
+                if (file.size > 10 * 1024 * 1024) {
+                    input.value = '';
+                    var errHtml = '<div style="margin-top:10px; padding:10px 12px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:8px; font-size:12px; color:#dc2626; box-shadow:0 2px 6px rgba(0,0,0,0.04);">';
+                    errHtml += '<div style="font-weight:800; display:flex; align-items:center; gap:6px;"><span class="dashicons dashicons-warning" style="color:#dc2626;"></span> ' + <?php echo json_encode( kaitori_t( 'File size exceeds limit (10MB): ', 'ファイルサイズ上限超過: ' ) ); ?> + sizeMb + ' MB</div>';
+                    errHtml += '<div style="margin-top:4px; color:#991b1b;">' + <?php echo json_encode( kaitori_t( 'Please upload a file within 10MB.', '10MB以下のファイルを選択してください。' ) ); ?> + '</div>';
+                    errHtml += '</div>';
+                    container.html(errHtml);
+                    alert('⚠️ ファイルサイズが上限(10MB)を超えています (' + sizeMb + 'MB)。');
+                    return false;
+                }
+
+                var isPdf = (ext === 'pdf');
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     var html = '<div style="margin-top:10px; padding:10px 12px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; font-size:12px; color:#166534; box-shadow:0 2px 6px rgba(0,0,0,0.04);">';
                     html += '<div style="font-weight:800; display:flex; align-items:center; gap:6px;"><span class="dashicons dashicons-yes-alt" style="color:#16a34a;"></span> ' + (isPdf ? 'New PDF Selected:' : 'New File Selected:') + '</div>';
-                    html += '<div style="font-family:monospace; margin-top:2px;">' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)</div>';
+                    html += '<div style="font-family:monospace; margin-top:2px;">' + file.name + ' (' + Math.round(file.size / 1024) + ' KB · ' + ext.toUpperCase() + ')</div>';
                     if (!isPdf) {
                         html += '<img src="' + e.target.result + '" style="max-width:180px; max-height:120px; object-fit:contain; border-radius:4px; margin-top:8px; display:block; border:1px solid #bbf7d0; background:#fff;">';
                     }
@@ -1330,6 +1358,8 @@ function kaitoriakiba_save_kyc_meta( $post_id ) {
                     delete_post_meta( $post_id, $slot_cfg['meta_attach'] );
                     $audit_actions[] = $slot_cfg['label'] . ' replaced via direct upload';
                     continue;
+                } else if ( is_wp_error( $stored ) ) {
+                    set_transient( 'kaitori_kyc_admin_error_' . get_current_user_id(), sprintf( kaitori_t( 'Document Upload Error (%s): %s', '書類アップロードエラー (%s): %s' ), $slot_cfg['label'], $stored->get_error_message() ), 60 );
                 }
             }
         }
@@ -1481,3 +1511,21 @@ function kaitoriakiba_user_profile_kyc_section( $user ) {
 add_action( 'show_user_profile', 'kaitoriakiba_user_profile_kyc_section' );
 add_action( 'edit_user_profile', 'kaitoriakiba_user_profile_kyc_section' );
 
+
+/**
+ * Display KYC admin upload error notices if any
+ */
+function kaitoriakiba_kyc_admin_error_notice() {
+    $err = get_transient( 'kaitori_kyc_admin_error_' . get_current_user_id() );
+    if ( $err ) {
+        delete_transient( 'kaitori_kyc_admin_error_' . get_current_user_id() );
+        ?>
+        <div class="notice notice-error is-dismissible" style="border-left-color:#dc2626; padding:12px 16px;">
+            <p style="font-weight:700; color:#b91c1c; margin:0;">
+                <span class="dashicons dashicons-warning" style="vertical-align:middle; color:#dc2626;"></span> <?php echo esc_html( $err ); ?>
+            </p>
+        </div>
+        <?php
+    }
+}
+add_action( 'admin_notices', 'kaitoriakiba_kyc_admin_error_notice' );

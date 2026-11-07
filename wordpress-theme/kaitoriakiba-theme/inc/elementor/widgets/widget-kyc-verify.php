@@ -275,8 +275,8 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                         <div class="upload-dropzone" id="front_dropzone" onclick="document.getElementById('kyc_id_front').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; cursor:pointer; background:#f8fafc; transition:all 0.2s;">
                             <i class="fa fa-cloud-upload" style="font-size:32px; color:#ef4444; margin-bottom:8px;"></i>
                             <div style="font-weight:700; font-size:13px; color:#1e293b;"><?php kaitori_te( 'Select or take a photo', '写真を選択または撮影' ); ?></div>
-                            <small id="frontFileName" style="color:#64748b; display:block; margin-top:4px;"><?php kaitori_te( 'JPG, PNG, PDF (max 10MB)', 'JPG, PNG, PDF (最大10MB)' ); ?></small>
-                            <input type="file" name="kyc_id_front" id="kyc_id_front" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="previewKycFile(this, 'frontFileName', 'front_dropzone');">
+                            <small id="frontFileName" style="color:#64748b; display:block; margin-top:4px;"><?php kaitori_te( 'JPG, PNG, PDF (max 10MB)', 'JPG, PNG, WEBP, PDF (最大10MB)' ); ?></small>
+                            <input type="file" name="kyc_id_front" id="kyc_id_front" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="previewKycFile(this, 'frontFileName', 'front_dropzone');">
                         </div>
                     </div>
 
@@ -289,7 +289,7 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                             <i class="fa fa-cloud-upload" style="font-size:32px; color:#ef4444; margin-bottom:8px;"></i>
                             <div style="font-weight:700; font-size:13px; color:#1e293b;"><?php kaitori_te( 'Select or take a photo', '写真を選択または撮影' ); ?></div>
                             <small id="backFileName" style="color:#64748b; display:block; margin-top:4px;"><?php kaitori_te( 'Back side / address-change page', '裏面・住所変更記載面' ); ?></small>
-                            <input type="file" name="kyc_id_back" id="kyc_id_back" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="previewKycFile(this, 'backFileName', 'back_dropzone');">
+                            <input type="file" name="kyc_id_back" id="kyc_id_back" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="previewKycFile(this, 'backFileName', 'back_dropzone');">
                         </div>
                     </div>
                 </div>
@@ -332,14 +332,60 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
             }
 
             function previewKycFile(input, targetId, dropzoneId) {
-                if (dropzoneId) {
-                    var dz = document.getElementById(dropzoneId);
-                    if (dz) dz.classList.remove('kaitori-field-error');
+                var dz = dropzoneId ? document.getElementById(dropzoneId) : null;
+                var target = document.getElementById(targetId);
+
+                if (dz) {
+                    dz.classList.remove('kaitori-field-error');
+                    dz.style.borderColor = '#cbd5e1';
                 }
+
                 if (input.files && input.files[0]) {
                     var f = input.files[0];
+                    var ext = f.name.split('.').pop().toLowerCase();
+                    var allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
                     var mb = (f.size / (1024 * 1024)).toFixed(1);
-                    document.getElementById(targetId).innerHTML = '<span class="file-chosen-badge"><i class="fa fa-check-circle"></i> ' + f.name + ' (' + mb + 'MB)</span>';
+
+                    if (allowedExts.indexOf(ext) === -1) {
+                        input.value = '';
+                        if (dz) {
+                            dz.classList.add('kaitori-field-error');
+                            dz.style.borderColor = '#ef4444';
+                        }
+                        if (target) {
+                            target.innerHTML = '<span style="color:#dc2626; font-weight:700; display:block; margin-top:4px;"><i class="fa fa-exclamation-triangle"></i> 未対応形式（.' + ext + '）許可形式: JPG, PNG, WEBP, PDF</span>';
+                        }
+                        if (typeof kaitoriPopup === 'function') {
+                            kaitoriPopup('⚠️ 許可されていないファイル形式です（.' + ext + '）。\n本人確認書類は JPG, PNG, WEBP, PDF 形式でアップロードしてください。（最大10MB）', 'error');
+                        } else {
+                            alert('⚠️ 許可されていないファイル形式です（.' + ext + '）。\n本人確認書類は JPG, PNG, WEBP, PDF 形式でアップロードしてください。（最大10MB）');
+                        }
+                        return false;
+                    }
+
+                    if (f.size > 10 * 1024 * 1024) {
+                        input.value = '';
+                        if (dz) {
+                            dz.classList.add('kaitori-field-error');
+                            dz.style.borderColor = '#ef4444';
+                        }
+                        if (target) {
+                            target.innerHTML = '<span style="color:#dc2626; font-weight:700; display:block; margin-top:4px;"><i class="fa fa-exclamation-triangle"></i> 上限(10MB)超過 (' + mb + 'MB)</span>';
+                        }
+                        if (typeof kaitoriPopup === 'function') {
+                            kaitoriPopup('⚠️ ファイルサイズが上限(10MB)を超えています (' + mb + 'MB)。', 'error');
+                        } else {
+                            alert('⚠️ ファイルサイズが上限(10MB)を超えています (' + mb + 'MB)。');
+                        }
+                        return false;
+                    }
+
+                    if (dz) {
+                        dz.style.borderColor = '#16a34a';
+                    }
+                    if (target) {
+                        target.innerHTML = '<span class="file-chosen-badge" style="background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:4px 8px; border-radius:4px; font-weight:700;"><i class="fa fa-check-circle"></i> ' + f.name + ' (' + mb + 'MB · ' + ext.toUpperCase() + ')</span>';
+                    }
                 }
             }
         </script>

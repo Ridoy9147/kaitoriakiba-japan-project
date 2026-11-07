@@ -186,10 +186,10 @@ else :
                     <div class="id-upload-frame" id="frame_id_front" onclick="document.getElementById('kyc_id_front').click();" style="border:2px dashed #cbd5e1; border-radius:12px; padding:24px; text-align:center; background:#f8fafc; cursor:pointer; transition:all 0.2s;">
                         <i class="fa fa-camera" style="font-size:28px; color:#ef4444; margin-bottom:8px;"></i>
                         <div style="font-weight:700; color:#1e293b;">表面の写真を選択または撮影</div>
-                        <div style="font-size:12px; color:#64748b;">文字・顔写真がはっきりと読み取れるよう全体を撮影してください (JPG, PNG, PDF 最大10MB)</div>
+                        <div style="font-size:12px; color:#64748b;">文字・顔写真がはっきりと読み取れるよう全体を撮影してください (JPG, PNG, WEBP, PDF 最大10MB)</div>
                         <div id="front_file_info" style="display:none; margin-top:8px;"></div>
                     </div>
-                    <input type="file" name="kyc_id_front" id="kyc_id_front" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="handleKycFileSelect(this, 'preview_front', 'front_file_info', 'frame_id_front');">
+                    <input type="file" name="kyc_id_front" id="kyc_id_front" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="handleKycFileSelect(this, 'preview_front', 'front_file_info', 'frame_id_front');">
                     <img id="preview_front" style="display:none; max-height:160px; margin:10px auto; border-radius:8px; border:1px solid #cbd5e1;">
                 </div>
 
@@ -204,7 +204,7 @@ else :
                         <div style="font-size:12px; color:#64748b;">裏面住所記載欄・更新履歴の確認に使用します (マイナンバーカードは裏面不要)</div>
                         <div id="back_file_info" style="display:none; margin-top:8px;"></div>
                     </div>
-                    <input type="file" name="kyc_id_back" id="kyc_id_back" accept="image/*,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="handleKycFileSelect(this, 'preview_back', 'back_file_info', 'frame_id_back');">
+                    <input type="file" name="kyc_id_back" id="kyc_id_back" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; z-index:-1;" onchange="handleKycFileSelect(this, 'preview_back', 'back_file_info', 'frame_id_back');">
                     <img id="preview_back" style="display:none; max-height:160px; margin:10px auto; border-radius:8px; border:1px solid #cbd5e1;">
                 </div>
 
@@ -268,18 +268,72 @@ else :
 
             if (frame) {
                 frame.classList.remove('kaitori-field-error');
+                frame.style.borderColor = '#cbd5e1';
             }
 
             if (input.files && input.files[0]) {
                 var file = input.files[0];
+                var ext = file.name.split('.').pop().toLowerCase();
+                var allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
                 var sizeMb = (file.size / (1024 * 1024)).toFixed(1);
 
+                // 1. Format validation
+                if (allowedExts.indexOf(ext) === -1) {
+                    input.value = '';
+                    if (img) img.style.display = 'none';
+                    if (frame) {
+                        frame.classList.add('kaitori-field-error');
+                        frame.style.borderColor = '#ef4444';
+                    }
+                    if (info) {
+                        info.innerHTML = '<div style="background:#fee2e2; border:1.5px solid #fecaca; color:#dc2626; padding:8px 12px; border-radius:8px; font-weight:700; font-size:12.5px; text-align:left; margin-top:8px;">' +
+                            '<i class="fa fa-exclamation-triangle"></i> 未対応のファイル形式です（.' + ext + '）<br>' +
+                            '<span style="font-weight:400; font-size:11.5px; color:#991b1b;">許可されている形式: <strong>JPG, JPEG, PNG, WEBP, PDF</strong>（最大10MB）</span>' +
+                            '</div>';
+                        info.style.display = 'block';
+                    }
+                    if (typeof kaitoriPopup === 'function') {
+                        kaitoriPopup('⚠️ 許可されていないファイル形式です（.' + ext + '）。\n本人確認書類は JPG, PNG, WEBP, PDF 形式でアップロードしてください。（最大10MB）', 'error');
+                    } else {
+                        alert('⚠️ 許可されていないファイル形式です（.' + ext + '）。\n本人確認書類は JPG, PNG, WEBP, PDF 形式でアップロードしてください。（最大10MB）');
+                    }
+                    return false;
+                }
+
+                // 2. Size validation
+                if (file.size > 10 * 1024 * 1024) {
+                    input.value = '';
+                    if (img) img.style.display = 'none';
+                    if (frame) {
+                        frame.classList.add('kaitori-field-error');
+                        frame.style.borderColor = '#ef4444';
+                    }
+                    if (info) {
+                        info.innerHTML = '<div style="background:#fee2e2; border:1.5px solid #fecaca; color:#dc2626; padding:8px 12px; border-radius:8px; font-weight:700; font-size:12.5px; text-align:left; margin-top:8px;">' +
+                            '<i class="fa fa-exclamation-triangle"></i> ファイルサイズ上限超過 (' + sizeMb + 'MB)<br>' +
+                            '<span style="font-weight:400; font-size:11.5px; color:#991b1b;">10MB以内の書類を選択してください。</span>' +
+                            '</div>';
+                        info.style.display = 'block';
+                    }
+                    if (typeof kaitoriPopup === 'function') {
+                        kaitoriPopup('⚠️ ファイルサイズが上限(10MB)を超えています (' + sizeMb + 'MB)。\n10MB以下のファイルを選択してください。', 'error');
+                    } else {
+                        alert('⚠️ ファイルサイズが上限(10MB)を超えています (' + sizeMb + 'MB)。');
+                    }
+                    return false;
+                }
+
+                // 3. Valid file
+                if (frame) {
+                    frame.style.borderColor = '#16a34a';
+                }
+                var isPdf = (ext === 'pdf');
                 if (info) {
-                    info.innerHTML = '<span class="file-chosen-badge"><i class="fa fa-check-circle"></i> ' + file.name + ' (' + sizeMb + 'MB) 選択完了</span>';
+                    info.innerHTML = '<span class="file-chosen-badge" style="background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:6px 12px; border-radius:6px; font-size:12.5px; font-weight:700; display:inline-block;"><i class="fa fa-check-circle"></i> ' + file.name + ' (' + sizeMb + 'MB · ' + ext.toUpperCase() + ') 選択完了</span>';
                     info.style.display = 'block';
                 }
 
-                if (file.type && file.type.indexOf('image/') === 0) {
+                if (!isPdf && window.FileReader) {
                     var reader = new FileReader();
                     reader.onload = function(e) {
                         if (img) {

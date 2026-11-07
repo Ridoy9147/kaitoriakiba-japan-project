@@ -410,6 +410,8 @@
                 });
             }
 
+            var allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+
             // Front ID Image (Required)
             var frontInput = $form.find('input[name="kyc_id_front"], input[name="kyc_front"]')[0];
             if (!frontInput || !frontInput.files || frontInput.files.length === 0) {
@@ -421,7 +423,15 @@
                 });
             } else {
                 var frontFile = frontInput.files[0];
-                if (frontFile.size > 10 * 1024 * 1024) {
+                var frontExt = frontFile.name ? frontFile.name.split('.').pop().toLowerCase() : '';
+                if (allowedExts.indexOf(frontExt) === -1) {
+                    errors.push({
+                        name: 'kyc_id_front',
+                        element: frontInput,
+                        label: '書類の表面画像 (Front ID Photo)',
+                        message: '未対応のファイル形式です（.' + frontExt + '）。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）'
+                    });
+                } else if (frontFile.size > 10 * 1024 * 1024) {
                     errors.push({
                         name: 'kyc_id_front',
                         element: frontInput,
@@ -447,7 +457,15 @@
                     });
                 } else {
                     var backFile = backInput.files[0];
-                    if (backFile.size > 10 * 1024 * 1024) {
+                    var backExt = backFile.name ? backFile.name.split('.').pop().toLowerCase() : '';
+                    if (allowedExts.indexOf(backExt) === -1) {
+                        errors.push({
+                            name: 'kyc_id_back',
+                            element: backInput,
+                            label: '書類の裏面画像 (Back ID Photo)',
+                            message: '未対応のファイル形式です（.' + backExt + '）。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）'
+                        });
+                    } else if (backFile.size > 10 * 1024 * 1024) {
                         errors.push({
                             name: 'kyc_id_back',
                             element: backInput,
