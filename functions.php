@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.3.7' );
+define( 'KAITORIAKIBA_VERSION', '2.3.8' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 
@@ -127,6 +127,7 @@ require_once KAITORIAKIBA_DIR . '/inc/crypto.php';
 require_once KAITORIAKIBA_DIR . '/inc/pricing.php';
 require_once KAITORIAKIBA_DIR . '/inc/kyc-security.php';
 require_once KAITORIAKIBA_DIR . '/inc/cpt.php';
+require_once KAITORIAKIBA_DIR . '/inc/staff-roles.php';
 require_once KAITORIAKIBA_DIR . '/inc/meta-boxes.php';
 require_once KAITORIAKIBA_DIR . '/inc/admin-customers.php';
 require_once KAITORIAKIBA_DIR . '/inc/invoice.php';
