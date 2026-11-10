@@ -295,6 +295,7 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
                 </div>
 
                 <div style="margin-top:24px;">
+                    <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'kyc' ); } ?>
                     <button type="submit" id="btnSubmitKyc" class="btn btn-danger btn-block" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px; border-radius:10px; font-size:16px;">
                         <i class="fa fa-shield"></i> <?php kaitori_te( 'Securely submit verification documents', '本人確認書類を安全に送信する (Submit Verification)' ); ?>
                     </button>

@@ -295,42 +295,42 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
             <div class="href_list">
                 <div class="gutter-10 clearflex">
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>" title="iPhone 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'iPhone buyback', 'iPhone 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_iphone.svg" alt="iPhone" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>" title="iPad / タブレット 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?cat=tablets' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'iPad / Tablet buyback', 'iPad / タブレット 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_ipad.svg" alt="iPad / Tablets" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>" title="Google Pixel 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Pixel' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'Google Pixel buyback', 'Google Pixel 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_pixel.svg" alt="Google Pixel" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?q=Galaxy' ) ); ?>" title="Galaxy 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Galaxy' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'Galaxy buyback', 'Galaxy 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_galaxy.svg" alt="Galaxy" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xperia' ) ); ?>" title="Xperia 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xperia' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'Xperia buyback', 'Xperia 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_xperia.svg" alt="Xperia" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?q=AQUOS' ) ); ?>" title="AQUOS / arrows 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=AQUOS' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'AQUOS / arrows buyback', 'AQUOS / arrows 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_aquos.svg" alt="AQUOS / arrows" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xiaomi' ) ); ?>" title="Xiaomi / OPPO 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?q=Xiaomi' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'Xiaomi / OPPO buyback', 'Xiaomi / OPPO 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_xiaomi.svg" alt="Xiaomi / OPPO" class="img-responsive" />
                         </a>
                     </div>
                     <div class="href_item mtop10 col-xs-6 col-sm-3">
-                        <a href="<?php echo esc_url( home_url( '/devices/?s_career=simfree' ) ); ?>" title="SIMフリー スマホ 買取">
+                        <a href="<?php echo esc_url( home_url( '/devices/?s_career=simfree' ) ); ?>" title="<?php echo esc_attr( kaitori_t( 'SIM-free smartphone buyback', 'SIMフリー スマホ 買取' ) ); ?>">
                             <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/upload/ad/phones/banner_simfree.svg" alt="SIM Free Smartphones" class="img-responsive" />
                         </a>
                     </div>

@@ -147,23 +147,23 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
 
                     <div class="col-lg-7 col-md-7 col-sm-12">
                         <div style="border-bottom:1.5px solid #f1f5f9; padding-bottom:14px; margin-bottom:16px;">
-                            <span style="display:inline-block; font-size:12px; font-weight:700; color:#ef4444; background:#fef2f2; padding:2px 8px; border-radius:4px; margin-bottom:6px;">Apple / 高価買取中</span>
+                            <span style="display:inline-block; font-size:12px; font-weight:700; color:#ef4444; background:#fef2f2; padding:2px 8px; border-radius:4px; margin-bottom:6px;">Apple / <?php kaitori_te( 'High-Value Buyback', '高価買取中' ); ?></span>
                             <h2 style="font-size:22px; font-weight:900; color:#0f172a; margin:0 0 6px 0;"><?php echo esc_html( $title ); ?></h2>
-                            <p style="font-size:12.5px; color:#64748b; margin:0;">型番: <?php echo esc_html( $model_num ); ?> | JAN: <?php echo esc_html( $jan ); ?></p>
+                            <p style="font-size:12.5px; color:#64748b; margin:0;"><?php kaitori_te( 'Model No.', '型番' ); ?>: <?php echo esc_html( $model_num ); ?> | JAN: <?php echo esc_html( $jan ); ?></p>
                         </div>
 
                         <!-- Price display -->
                         <div style="background:linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%); border:2px solid #fed7aa; border-radius:12px; padding:16px 20px; margin-bottom:20px;">
-                            <div style="font-size:12px; font-weight:700; color:#c2410c;">本日の最高買取上限価格 (新品未開封・SIMフリー)</div>
+                            <div style="font-size:12px; font-weight:700; color:#c2410c;"><?php kaitori_te( "Today's maximum buyback price (brand-new, unopened, SIM-free)", '本日の最高買取上限価格 (新品未開封・SIMフリー)' ); ?></div>
                             <div style="font-size:36px; font-weight:900; color:#dc2626; line-height:1.2;">
                                 ¥<span id="elCalcPrice"><?php echo number_format( (int)$base_price ); ?></span>
-                                <small style="font-size:12px; color:#78350f; font-weight:700; background:#fed7aa; padding:2px 8px; border-radius:12px; vertical-align:middle; margin-left:8px;">税込・手数料0円</small>
+                                <small style="font-size:12px; color:#78350f; font-weight:700; background:#fed7aa; padding:2px 8px; border-radius:12px; vertical-align:middle; margin-left:8px;"><?php kaitori_te( 'Tax incl. / ¥0 fees', '税込・手数料0円' ); ?></small>
                             </div>
                         </div>
 
                         <!-- Storage selector -->
                         <div style="margin-bottom:16px;">
-                            <label style="font-size:13px; font-weight:800; color:#1e293b; display:block; margin-bottom:6px;">容量を選択:</label>
+                            <label style="font-size:13px; font-weight:800; color:#1e293b; display:block; margin-bottom:6px;"><?php kaitori_te( 'Select capacity', '容量を選択' ); ?>:</label>
                             <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
                                 <button type="button" class="btn btn-default" style="font-weight:700;" onclick="elUpdateStorage('128GB', <?php echo intval($base_price * 0.9); ?>)">128GB</button>
                                 <button type="button" class="btn btn-danger" style="font-weight:700;" onclick="elUpdateStorage('256GB', <?php echo intval($base_price); ?>)">256GB</button>
@@ -175,7 +175,7 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                         <!-- CTA Apply -->
                         <div style="margin-top:20px;">
                             <a id="elApplyBtn" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $title ) . '&storage=256GB' ) ); ?>" class="btn btn-danger btn-block" style="padding:14px; font-size:16px; font-weight:800; border-radius:8px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-                                <i class="fa fa-paper-plane"></i> この機種の買取を申し込む (Apply for Buyback)
+                                <i class="fa fa-paper-plane"></i> <?php kaitori_te( 'Apply to Sell This Device', 'この機種の買取を申し込む' ); ?>
                             </a>
                         </div>
                     </div>
@@ -186,40 +186,40 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                 <!-- Ranks S-D Table -->
                 <div style="background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; padding:24px; margin-bottom:24px;">
                     <h3 style="font-size:17px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:16px;">
-                        <i class="fa fa-sliders" style="color:#ef4444;"></i> コンディション別買取価格一覧表
+                        <i class="fa fa-sliders" style="color:#ef4444;"></i> <?php kaitori_te( 'Buyback Price List by Condition', 'コンディション別買取価格一覧表' ); ?>
                     </h3>
                     <table class="table table-bordered table-striped" style="margin-bottom:0;">
                         <thead>
                             <tr style="background:#f8fafc;">
-                                <th>ランク</th>
-                                <th>状態の目安</th>
-                                <th>買取目安価格</th>
+                                <th><?php kaitori_te( 'Rank', 'ランク' ); ?></th>
+                                <th><?php kaitori_te( 'Condition guide', '状態の目安' ); ?></th>
+                                <th><?php kaitori_te( 'Est. buyback price', '買取目安価格' ); ?></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><span style="background:#dbeafe; color:#1e40af; font-weight:800; padding:2px 8px; border-radius:4px;">Rank S</span></td>
-                                <td>新品未開封 (Factory Sealed)</td>
+                                <td><?php kaitori_te( 'Factory Sealed', '新品未開封 (Factory Sealed)' ); ?></td>
                                 <td><strong style="color:#dc2626; font-size:16px;" id="elRankS">¥<?php echo number_format( (int)$base_price ); ?></strong></td>
                             </tr>
                             <tr>
                                 <td><span style="background:#dcfce7; color:#15803d; font-weight:800; padding:2px 8px; border-radius:4px;">Rank A</span></td>
-                                <td>未使用品・通電確認のみ (Opened Box)</td>
+                                <td><?php kaitori_te( 'Opened Box (power-on check only)', '未使用品・通電確認のみ (Opened Box)' ); ?></td>
                                 <td><strong style="color:#dc2626; font-size:16px;" id="elRankA">¥<?php echo number_format( (int)round($base_price * 0.92) ); ?></strong></td>
                             </tr>
                             <tr>
                                 <td><span style="background:#fef9c3; color:#854d0e; font-weight:800; padding:2px 8px; border-radius:4px;">Rank B</span></td>
-                                <td>中古美品・目立つ傷なし (Used Pristine)</td>
+                                <td><?php kaitori_te( 'Used Pristine (no noticeable scratches)', '中古美品・目立つ傷なし (Used Pristine)' ); ?></td>
                                 <td><strong style="color:#dc2626; font-size:16px;" id="elRankB">¥<?php echo number_format( (int)round($base_price * 0.84) ); ?></strong></td>
                             </tr>
                             <tr>
                                 <td><span style="background:#ffedd5; color:#9a3412; font-weight:800; padding:2px 8px; border-radius:4px;">Rank C</span></td>
-                                <td>中古良品・小傷あり (Used Minor Scratches)</td>
+                                <td><?php kaitori_te( 'Used Good (minor scratches)', '中古良品・小傷あり (Used Minor Scratches)' ); ?></td>
                                 <td><strong style="color:#dc2626; font-size:16px;" id="elRankC">¥<?php echo number_format( (int)round($base_price * 0.76) ); ?></strong></td>
                             </tr>
                             <tr>
                                 <td><span style="background:#fee2e2; color:#b91c1c; font-weight:800; padding:2px 8px; border-radius:4px;">Rank D</span></td>
-                                <td>画面割れ・故障・難あり (Cracked / Broken)</td>
+                                <td><?php kaitori_te( 'Cracked / Broken / Defective', '画面割れ・故障・難あり (Cracked / Broken)' ); ?></td>
                                 <td><strong style="color:#dc2626; font-size:16px;" id="elRankD">¥<?php echo number_format( (int)round($base_price * 0.48) ); ?></strong></td>
                             </tr>
                         </tbody>
@@ -231,10 +231,10 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                 <!-- Installment Info Box -->
                 <div style="background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; padding:20px; margin-bottom:24px;">
                     <h4 style="font-size:15px; font-weight:800; color:#0f172a; margin-top:0;">
-                        <i class="fa fa-info-circle" style="color:#ef4444;"></i> 分割支払い中（ネットワーク利用制限△）でも高価買取対応！
+                        <i class="fa fa-info-circle" style="color:#ef4444;"></i> <?php kaitori_te( 'High-value buyback even on installment plans (network usage restriction △)!', '分割支払い中（ネットワーク利用制限△）でも高価買取対応！' ); ?>
                     </h4>
                     <p style="font-size:13px; color:#475569; margin-bottom:0;">
-                        代金分割支払い中（残債あり）のiPhoneも減額を最小限（-¥3,000〜¥5,000程度）に抑えて即日買取可能です。申込みフォームで残債ありを選択してください。
+                        <?php kaitori_te( 'Even iPhones still on an installment plan (with a remaining balance) can be bought the same day, with the deduction kept to a minimum (around -¥3,000 to ¥5,000). Please select "balance remaining" on the application form.', '代金分割支払い中（残債あり）のiPhoneも減額を最小限（-¥3,000〜¥5,000程度）に抑えて即日買取可能です。申込みフォームで残債ありを選択してください。' ); ?>
                     </p>
                 </div>
             <?php endif; ?>

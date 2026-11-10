@@ -6,6 +6,11 @@
 (function($) {
     'use strict';
 
+    // Bilingual helper mirroring PHP kaitori_t(): picks EN or JA by the
+    // current site language (passed through the kaitori_ajax localize).
+    var KLANG = (typeof kaitori_ajax !== 'undefined' && kaitori_ajax.lang) ? kaitori_ajax.lang : 'ja';
+    function kt(en, ja) { return (KLANG === 'en') ? en : ja; }
+
     /**
      * Styled modal popup that replaces the browser's native alert() for all
      * form responses. type = 'success' (green ✓) or 'error' (red !).
@@ -89,7 +94,7 @@
 
             if (!errors || errors.length === 0) return;
 
-            var title = customTitle || '入力内容または書類に不備があります。以下の項目をご確認・修正してください：';
+            var title = customTitle || kt('Some entries or documents are invalid. Please check and correct the following items:', '入力内容または書類に不備があります。以下の項目をご確認・修正してください：');
             var alertHtml = '<div class="kaitori-form-error-alert" role="alert">' +
                 '<div class="alert-title"><i class="fa fa-exclamation-triangle" style="color:#ef4444; font-size:18px;"></i> ' + escapeHtml(title) + '</div>' +
                 '<ul class="alert-list">';
@@ -191,8 +196,8 @@
             if (!model || model.trim() === '') {
                 errors.push({
                     name: 'model',
-                    label: '機種名 (Device Model)',
-                    message: '買取希望の機種名を選択してください。',
+                    label: kt('Device Model', '機種名'),
+                    message: kt('Please select the device model you want to sell.', '買取希望の機種名を選択してください。'),
                     step: 1
                 });
             }
@@ -202,8 +207,8 @@
             if (!storage || storage.trim() === '') {
                 errors.push({
                     name: 'storage',
-                    label: 'ストレージ容量 (Storage)',
-                    message: 'ストレージ容量を選択してください。',
+                    label: kt('Storage', 'ストレージ容量'),
+                    message: kt('Please select a storage capacity.', 'ストレージ容量を選択してください。'),
                     step: 1
                 });
             }
@@ -213,8 +218,8 @@
             if (!carrier || carrier.trim() === '') {
                 errors.push({
                     name: 'carrier',
-                    label: 'キャリア (Carrier)',
-                    message: 'キャリア・SIM状態を選択してください。',
+                    label: kt('Carrier', 'キャリア'),
+                    message: kt('Please select the carrier / SIM status.', 'キャリア・SIM状態を選択してください。'),
                     step: 1
                 });
             }
@@ -224,8 +229,8 @@
             if ($colorEl.length && (!$colorEl.val() || $colorEl.val().trim() === '')) {
                 errors.push({
                     name: 'color',
-                    label: 'カラー (Color)',
-                    message: '本体カラーを選択または入力してください。',
+                    label: kt('Color', 'カラー'),
+                    message: kt('Please select or enter the device color.', '本体カラーを選択または入力してください。'),
                     step: 1
                 });
             }
@@ -238,8 +243,8 @@
                     errors.push({
                         name: $imei.attr('name') || 'imei',
                         element: $imei[0],
-                        label: 'IMEI番号 (IMEI / Serial)',
-                        message: 'IMEI番号は15桁の半角数字で入力してください。(例: 351234567890123)',
+                        label: kt('IMEI / Serial', 'IMEI番号'),
+                        message: kt('Please enter the IMEI as 15 half-width digits. (e.g. 351234567890123)', 'IMEI番号は15桁の半角数字で入力してください。(例: 351234567890123)'),
                         step: 1
                     });
                 }
@@ -253,8 +258,8 @@
                     errors.push({
                         name: 'applicant_email',
                         element: $email[0],
-                        label: 'メールアドレス (Email)',
-                        message: '有効なメールアドレスの形式で入力してください。(例: taro@example.com)',
+                        label: kt('Email', 'メールアドレス'),
+                        message: kt('Please enter a valid email address. (e.g. taro@example.com)', '有効なメールアドレスの形式で入力してください。(例: taro@example.com)'),
                         step: 2
                     });
                 }
@@ -268,8 +273,8 @@
                     errors.push({
                         name: 'applicant_phone',
                         element: $phone[0],
-                        label: '電話番号 (Phone Number)',
-                        message: '10〜11桁の半角数字で電話番号を入力してください。(例: 09012345678)',
+                        label: kt('Phone Number', '電話番号'),
+                        message: kt('Please enter a 10–11 digit phone number. (e.g. 09012345678)', '10〜11桁の半角数字で電話番号を入力してください。(例: 09012345678)'),
                         step: 2
                     });
                 }
@@ -281,8 +286,8 @@
                 errors.push({
                     name: 'agree_terms',
                     element: $terms[0],
-                    label: '利用規約への同意 (Terms of Service)',
-                    message: '利用規約および個人情報の取扱いに同意のチェックを入れてください。',
+                    label: kt('Terms of Service', '利用規約への同意'),
+                    message: kt('Please check the box to agree to the Terms of Service and the handling of personal information.', '利用規約および個人情報の取扱いに同意のチェックを入れてください。'),
                     step: 2
                 });
             }
@@ -300,8 +305,8 @@
                 errors.push({
                     name: $name.attr('name') || 'kyc_name',
                     element: $name[0],
-                    label: '氏名 (Full Name)',
-                    message: '身分証明書記載のお名前（漢字）を入力してください。'
+                    label: kt('Full Name', '氏名'),
+                    message: kt('Please enter your name as written on your ID document (in kanji).', '身分証明書記載のお名前（漢字）を入力してください。')
                 });
             }
 
@@ -311,8 +316,8 @@
                 errors.push({
                     name: 'kyc_kana',
                     element: $kana[0],
-                    label: 'フリガナ (Katakana)',
-                    message: 'カタカナでお名前を入力してください。(例: ヤマダ タロウ)'
+                    label: kt('Katakana', 'フリガナ'),
+                    message: kt('Please enter your name in katakana. (e.g. ヤマダ タロウ)', 'カタカナでお名前を入力してください。(例: ヤマダ タロウ)')
                 });
             }
 
@@ -322,15 +327,15 @@
                 errors.push({
                     name: $email.attr('name') || 'kyc_email',
                     element: $email[0],
-                    label: 'メールアドレス (Email)',
-                    message: '連絡可能なメールアドレスを入力してください。'
+                    label: kt('Email', 'メールアドレス'),
+                    message: kt('Please enter an email address where we can reach you.', '連絡可能なメールアドレスを入力してください。')
                 });
             } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($email.val().trim())) {
                 errors.push({
                     name: $email.attr('name') || 'kyc_email',
                     element: $email[0],
-                    label: 'メールアドレス (Email)',
-                    message: '有効なメールアドレスの形式で入力してください。(例: user@example.com)'
+                    label: kt('Email', 'メールアドレス'),
+                    message: kt('Please enter a valid email address. (e.g. user@example.com)', '有効なメールアドレスの形式で入力してください。(例: user@example.com)')
                 });
             }
 
@@ -342,15 +347,15 @@
                     errors.push({
                         name: 'kyc_phone',
                         element: $phone[0],
-                        label: '電話番号 (Phone Number)',
-                        message: '電話番号を入力してください。(例: 09012345678)'
+                        label: kt('Phone Number', '電話番号'),
+                        message: kt('Please enter your phone number. (e.g. 09012345678)', '電話番号を入力してください。(例: 09012345678)')
                     });
                 } else if (phoneClean.length < 10 || !/^\d{10,12}$/.test(phoneClean)) {
                     errors.push({
                         name: 'kyc_phone',
                         element: $phone[0],
-                        label: '電話番号 (Phone Number)',
-                        message: '10〜11桁の半角数字で電話番号を入力してください。'
+                        label: kt('Phone Number', '電話番号'),
+                        message: kt('Please enter a 10–11 digit phone number.', '10〜11桁の半角数字で電話番号を入力してください。')
                     });
                 }
             }
@@ -361,8 +366,8 @@
                 errors.push({
                     name: 'kyc_dob',
                     element: $dob[0],
-                    label: '生年月日 (Date of Birth)',
-                    message: '生年月日を選択してください。'
+                    label: kt('Date of Birth', '生年月日'),
+                    message: kt('Please select your date of birth.', '生年月日を選択してください。')
                 });
             }
 
@@ -372,8 +377,8 @@
                 errors.push({
                     name: 'kyc_postal',
                     element: $postal[0],
-                    label: '郵便番号 (Postal Code)',
-                    message: '郵便番号を入力してください。(例: 101-0021)'
+                    label: kt('Postal Code', '郵便番号'),
+                    message: kt('Please enter your postal code. (e.g. 101-0021)', '郵便番号を入力してください。(例: 101-0021)')
                 });
             }
 
@@ -383,8 +388,8 @@
                 errors.push({
                     name: 'kyc_prefecture',
                     element: $pref[0],
-                    label: '都道府県 (Prefecture)',
-                    message: '都道府県を入力してください。(例: 東京都)'
+                    label: kt('Prefecture', '都道府県'),
+                    message: kt('Please enter your prefecture. (e.g. Tokyo)', '都道府県を入力してください。(例: 東京都)')
                 });
             }
 
@@ -394,8 +399,8 @@
                 errors.push({
                     name: 'kyc_city',
                     element: $city[0],
-                    label: '市区町村 (City / Ward)',
-                    message: '市区町村を入力してください。(例: 千代田区)'
+                    label: kt('City / Ward', '市区町村'),
+                    message: kt('Please enter your city, ward, or town. (e.g. Chiyoda-ku)', '市区町村を入力してください。(例: 千代田区)')
                 });
             }
 
@@ -405,8 +410,8 @@
                 errors.push({
                     name: 'kyc_address',
                     element: $addr[0],
-                    label: '番地・建物名 (Street Address)',
-                    message: '番地・建物名・部屋番号を入力してください。'
+                    label: kt('Street Address', '番地・建物名'),
+                    message: kt('Please enter your street address, building name, and room number.', '番地・建物名・部屋番号を入力してください。')
                 });
             }
 
@@ -418,8 +423,8 @@
                 errors.push({
                     name: 'kyc_id_front',
                     element: frontInput,
-                    label: '書類の表面画像 (Front ID Photo)',
-                    message: '本人確認書類の表面写真を選択または撮影してください。(必須)'
+                    label: kt('Front ID Photo', '書類の表面画像'),
+                    message: kt('Please select or take a photo of the front of your ID document. (Required)', '本人確認書類の表面写真を選択または撮影してください。(必須)')
                 });
             } else {
                 var frontFile = frontInput.files[0];
@@ -428,15 +433,15 @@
                     errors.push({
                         name: 'kyc_id_front',
                         element: frontInput,
-                        label: '書類の表面画像 (Front ID Photo)',
-                        message: '未対応のファイル形式です（.' + frontExt + '）。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）'
+                        label: kt('Front ID Photo', '書類の表面画像'),
+                        message: kt('Unsupported file format (.', '未対応のファイル形式です（.') + frontExt + kt(') is not supported. Allowed formats: JPG, JPEG, PNG, WEBP, PDF (max 10MB)', '）。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）')
                     });
                 } else if (frontFile.size > 10 * 1024 * 1024) {
                     errors.push({
                         name: 'kyc_id_front',
                         element: frontInput,
-                        label: '書類の表面画像 (Front ID Photo)',
-                        message: '表面画像のファイルサイズが上限(10MB)を超えています。'
+                        label: kt('Front ID Photo', '書類の表面画像'),
+                        message: kt('The front image exceeds the 10MB file-size limit.', '表面画像のファイルサイズが上限(10MB)を超えています。')
                     });
                 }
             }
@@ -452,8 +457,8 @@
                     errors.push({
                         name: 'kyc_id_back',
                         element: backInput,
-                        label: '書類の裏面画像 (Back ID Photo)',
-                        message: '運転免許証・在留カード・パスポートは裏面写真の提出が必要です。'
+                        label: kt('Back ID Photo', '書類の裏面画像'),
+                        message: kt('A back photo is required for a driver\'s license, residence card, or passport.', '運転免許証・在留カード・パスポートは裏面写真の提出が必要です。')
                     });
                 } else {
                     var backFile = backInput.files[0];
@@ -462,15 +467,15 @@
                         errors.push({
                             name: 'kyc_id_back',
                             element: backInput,
-                            label: '書類の裏面画像 (Back ID Photo)',
-                            message: '未対応のファイル形式です（.' + backExt + '）。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）'
+                            label: kt('Back ID Photo', '書類の裏面画像'),
+                            message: kt('Unsupported file format (.', '未対応のファイル形式です（.') + backExt + kt(') is not supported. Allowed formats: JPG, JPEG, PNG, WEBP, PDF (max 10MB)', '）。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）')
                         });
                     } else if (backFile.size > 10 * 1024 * 1024) {
                         errors.push({
                             name: 'kyc_id_back',
                             element: backInput,
-                            label: '書類の裏面画像 (Back ID Photo)',
-                            message: '裏面画像のファイルサイズが上限(10MB)を超えています。'
+                            label: kt('Back ID Photo', '書類の裏面画像'),
+                            message: kt('The back image exceeds the 10MB file-size limit.', '裏面画像のファイルサイズが上限(10MB)を超えています。')
                         });
                     }
                 }
@@ -482,8 +487,8 @@
                 errors.push({
                     name: 'kyc_consent',
                     element: $consent[0],
-                    label: '個人情報提供への同意 (Consent)',
-                    message: '古物営業法に基づく身元確認のため個人情報の提供に同意のチェックを入れてください。'
+                    label: kt('Consent', '個人情報提供への同意'),
+                    message: kt('Please check the box to consent to providing personal information for identity verification under the Secondhand Dealer Act.', '古物営業法に基づく身元確認のため個人情報の提供に同意のチェックを入れてください。')
                 });
             }
 
@@ -500,8 +505,8 @@
             // Run client-side validation
             var errors = validateSellFormClient($form);
             if (errors.length > 0) {
-                showFieldErrors($form, errors, '入力内容に不備がある項目があります。該当項目をご確認ください：');
-                kaitoriPopup('入力内容に不備があります。赤枠で表示された項目をご確認ください。', 'error');
+                showFieldErrors($form, errors, kt('Some fields contain invalid input. Please check the following items:', '入力内容に不備がある項目があります。該当項目をご確認ください：'));
+                kaitoriPopup(kt('Some entries are invalid. Please check the fields highlighted in red.', '入力内容に不備があります。赤枠で表示された項目をご確認ください。'), 'error');
                 return false;
             }
 
@@ -542,12 +547,12 @@
                         if (response.data && response.data.invalid_fields) {
                             var serverErrors = [];
                             var fieldLabels = {
-                                'model': '機種名 (Device Model)',
-                                'storage': 'ストレージ容量 (Storage)',
-                                'carrier': 'キャリア (Carrier)',
-                                'imei': 'IMEI番号 (IMEI / Serial)',
-                                'applicant_email': 'メールアドレス (Email)',
-                                'agree_terms': '利用規約への同意'
+                                'model': kt('Device Model', '機種名'),
+                                'storage': kt('Storage', 'ストレージ容量'),
+                                'carrier': kt('Carrier', 'キャリア'),
+                                'imei': kt('IMEI / Serial', 'IMEI番号'),
+                                'applicant_email': kt('Email', 'メールアドレス'),
+                                'agree_terms': kt('Terms of Service', '利用規約への同意')
                             };
                             $.each(response.data.invalid_fields, function(fName, msg) {
                                 serverErrors.push({
@@ -564,10 +569,10 @@
                                 '<i class="fa fa-lock" style="color:#d97706; font-size:20px;"></i> ' + escapeHtml(response.data.message) + '</div>' +
                                 '<div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap;">';
                             if (response.data.kyc_url) {
-                                gateHtml += '<a href="' + escapeHtml(response.data.kyc_url) + '" class="btn btn-danger" style="background:#ef4444; border-color:#ef4444; font-weight:700; border-radius:8px; padding:10px 22px; color:#fff;">本人確認 (eKYC) へ進む &rarr;</a>';
+                                gateHtml += '<a href="' + escapeHtml(response.data.kyc_url) + '" class="btn btn-danger" style="background:#ef4444; border-color:#ef4444; font-weight:700; border-radius:8px; padding:10px 22px; color:#fff;">' + kt('Proceed to Identity Verification (eKYC)', '本人確認 (eKYC) へ進む') + ' &rarr;</a>';
                             }
                             if (response.data.login_url) {
-                                gateHtml += '<a href="' + escapeHtml(response.data.login_url) + '" class="btn btn-default" style="font-weight:700; border-radius:8px; padding:10px 20px;">ログイン・会員登録</a>';
+                                gateHtml += '<a href="' + escapeHtml(response.data.login_url) + '" class="btn btn-default" style="font-weight:700; border-radius:8px; padding:10px 20px;">' + kt('Log in / Register', 'ログイン・会員登録') + '</a>';
                             }
                             gateHtml += '</div></div>';
                             $form.prepend(gateHtml);
@@ -593,8 +598,8 @@
             // Run client-side validation
             var errors = validateKycFormClient($form);
             if (errors.length > 0) {
-                showFieldErrors($form, errors, '本人確認データまたは添付書類に不備があります。以下の項目をご確認ください：');
-                kaitoriPopup('入力内容または書類画像に不備があります。赤枠で表示された項目をご確認ください。', 'error');
+                showFieldErrors($form, errors, kt('There is a problem with your identity-verification data or attached documents. Please check the following items:', '本人確認データまたは添付書類に不備があります。以下の項目をご確認ください：'));
+                kaitoriPopup(kt('Some entries or document images are invalid. Please check the fields highlighted in red.', '入力内容または書類画像に不備があります。赤枠で表示された項目をご確認ください。'), 'error');
                 return false;
             }
 
@@ -624,18 +629,18 @@
                         if (response.data && response.data.invalid_fields) {
                             var serverErrors = [];
                             var fieldLabels = {
-                                'kyc_name': '氏名 (Full Name)',
-                                'kyc_kana': 'フリガナ (Katakana)',
-                                'kyc_email': 'メールアドレス (Email)',
-                                'kyc_phone': '電話番号 (Phone Number)',
-                                'kyc_dob': '生年月日 (Date of Birth)',
-                                'kyc_postal': '郵便番号 (Postal Code)',
-                                'kyc_prefecture': '都道府県 (Prefecture)',
-                                'kyc_city': '市区町村 (City / Ward)',
-                                'kyc_address': '番地・建物名 (Street Address)',
-                                'kyc_id_front': '書類の表面画像 (Front ID Photo)',
-                                'kyc_id_back': '書類の裏面画像 (Back ID Photo)',
-                                'kyc_selfie': 'セルフィー写真 (Selfie)'
+                                'kyc_name': kt('Full Name', '氏名'),
+                                'kyc_kana': kt('Katakana', 'フリガナ'),
+                                'kyc_email': kt('Email', 'メールアドレス'),
+                                'kyc_phone': kt('Phone Number', '電話番号'),
+                                'kyc_dob': kt('Date of Birth', '生年月日'),
+                                'kyc_postal': kt('Postal Code', '郵便番号'),
+                                'kyc_prefecture': kt('Prefecture', '都道府県'),
+                                'kyc_city': kt('City / Ward', '市区町村'),
+                                'kyc_address': kt('Street Address', '番地・建物名'),
+                                'kyc_id_front': kt('Front ID Photo', '書類の表面画像'),
+                                'kyc_id_back': kt('Back ID Photo', '書類の裏面画像'),
+                                'kyc_selfie': kt('Selfie', 'セルフィー写真')
                             };
                             $.each(response.data.invalid_fields, function(fName, msg) {
                                 serverErrors.push({

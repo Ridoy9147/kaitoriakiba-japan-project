@@ -128,10 +128,10 @@
     <div class="navigation-box2" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:20px;">
         <div class="navigation-h2" style="background:#0f172a; padding:10px 14px; color:#ffffff; font-weight:800; font-size:14px;"><i class="fa fa-circle" style="font-size:8px; vertical-align:middle; margin-right:6px;"></i><span>Information &amp; Guides</span></div>
         <ul class="navigation-h3" style="list-style:none; padding:10px 14px; margin:0;">
-            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span>買取申込 (Online Application)</span></a></li>
-            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span>本人確認 (eKYC Verification)</span></a></li>
-            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span>新規会員登録 (Register)</span></a></li>
-            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span>買取価格一覧 (Price List)</span></a></li>
+            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span><?php kaitori_te( 'Online Application', '買取申込' ); ?></span></a></li>
+            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span><?php kaitori_te( 'eKYC Verification', '本人確認' ); ?></span></a></li>
+            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span><?php kaitori_te( 'Register', '新規会員登録' ); ?></span></a></li>
+            <li style="padding:8px 0; border-bottom:1px solid #f1f5f9;"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><i class="fa fa-caret-right" style="color:#ef4444; margin-right:6px;"></i><span><?php kaitori_te( 'Price List', '買取価格一覧' ); ?></span></a></li>
         </ul>
     </div>
 
@@ -141,9 +141,9 @@
             <div class="header">
                 <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/email/weekly.jpg" width="100%" alt="Weekly Newsletter" style="width:100% !important; max-width:100% !important; margin:0 !important; display:block !important; border-radius:6px;" />
             </div>
-            <p class="info" style="font-size:12px; margin:10px 0 6px 0; color:#475569;">最新の高価買取相場や会員限定キャンペーン情報をメールでお届けします。</p>
+            <p class="info" style="font-size:12px; margin:10px 0 6px 0; color:#475569;"><?php kaitori_te( "We'll email you the latest high-value buyback rates and member-only campaign news.", '最新の高価買取相場や会員限定キャンペーン情報をメールでお届けします。' ); ?></p>
             <div style="margin-bottom: 10px;">
-                <a class="btn-ys block-btn btn-ys-cor1" style="background-color: #ef4444; color:#fff; display:block; text-align:center; padding:8px; border-radius:6px; font-weight:700; text-decoration:none;" href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php _e( 'メールマガジン登録', 'kaitoriakiba' ); ?></a>
+                <a class="btn-ys block-btn btn-ys-cor1" style="background-color: #ef4444; color:#fff; display:block; text-align:center; padding:8px; border-radius:6px; font-weight:700; text-decoration:none;" href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php kaitori_te( 'Subscribe to Newsletter', 'メールマガジン登録' ); ?></a>
             </div>
         </div>
     </div>

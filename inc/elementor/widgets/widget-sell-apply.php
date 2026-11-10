@@ -420,6 +420,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                         </label>
                     </div>
 
+                    <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'sell_apply' ); } ?>
                     <div class="step-nav" style="display:flex; justify-content:space-between; margin-top:24px;">
                         <button type="button" class="btn btn-default" onclick="goToStep(1)" style="font-weight:700; padding:12px 24px; border-radius:10px;">&larr; <?php kaitori_te( 'Back', '前へ戻る' ); ?></button>
                         <button type="submit" id="btnSubmitSell" class="btn btn-danger" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px 40px; border-radius:10px; font-size:16px;">

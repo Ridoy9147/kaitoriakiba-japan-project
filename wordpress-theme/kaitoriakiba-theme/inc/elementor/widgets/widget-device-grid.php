@@ -194,9 +194,9 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
         $columns        = ! empty( $settings['columns'] ) ? $settings['columns'] : '4';
         $btn_text       = ! empty( $settings['button_text'] ) ? $settings['button_text'] : __( 'Apply for Buyback', 'kaitoriakiba' );
         $show_header    = isset( $settings['show_section_header'] ) ? $settings['show_section_header'] : 'yes';
-        $section_badge  = ! empty( $settings['section_badge'] ) ? $settings['section_badge'] : '高価買取強化中';
-        $section_title  = ! empty( $settings['section_title'] ) ? $settings['section_title'] : '買取強化商品一覧';
-        $section_sub    = ! empty( $settings['section_subtitle'] ) ? $settings['section_subtitle'] : 'iPhone・最新スマホ・タブレットなど高額買取対象モデル';
+        $section_badge  = ! empty( $settings['section_badge'] ) ? $settings['section_badge'] : kaitori_t( 'High-Value Buyback Boost', '高価買取強化中' );
+        $section_title  = ! empty( $settings['section_title'] ) ? $settings['section_title'] : kaitori_t( 'Featured Buyback Models', '買取強化商品一覧' );
+        $section_sub    = ! empty( $settings['section_subtitle'] ) ? $settings['section_subtitle'] : kaitori_t( 'High-value buyback models including iPhone, the latest smartphones, and tablets', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' );
 
         $args = array(
             'post_type'      => 'kaitori_device',
@@ -294,7 +294,7 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                         <a title="<?php the_title_attribute(); ?>" href="<?php echo esc_url( $permalink ); ?>"><?php the_title(); ?></a>
                                                     </li>
                                                     <li class="sub-pro-notice-item" style="margin: 2px 0 1px 0; line-height: 1.2;">
-                                                        <a style="color:#ec1600; font-size: 11px; font-weight: 600; display: block; height: auto; max-height: 18px; line-height: 1.2; text-decoration: none;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( $permalink ); ?>">分割残債あり(△)も減額なし対応</a>
+                                                        <a style="color:#ec1600; font-size: 11px; font-weight: 600; display: block; height: auto; max-height: 18px; line-height: 1.2; text-decoration: none;" title="<?php echo esc_attr( kaitori_t( 'Installment balance (△) accepted with no deduction', '分割残債あり(△)も減額なし対応' ) ); ?>" href="<?php echo esc_url( $permalink ); ?>"><?php kaitori_te( 'Installment balance (△) accepted with no deduction', '分割残債あり(△)も減額なし対応' ); ?></a>
                                                     </li>
                                                     <li class="sub-pro-jan-item" style="font-size: 11px; color: #64748b; margin: 2px 0 0 0; line-height: 1.2; padding: 0;">JAN：<?php echo esc_html( $jan ); ?></li>
                                                 </div>
@@ -340,7 +340,7 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                         <a title="<?php echo esc_attr( $dev['title'] ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php echo esc_html( $dev['title'] ); ?></a>
                                                     </li>
                                                     <li class="sub-pro-notice-item" style="margin: 2px 0 1px 0; line-height: 1.2;">
-                                                        <a style="color:#ec1600; font-size: 11px; font-weight: 600; display: block; height: auto; max-height: 18px; line-height: 1.2; text-decoration: none;" title="分割残債あり(△)も減額なし対応" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>">分割残債あり(△)も減額なし対応</a>
+                                                        <a style="color:#ec1600; font-size: 11px; font-weight: 600; display: block; height: auto; max-height: 18px; line-height: 1.2; text-decoration: none;" title="<?php echo esc_attr( kaitori_t( 'Installment balance (△) accepted with no deduction', '分割残債あり(△)も減額なし対応' ) ); ?>" href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>"><?php kaitori_te( 'Installment balance (△) accepted with no deduction', '分割残債あり(△)も減額なし対応' ); ?></a>
                                                     </li>
                                                     <li class="sub-pro-jan-item" style="font-size: 11px; color: #64748b; margin: 2px 0 0 0; line-height: 1.2; padding: 0;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
                                                 </div>
@@ -363,7 +363,7 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                     </div>
                 </div>
                 <div class="sub-pro-footer" style="text-align: center; margin-top: 15px;">
-                    <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 全機種一覧', 'kaitoriakiba' ); ?></a>
+                    <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'View All', '全機種一覧' ); ?></a>
                 </div>
             </div>
         </div>

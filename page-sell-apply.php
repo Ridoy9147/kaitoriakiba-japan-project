@@ -41,10 +41,10 @@ else :
             
             <div class="apply-header" style="text-align: center; margin-bottom: 30px;">
                 <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 8px;">
-                    <i class="fa fa-mobile" style="color:#ef4444;"></i> <?php _e( 'iPhone・スマホ買取 査定・オンライン申込', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-mobile" style="color:#ef4444;"></i> <?php kaitori_te( 'iPhone & Smartphone Buyback — Assessment & Online Application', 'iPhone・スマホ買取 査定・オンライン申込' ); ?>
                 </h1>
                 <p style="color: #64748b; font-size: 13.5px; margin: 0;">
-                    <?php _e( 'かんたん2ステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！', 'kaitoriakiba' ); ?>
+                    <?php kaitori_te( 'Instant assessment & buyback application in 2 easy steps. Same-day payment at the earliest, free shipping!', 'かんたん2ステップ入力で即時査定＆買取お申込み。最短即日入金・送料無料！' ); ?>
                 </p>
             </div>
 
@@ -418,6 +418,7 @@ else :
                         <button type="button" class="btn btn-default" onclick="goToStep(1);" style="font-weight:700; border-radius:10px; padding:12px 24px; border:1.5px solid #cbd5e1;">
                             <i class="fa fa-arrow-left"></i> 前へ戻る (Back)
                         </button>
+                        <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'sell_apply' ); } ?>
                         <button type="submit" class="btn btn-primary btn-submit-app" id="btnFinalSubmit" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border:none; border-radius:10px; font-weight:800; font-size:16px; color:#fff; padding:12px 36px;">
                             <i class="fa fa-paper-plane"></i> 買取を申し込む (Submit Buyback Application)
                         </button>

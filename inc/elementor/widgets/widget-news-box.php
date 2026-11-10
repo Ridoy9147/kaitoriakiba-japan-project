@@ -53,7 +53,7 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings  = $this->get_settings_for_display();
         $theme_uri = get_template_directory_uri();
-        $title     = ! empty( $settings['news_title'] ) ? $settings['news_title'] : "What's News (新着情報・お知らせ)";
+        $title     = ! empty( $settings['news_title'] ) ? $settings['news_title'] : kaitori_t( "What's News", '新着情報・お知らせ' );
         ?>
         <div class="topicInner home" style="margin-bottom: 25px;">
             <div class="topicHeader">
@@ -78,8 +78,8 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
                             </div>
                             <div class="layout_cell">
                                 <p class="date">2026.09.16</p>
-                                <p class="title"><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>">【秋葉原店】通常営業時間のご案内 (10:00〜19:30)</a></p>
-                                <p class="msg"><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>">いつも買取アキバをご利用いただきありがとうございます。秋葉原店は年中無休で店頭買取を実施しております。</a></p>
+                                <p class="title"><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>"><?php kaitori_te( '[Akihabara Store] Regular business hours (10:00–19:30)', '【秋葉原店】通常営業時間のご案内 (10:00〜19:30)' ); ?></a></p>
+                                <p class="msg"><a href="<?php echo esc_url( home_url( '/access/' ) ); ?>"><?php kaitori_te( 'Thank you for always choosing Kaitori Akiba. Our Akihabara store offers in-store buyback year-round.', 'いつも買取アキバをご利用いただきありがとうございます。秋葉原店は年中無休で店頭買取を実施しております。' ); ?></a></p>
                             </div>
                         </li>
                         <li class="col-xs-12 col-md-6">
@@ -90,8 +90,8 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
                             </div>
                             <div class="layout_cell">
                                 <p class="date">2026.07.07</p>
-                                <p class="title"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">【本人確認】オンラインeKYCスピード認証システム導入</a></p>
-                                <p class="msg"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>">古物営業法に基づく本人確認手続きがスマホひとつで完了。運転免許証・マイナンバーカードのアップロードに対応。</a></p>
+                                <p class="title"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><?php kaitori_te( '[Identity Verification] Online eKYC speedy authentication system introduced', '【本人確認】オンラインeKYCスピード認証システム導入' ); ?></a></p>
+                                <p class="msg"><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><?php kaitori_te( 'Identity verification under the Secondhand Dealer Act can be completed with just your smartphone. Driver\'s license and My Number card uploads supported.', '古物営業法に基づく本人確認手続きがスマホひとつで完了。運転免許証・マイナンバーカードのアップロードに対応。' ); ?></a></p>
                             </div>
                         </li>
                         <li class="col-xs-12 col-md-6">
@@ -102,8 +102,8 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
                             </div>
                             <div class="layout_cell">
                                 <p class="date">2026.06.09</p>
-                                <p class="title"><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>">【郵送買取】安全な梱包と無料発送キットのご案内</a></p>
-                                <p class="msg"><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>">輸送中の箱潰れを防ぐため、端末を気泡緩衝材（プチプチ）で丁寧に保護して発送してください。</a></p>
+                                <p class="title"><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><?php kaitori_te( '[Mail-in Buyback] Safe packing and free shipping kit guide', '【郵送買取】安全な梱包と無料発送キットのご案内' ); ?></a></p>
+                                <p class="msg"><a href="<?php echo esc_url( home_url( '/sell-apply/?delivery=mail' ) ); ?>"><?php kaitori_te( 'To prevent the box from being crushed in transit, please carefully protect the device with bubble wrap before shipping.', '輸送中の箱潰れを防ぐため、端末を気泡緩衝材（プチプチ）で丁寧に保護して発送してください。' ); ?></a></p>
                             </div>
                         </li>
                         <li class="col-xs-12 col-md-6">
@@ -114,15 +114,15 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
                             </div>
                             <div class="layout_cell">
                                 <p class="date">2026.03.17</p>
-                                <p class="title"><a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">【相場更新】iPhone 16 / 15 シリーズ高価買取価格改定のお知らせ</a></p>
-                                <p class="msg"><a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>">最新相場に基づきiPhone各シリーズの最高買取上限価格を更新いたしました。分割中(△)も同額買取対応！</a></p>
+                                <p class="title"><a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>"><?php kaitori_te( '[Price Update] iPhone 16 / 15 series high-value buyback price revision', '【相場更新】iPhone 16 / 15 シリーズ高価買取価格改定のお知らせ' ); ?></a></p>
+                                <p class="msg"><a href="<?php echo esc_url( home_url( '/devices/?cat=iphone' ) ); ?>"><?php kaitori_te( 'We have updated the maximum buyback prices for each iPhone series based on the latest market rates. Same price even for devices still on installments (△)!', '最新相場に基づきiPhone各シリーズの最高買取上限価格を更新いたしました。分割中(△)も同額買取対応！' ); ?></a></p>
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="topicFooter">
-                <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php _e( 'View All / 一覧を見る', 'kaitoriakiba' ); ?></a>
+                <a class="btn-ys more" href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'View All', '一覧を見る' ); ?></a>
             </div>
         </div>
         <?php

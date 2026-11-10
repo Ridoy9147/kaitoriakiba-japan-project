@@ -156,7 +156,11 @@ function kaitoriakiba_staff_grant_caps( $allcaps, $caps, $args, $user ) {
 
     // 2. eKYC Verifications & Customer Management
     // Both share kaitoriakiba_manage_cap() which returns 'edit_kaitori_records'
-    if ( ! empty( $perms['ekyc_view'] ) || ! empty( $perms['ekyc_verify'] ) || ! empty( $perms['customers_view'] ) || ! empty( $perms['orders_edit'] ) ) {
+    // edit_kaitori_records is the type's primitive used to SHOW the Orders/eKYC menus.
+    // Grant it for any view permission too, then block the actual per-record edit via
+    // map_meta_cap when the matching edit permission is off (see below) — so "view only"
+    // can browse without being able to change records.
+    if ( ! empty( $perms['orders_view'] ) || ! empty( $perms['ekyc_view'] ) || ! empty( $perms['ekyc_verify'] ) || ! empty( $perms['customers_view'] ) || ! empty( $perms['orders_edit'] ) ) {
         $allcaps['edit_kaitori_records'] = true;
     }
 
@@ -272,6 +276,19 @@ function kaitoriakiba_staff_map_meta_cap( $caps, $cap, $user_id, $args ) {
             // Block deleting devices if devices_delete is OFF
             if ( 'kaitori_device' === $post->post_type && 'delete_post' === $cap && empty( $perms['devices_delete'] ) ) {
                 return array( 'do_not_allow' );
+            }
+            // Block EDITING when the module's edit permission is off, so "view only"
+            // staff can browse the list but not modify records.
+            if ( 'edit_post' === $cap ) {
+                if ( 'kaitori_device' === $post->post_type && empty( $perms['devices_edit'] ) ) {
+                    return array( 'do_not_allow' );
+                }
+                if ( 'buyback_order' === $post->post_type && empty( $perms['orders_edit'] ) ) {
+                    return array( 'do_not_allow' );
+                }
+                if ( 'kyc_record' === $post->post_type && empty( $perms['ekyc_verify'] ) ) {
+                    return array( 'do_not_allow' );
+                }
             }
         }
     }

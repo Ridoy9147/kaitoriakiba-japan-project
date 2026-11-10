@@ -41,10 +41,10 @@ else :
             
             <div class="kyc-header" style="text-align: center; margin-bottom: 24px;">
                 <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-                    <i class="fa fa-id-card-o" style="color:#ef4444;"></i> <?php _e( '本人確認 (Identity Verification - eKYC)', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-id-card-o" style="color:#ef4444;"></i> <?php kaitori_te( 'Identity Verification (eKYC)', '本人確認 (eKYC)' ); ?>
                 </h1>
                 <p style="color: #64748b; font-size: 13.5px; line-height: 1.5; margin:0;">
-                    <?php _e( '古物営業法に基づき、スマートフォン等の買取時には本人確認書類の提出が義務付けられています。オンラインで安全に書類画像をアップロードいただけます。', 'kaitoriakiba' ); ?>
+                    <?php kaitori_te( 'Under the Secondhand Dealer Act, submitting identity documents is required when buying smartphones and similar devices. You can securely upload your document images online.', '古物営業法に基づき、スマートフォン等の買取時には本人確認書類の提出が義務付けられています。オンラインで安全に書類画像をアップロードいただけます。' ); ?>
                 </p>
             </div>
 
@@ -215,6 +215,7 @@ else :
                     </label>
                 </div>
 
+                <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'kyc' ); } ?>
                 <button type="submit" class="btn btn-primary btn-submit-kyc" style="width:100%; height:50px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border:none; border-radius:10px; font-weight:800; font-size:16px; color:#fff;">
                     <i class="fa fa-upload"></i> 本人確認書類を提出する (Submit eKYC)
                 </button>

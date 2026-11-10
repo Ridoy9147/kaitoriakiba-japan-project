@@ -724,16 +724,14 @@ function kaitoriakiba_order_meta_box_render( $post ) {
 }
 
 function kaitoriakiba_save_order_meta( $post_id ) {
+    // Verify the meta-box nonce first (CSRF protection); bail if absent/invalid.
     if ( ! isset( $_POST['kaitori_order_meta_nonce'] ) || ! wp_verify_nonce( $_POST['kaitori_order_meta_nonce'], 'kaitori_order_meta_save' ) ) {
-        if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {
-            return;
-        }
+        return;
     }
-
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return;
     }
-    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+    if ( ! current_user_can( kaitoriakiba_manage_cap() ) || ! current_user_can( 'edit_post', $post_id ) ) {
         return;
     }
 
@@ -1263,16 +1261,14 @@ function kaitoriakiba_kyc_meta_box_render( $post ) {
 }
 
 function kaitoriakiba_save_kyc_meta( $post_id ) {
+    // Verify the meta-box nonce first (CSRF protection); bail if absent/invalid.
     if ( ! isset( $_POST['kaitori_kyc_meta_nonce'] ) || ! wp_verify_nonce( $_POST['kaitori_kyc_meta_nonce'], 'kaitori_kyc_meta_save' ) ) {
-        if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {
-            return;
-        }
+        return;
     }
-
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return;
     }
-    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+    if ( ! current_user_can( kaitoriakiba_manage_cap() ) || ! current_user_can( 'edit_post', $post_id ) ) {
         return;
     }
 

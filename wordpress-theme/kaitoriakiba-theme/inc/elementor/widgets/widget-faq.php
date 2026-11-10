@@ -91,26 +91,26 @@ class Kaitori_FAQ_Widget extends \Elementor\Widget_Base {
 
         $faq_list = ! empty( $settings['faq_list'] ) && is_iterable( $settings['faq_list'] ) ? $settings['faq_list'] : array(
             array(
-                'question' => '箱や付属品がなくても買取できますか？',
-                'answer'   => 'はい、本体のみでも高価買取しております！付属品の欠品による大幅な減額はございません。',
+                'question' => kaitori_t( 'Can you buy my device even without the box or accessories?', '箱や付属品がなくても買取できますか？' ),
+                'answer'   => kaitori_t( 'Yes, we offer high prices even for the device alone! There is no major deduction for missing accessories.', 'はい、本体のみでも高価買取しております！付属品の欠品による大幅な減額はございません。' ),
             ),
             array(
-                'question' => '分割支払い中（残債あり）のiPhoneも売れますか？',
-                'answer'   => 'はい、当店ではネットワーク利用制限△（分割中）の端末も僅かな減額幅で即日買取可能です。',
+                'question' => kaitori_t( 'Can I sell an iPhone that is still on an installment plan (with a remaining balance)?', '分割支払い中（残債あり）のiPhoneも売れますか？' ),
+                'answer'   => kaitori_t( 'Yes, we can buy devices with network usage restriction △ (on installments) same-day with only a slight deduction.', 'はい、当店ではネットワーク利用制限△（分割中）の端末も僅かな減額幅で即日買取可能です。' ),
             ),
             array(
-                'question' => '画面が割れていても買い取ってもらえますか？',
-                'answer'   => 'はい、ガラス割れ・背面割れ・液晶不良などのジャンク状態でも適正価格でお買取いたします。',
+                'question' => kaitori_t( 'Will you buy my device even if the screen is cracked?', '画面が割れていても買い取ってもらえますか？' ),
+                'answer'   => kaitori_t( 'Yes, we buy devices at a fair price even in junk condition such as cracked glass, a cracked back, or LCD defects.', 'はい、ガラス割れ・背面割れ・液晶不良などのジャンク状態でも適正価格でお買取いたします。' ),
             ),
             array(
-                'question' => '振込手数料や送料はかかりますか？',
-                'answer'   => '送料・振込手数料・査定料すべて当店負担（0円）です。お客様の費用負担は一切ございません。',
+                'question' => kaitori_t( 'Are there any transfer fees or shipping costs?', '振込手数料や送料はかかりますか？' ),
+                'answer'   => kaitori_t( 'Shipping, transfer fees, and assessment fees are all covered by us (¥0). There is no cost to you whatsoever.', '送料・振込手数料・査定料すべて当店負担（0円）です。お客様の費用負担は一切ございません。' ),
             ),
         );
         ?>
         <div class="kaitori-faq-widget" style="background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; padding:24px; margin:20px 0;">
             <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:18px; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">
-                <i class="fa fa-question-circle" style="color:#ef4444;"></i> <?php _e( 'よくあるご質問 (FAQ)', 'kaitoriakiba' ); ?>
+                <i class="fa fa-question-circle" style="color:#ef4444;"></i> <?php kaitori_te( 'Frequently Asked Questions (FAQ)', 'よくあるご質問 (FAQ)' ); ?>
             </h3>
             <div class="faq-accordion-list">
                 <?php foreach ( $faq_list as $index => $item ) : ?>

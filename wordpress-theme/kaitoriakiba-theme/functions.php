@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.4.0' );
+define( 'KAITORIAKIBA_VERSION', '2.5.0' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 
@@ -99,6 +99,7 @@ function kaitoriakiba_enqueue_scripts() {
         'home_url'   => home_url( '/' ),
         'theme_url'  => $uri,
         'logged_in'  => is_user_logged_in() ? 1 : 0,
+        'lang'       => function_exists( 'kaitoriakiba_lang' ) ? kaitoriakiba_lang() : 'ja',
         'favorites'  => function_exists( 'kaitoriakiba_get_user_favorites' ) ? kaitoriakiba_get_user_favorites() : array(),
         'i18n_error' => kaitori_t( 'A communication error occurred. Please try again shortly.', '通信エラーが発生しました。しばらくしてからもう一度お試しください。' ),
         'i18n'       => array(
@@ -122,6 +123,7 @@ add_action( 'wp_enqueue_scripts', 'kaitoriakiba_enqueue_scripts' );
  */
 require_once KAITORIAKIBA_DIR . '/inc/i18n-switcher.php';
 require_once KAITORIAKIBA_DIR . '/inc/form-security.php';
+require_once KAITORIAKIBA_DIR . '/inc/recaptcha.php';
 require_once KAITORIAKIBA_DIR . '/inc/seo.php';
 require_once KAITORIAKIBA_DIR . '/inc/crypto.php';
 require_once KAITORIAKIBA_DIR . '/inc/pricing.php';
@@ -377,15 +379,20 @@ add_action( 'after_switch_theme', function() {
  * 9. Fallback template routing for /mypage and /my-account to prevent 404 errors.
  */
 function kaitoriakiba_account_template_include( $template ) {
-    $uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+    // Only act as a FALLBACK: if the account page exists, WordPress already routes it
+    // to its own template, so we must not override it (that made page-mypage.php never
+    // render). We also must not touch non-404 requests, or we'd mask real 404s.
+    if ( ! is_404() ) {
+        return $template;
+    }
+    $uri  = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
     $path = trim( (string) wp_parse_url( $uri, PHP_URL_PATH ), '/' );
 
     if ( preg_match( '#(^|/)(mypage|my-account|my_account)$#i', $path ) ) {
-        status_header( 200 );
         global $wp_query;
         if ( $wp_query ) {
-            $wp_query->is_404  = false;
-            $wp_query->is_page = true;
+            $wp_query->is_404 = false;
+            status_header( 200 );
         }
         $target = locate_template( array( 'page-my-account.php', 'page-mypage.php' ) );
         if ( $target ) {

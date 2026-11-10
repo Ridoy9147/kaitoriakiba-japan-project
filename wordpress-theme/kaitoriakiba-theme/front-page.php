@@ -284,7 +284,7 @@ else :
                         <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/devices/' ) ); ?>"><?php kaitori_te( 'Price Guarantee Policy', '価格保証について' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
-                        <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/mypage/' ) ); ?>"><?php kaitori_te( 'Member Dashboard', 'マイページ' ); ?></a></div>
+                        <div class="home_lx_td"><a href="<?php echo esc_url( function_exists( 'kaitoriakiba_get_account_url' ) ? kaitoriakiba_get_account_url() : home_url( '/mypage/' ) ); ?>"><?php kaitori_te( 'Member Dashboard', 'マイページ' ); ?></a></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 home_lx">
                         <div class="home_lx_td"><a href="<?php echo esc_url( home_url( '/faq/' ) ); ?>"><?php kaitori_te( 'Frequently Asked Questions (FAQ)', 'よくある質問 (FAQ)' ); ?></a></div>

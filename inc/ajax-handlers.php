@@ -23,10 +23,10 @@ function kaitoriakiba_ajax_submit_application() {
         list( $can_sell, $gate_reason ) = kaitoriakiba_user_can_sell();
         if ( ! $can_sell ) {
             $messages = array(
-                'login'    => __( '買取申込にはログインが必要です。', 'kaitoriakiba' ),
-                'need_kyc' => __( 'お申込みの前に本人確認（eKYC）を完了してください。', 'kaitoriakiba' ),
-                'pending'  => __( '本人確認の審査中です。承認後にお申込みいただけます。', 'kaitoriakiba' ),
-                'rejected' => __( '本人確認に不備があります。再提出をお願いいたします。', 'kaitoriakiba' ),
+                'login'    => kaitori_t( 'You must be logged in to apply for a buyback.', '買取申込にはログインが必要です。' ),
+                'need_kyc' => kaitori_t( 'Please complete identity verification (eKYC) before applying.', 'お申込みの前に本人確認（eKYC）を完了してください。' ),
+                'pending'  => kaitori_t( 'Your identity verification is under review. You can apply once it is approved.', '本人確認の審査中です。承認後にお申込みいただけます。' ),
+                'rejected' => kaitori_t( 'There is a problem with your identity verification. Please resubmit.', '本人確認に不備があります。再提出をお願いいたします。' ),
             );
             wp_send_json_error( array(
                 'message'  => isset( $messages[ $gate_reason ] ) ? $messages[ $gate_reason ] : $messages['need_kyc'],
@@ -95,26 +95,26 @@ function kaitoriakiba_ajax_submit_application() {
     // Server-side validation for Application Fields
     $invalid_app_fields = array();
     if ( empty( $model ) ) {
-        $invalid_app_fields['model'] = __( '機種名を選択してください。', 'kaitoriakiba' );
+        $invalid_app_fields['model'] = kaitori_t( 'Please select a device model.', '機種名を選択してください。' );
     }
     if ( empty( $storage ) ) {
-        $invalid_app_fields['storage'] = __( 'ストレージ容量を選択してください。', 'kaitoriakiba' );
+        $invalid_app_fields['storage'] = kaitori_t( 'Please select a storage capacity.', 'ストレージ容量を選択してください。' );
     }
     if ( ! empty( $imei ) ) {
         $clean_imei = preg_replace( '/[\s\-]/', '', $imei );
         if ( strlen( $clean_imei ) !== 15 || ! ctype_digit( $clean_imei ) ) {
-            $invalid_app_fields['imei'] = __( 'IMEI番号は15桁の半角数字で入力してください。', 'kaitoriakiba' );
+            $invalid_app_fields['imei'] = kaitori_t( 'Please enter the IMEI as 15 half-width digits.', 'IMEI番号は15桁の半角数字で入力してください。' );
         }
     }
     if ( ! empty( $email ) && ! is_email( $email ) ) {
-        $invalid_app_fields['applicant_email'] = __( '有効なメールアドレスの形式で入力してください。', 'kaitoriakiba' );
+        $invalid_app_fields['applicant_email'] = kaitori_t( 'Please enter a valid email address.', '有効なメールアドレスの形式で入力してください。' );
     }
     if ( empty( $_POST['agree_terms'] ) ) {
-        $invalid_app_fields['agree_terms'] = __( '利用規約への同意にチェックを入れてください。', 'kaitoriakiba' );
+        $invalid_app_fields['agree_terms'] = kaitori_t( 'Please check the box to agree to the Terms of Service.', '利用規約への同意にチェックを入れてください。' );
     }
     if ( ! empty( $invalid_app_fields ) ) {
         wp_send_json_error( array(
-            'message'        => __( '入力内容に不備があります。該当項目をご確認ください。', 'kaitoriakiba' ),
+            'message'        => kaitori_t( 'Some entries are invalid. Please check the highlighted fields.', '入力内容に不備があります。該当項目をご確認ください。' ),
             'invalid_fields' => $invalid_app_fields,
         ) );
     }
@@ -131,7 +131,7 @@ function kaitoriakiba_ajax_submit_application() {
     $order_id = wp_insert_post( $post_data );
 
     if ( is_wp_error( $order_id ) || ! $order_id ) {
-        wp_send_json_error( array( 'message' => __( '申し訳ありません。申込の送信中にエラーが発生しました。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'Sorry, an error occurred while submitting your application.', '申し訳ありません。申込の送信中にエラーが発生しました。' ) ) );
     }
 
     // Save Meta Data
@@ -223,7 +223,7 @@ function kaitoriakiba_ajax_submit_application() {
     wp_send_json_success( array(
         'order_id'    => $order_id,
         'order_code'  => $order_title,
-        'message'     => __( '買取申込が正常に送信されました。確認メールをご確認ください。', 'kaitoriakiba' ),
+        'message'     => kaitori_t( 'Your buyback application was submitted successfully. Please check your confirmation email.', '買取申込が正常に送信されました。確認メールをご確認ください。' ),
     ) );
 }
 add_action( 'wp_ajax_kaitori_submit_application', 'kaitoriakiba_ajax_submit_application' );
@@ -253,31 +253,31 @@ function kaitoriakiba_ajax_submit_kyc() {
     $invalid_kyc_fields = array();
 
     if ( empty( $name ) ) {
-        $invalid_kyc_fields['kyc_name'] = __( '氏名（漢字）を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_name'] = kaitori_t( 'Please enter your name (in kanji).', '氏名（漢字）を入力してください。' );
     }
     if ( empty( $kana ) ) {
-        $invalid_kyc_fields['kyc_kana'] = __( 'フリガナ（カタカナ）を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_kana'] = kaitori_t( 'Please enter your name reading (in katakana).', 'フリガナ（カタカナ）を入力してください。' );
     }
     if ( empty( $email ) || ! is_email( $email ) ) {
-        $invalid_kyc_fields['kyc_email'] = __( '有効なメールアドレスを入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_email'] = kaitori_t( 'Please enter a valid email address.', '有効なメールアドレスを入力してください。' );
     }
     if ( empty( $phone ) ) {
-        $invalid_kyc_fields['kyc_phone'] = __( '電話番号を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_phone'] = kaitori_t( 'Please enter your phone number.', '電話番号を入力してください。' );
     }
     if ( empty( $dob ) ) {
-        $invalid_kyc_fields['kyc_dob'] = __( '生年月日を選択してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_dob'] = kaitori_t( 'Please select your date of birth.', '生年月日を選択してください。' );
     }
     if ( empty( $postal ) ) {
-        $invalid_kyc_fields['kyc_postal'] = __( '郵便番号を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_postal'] = kaitori_t( 'Please enter your postal code.', '郵便番号を入力してください。' );
     }
     if ( empty( $pref ) ) {
-        $invalid_kyc_fields['kyc_prefecture'] = __( '都道府県を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_prefecture'] = kaitori_t( 'Please enter your prefecture.', '都道府県を入力してください。' );
     }
     if ( empty( $city ) ) {
-        $invalid_kyc_fields['kyc_city'] = __( '市区町村を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_city'] = kaitori_t( 'Please enter your city, ward, or town.', '市区町村を入力してください。' );
     }
     if ( empty( $address ) ) {
-        $invalid_kyc_fields['kyc_address'] = __( '番地・建物名を入力してください。', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_address'] = kaitori_t( 'Please enter your street address and building name.', '番地・建物名を入力してください。' );
     }
 
     $allowed_exts = array( 'jpg', 'jpeg', 'png', 'webp', 'pdf' );
@@ -285,17 +285,17 @@ function kaitoriakiba_ajax_submit_kyc() {
     // Check front ID file
     $front_key = ! empty( $_FILES['kyc_id_front']['name'] ) ? 'kyc_id_front' : ( ! empty( $_FILES['kyc_front']['name'] ) ? 'kyc_front' : '' );
     if ( empty( $front_key ) || empty( $_FILES[ $front_key ]['tmp_name'] ) ) {
-        $invalid_kyc_fields['kyc_id_front'] = __( '本人確認書類の表面画像を選択してください。(必須)', 'kaitoriakiba' );
+        $invalid_kyc_fields['kyc_id_front'] = kaitori_t( 'Please select the front image of your ID document. (Required)', '本人確認書類の表面画像を選択してください。(必須)' );
     } else {
         $front_ext = strtolower( pathinfo( $_FILES[ $front_key ]['name'], PATHINFO_EXTENSION ) );
         if ( ! in_array( $front_ext, $allowed_exts, true ) ) {
             $invalid_kyc_fields['kyc_id_front'] = sprintf(
-                __( '表面写真の形式（.%s）は未対応です。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）', 'kaitoriakiba' ),
+                kaitori_t( 'The front photo format (.%s) is not supported. Allowed formats: JPG, JPEG, PNG, WEBP, PDF (max 10MB)', '表面写真の形式（.%s）は未対応です。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）' ),
                 esc_html( $front_ext ?: '不明' )
             );
         } elseif ( (int) $_FILES[ $front_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
             $invalid_kyc_fields['kyc_id_front'] = sprintf(
-                __( '表面画像のサイズが上限（10MB）を超えています（%sMB）。10MB以下のファイルを選択してください。', 'kaitoriakiba' ),
+                kaitori_t( 'The front image exceeds the 10MB limit (%sMB). Please choose a file of 10MB or less.', '表面画像のサイズが上限（10MB）を超えています（%sMB）。10MB以下のファイルを選択してください。' ),
                 number_format( (int) $_FILES[ $front_key ]['size'] / ( 1024 * 1024 ), 1 )
             );
         }
@@ -308,12 +308,12 @@ function kaitoriakiba_ajax_submit_kyc() {
         $back_ext = strtolower( pathinfo( $_FILES[ $back_key ]['name'], PATHINFO_EXTENSION ) );
         if ( ! in_array( $back_ext, $allowed_exts, true ) ) {
             $invalid_kyc_fields['kyc_id_back'] = sprintf(
-                __( '裏面写真の形式（.%s）は未対応です。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）', 'kaitoriakiba' ),
+                kaitori_t( 'The back photo format (.%s) is not supported. Allowed formats: JPG, JPEG, PNG, WEBP, PDF (max 10MB)', '裏面写真の形式（.%s）は未対応です。許可形式: JPG, JPEG, PNG, WEBP, PDF（最大10MB）' ),
                 esc_html( $back_ext ?: '不明' )
             );
         } elseif ( (int) $_FILES[ $back_key ]['size'] > kaitoriakiba_kyc_max_size() ) {
             $invalid_kyc_fields['kyc_id_back'] = sprintf(
-                __( '裏面画像のサイズが上限（10MB）を超えています（%sMB）。10MB以下のファイルを選択してください。', 'kaitoriakiba' ),
+                kaitori_t( 'The back image exceeds the 10MB limit (%sMB). Please choose a file of 10MB or less.', '裏面画像のサイズが上限（10MB）を超えています（%sMB）。10MB以下のファイルを選択してください。' ),
                 number_format( (int) $_FILES[ $back_key ]['size'] / ( 1024 * 1024 ), 1 )
             );
         }
@@ -321,7 +321,7 @@ function kaitoriakiba_ajax_submit_kyc() {
 
     if ( ! empty( $invalid_kyc_fields ) ) {
         wp_send_json_error( array(
-            'message'        => __( '本人確認データの入力内容または書類に不備があります。該当項目をご確認ください。', 'kaitoriakiba' ),
+            'message'        => kaitori_t( 'There is a problem with your identity-verification details or documents. Please check the highlighted fields.', '本人確認データの入力内容または書類に不備があります。該当項目をご確認ください。' ),
             'invalid_fields' => $invalid_kyc_fields,
         ) );
     }
@@ -372,7 +372,7 @@ function kaitoriakiba_ajax_submit_kyc() {
     ) );
 
     if ( ! $kyc_id || is_wp_error( $kyc_id ) ) {
-        wp_send_json_error( array( 'message' => __( '本人確認データの送信に失敗しました。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'Failed to submit your identity-verification data.', '本人確認データの送信に失敗しました。' ) ) );
     }
 
     update_post_meta( $kyc_id, '_kyc_status', 'pending' );
@@ -443,7 +443,7 @@ function kaitoriakiba_ajax_submit_kyc() {
 
     wp_send_json_success( array(
         'kyc_id'  => $kyc_id,
-        'message' => __( '本人確認書類のアップロードが完了いたしました。審査完了まで今しばらくお待ちください。', 'kaitoriakiba' ),
+        'message' => kaitori_t( 'Your identity documents were uploaded successfully. Please wait a little while for the review to complete.', '本人確認書類のアップロードが完了いたしました。審査完了まで今しばらくお待ちください。' ),
     ) );
 }
 add_action( 'wp_ajax_kaitori_submit_kyc', 'kaitoriakiba_ajax_submit_kyc' );
@@ -704,7 +704,7 @@ function kaitoriakiba_ajax_toggle_favorite() {
 
     $device_id = isset( $_POST['device_id'] ) ? intval( $_POST['device_id'] ) : 0;
     if ( ! $device_id || 'kaitori_device' !== get_post_type( $device_id ) ) {
-        wp_send_json_error( array( 'message' => __( '対象の端末が見つかりませんでした。', 'kaitoriakiba' ) ) );
+        wp_send_json_error( array( 'message' => kaitori_t( 'The specified device could not be found.', '対象の端末が見つかりませんでした。' ) ) );
     }
 
     if ( ! is_user_logged_in() ) {
@@ -712,7 +712,7 @@ function kaitoriakiba_ajax_toggle_favorite() {
             'guest'      => true,
             'device_id'  => $device_id,
             'login_url'  => home_url( '/register/' ),
-            'message'    => __( 'お気に入りの保存には会員登録・ログインが必要です。', 'kaitoriakiba' ),
+            'message'    => kaitori_t( 'You must register and log in to save favorites.', 'お気に入りの保存には会員登録・ログインが必要です。' ),
         ) );
     }
 

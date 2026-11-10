@@ -112,7 +112,8 @@ function kaitoriakiba_order_status_changed_email( $meta_id, $post_id, $meta_key,
     if ( $extra ) {
         $body .= '<p>' . $extra . '</p>';
     }
-    $body .= '<p><a href="' . esc_url( home_url( '/mypage/' ) ) . '" style="display:inline-block;background:#0f172a;color:#fff;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;">' . esc_html__( 'マイページで確認', 'kaitoriakiba' ) . '</a></p>';
+    $account_url = function_exists( 'kaitoriakiba_get_account_url' ) ? kaitoriakiba_get_account_url() : home_url( '/mypage/' );
+    $body .= '<p><a href="' . esc_url( $account_url ) . '" style="display:inline-block;background:#0f172a;color:#fff;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;">' . esc_html__( 'マイページで確認', 'kaitoriakiba' ) . '</a></p>';
 
     $subject = sprintf( esc_html__( '【買取アキバ】お申込みステータス更新（%s）', 'kaitoriakiba' ), $code );
     $html    = kaitoriakiba_email_wrap( esc_html__( 'ステータス更新のお知らせ', 'kaitoriakiba' ), $body );

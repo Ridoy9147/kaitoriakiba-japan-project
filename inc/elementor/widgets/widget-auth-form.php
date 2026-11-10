@@ -194,6 +194,7 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
                             <small style="color:#64748b; font-size:12px;"><?php kaitori_te( '* Use at least 8 half-width alphanumeric characters.', '※8文字以上の半角英数字を組み合わせて入力してください。' ); ?></small>
                         </div>
 
+                        <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'register' ); } ?>
                         <button type="submit" id="btnSubmitRegister" class="btn btn-danger btn-block" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px; border-radius:10px; font-size:16px;">
                             <i class="fa fa-user-plus"></i> <?php kaitori_te( 'Complete Registration', '会員登録を完了する' ); ?>
                         </button>
@@ -234,6 +235,7 @@ class Kaitori_Auth_Form_Widget extends \Elementor\Widget_Base {
                             </label>
                         </div>
 
+                        <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'login' ); } ?>
                         <button type="submit" id="btnSubmitLogin" class="btn btn-danger btn-block" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:14px; border-radius:10px; font-size:16px;">
                             <i class="fa fa-sign-in"></i> <?php kaitori_te( 'Sign In', 'ログインする' ); ?>
                         </button>

@@ -34,10 +34,10 @@ else :
             <!-- Auth Navigation Tabs -->
             <div style="display:flex; border-bottom:2px solid #e2e8f0; margin-bottom:28px;">
                 <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" style="flex:1; padding:12px; font-weight:800; font-size:15px; border:none; background:transparent; border-bottom:3px solid <?php echo $is_login_page ? 'transparent' : '#ef4444'; ?>; color:<?php echo $is_login_page ? '#64748b' : '#ef4444'; ?>; cursor:pointer;">
-                    <i class="fa fa-user-plus"></i> <?php _e( '新規会員登録 (Register)', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-user-plus"></i> <?php kaitori_te( 'Member Registration', '新規会員登録' ); ?>
                 </button>
                 <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" style="flex:1; padding:12px; font-weight:800; font-size:15px; border:none; background:transparent; border-bottom:3px solid <?php echo $is_login_page ? '#ef4444' : 'transparent'; ?>; color:<?php echo $is_login_page ? '#ef4444' : '#64748b'; ?>; cursor:pointer;">
-                    <i class="fa fa-sign-in"></i> <?php _e( 'ログイン (Login)', 'kaitoriakiba' ); ?>
+                    <i class="fa fa-sign-in"></i> <?php kaitori_te( 'Login', 'ログイン' ); ?>
                 </button>
             </div>
 
@@ -58,10 +58,10 @@ else :
                 <div id="authRegisterPanel" style="display:<?php echo $is_login_page ? 'none' : 'block'; ?>;">
                     <div class="auth-header" style="text-align: center; margin-bottom: 24px;">
                         <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
-                            <?php _e( 'Kaitori Akiba 無料会員登録', 'kaitoriakiba' ); ?>
+                            <?php kaitori_te( 'Kaitori Akiba Free Membership', 'Kaitori Akiba 無料会員登録' ); ?>
                         </h2>
                         <p style="color: #64748b; font-size: 13.5px; margin:0;">
-                            <?php _e( '会員登録を行うと、次回からの入力省略や買取履歴の確認、会員限定ボーナスがご利用いただけます。', 'kaitoriakiba' ); ?>
+                            <?php kaitori_te( 'Registering lets you skip re-entering your details next time, check your buyback history, and enjoy member-only bonuses.', '会員登録を行うと、次回からの入力省略や買取履歴の確認、会員限定ボーナスがご利用いただけます。' ); ?>
                         </p>
                     </div>
 
@@ -115,6 +115,7 @@ else :
                             </label>
                         </div>
 
+                        <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'register' ); } ?>
                         <button type="submit" class="btn btn-primary btn-submit-reg" style="width:100%; height:50px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border:none; border-radius:10px; font-weight:800; font-size:16px; color:#fff;">
                             <i class="fa fa-user-plus"></i> 無料会員登録を完了する (Register)
                         </button>
@@ -129,10 +130,10 @@ else :
                 <div id="authLoginPanel" style="display:<?php echo $is_login_page ? 'block' : 'none'; ?>;">
                     <div class="auth-header" style="text-align: center; margin-bottom: 24px;">
                         <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
-                            <?php _e( '会員ログイン (Login)', 'kaitoriakiba' ); ?>
+                            <?php kaitori_te( 'Member Login', '会員ログイン' ); ?>
                         </h2>
                         <p style="color: #64748b; font-size: 13.5px; margin:0;">
-                            <?php _e( 'ご登録済みのメールアドレスとパスワードでログインしてください。', 'kaitoriakiba' ); ?>
+                            <?php kaitori_te( 'Please log in with your registered email address and password.', 'ご登録済みのメールアドレスとパスワードでログインしてください。' ); ?>
                         </p>
                     </div>
 
@@ -161,6 +162,7 @@ else :
                             <a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" style="font-size:12.5px; color:#ef4444; text-decoration:none;">パスワードをお忘れの方</a>
                         </div>
 
+                        <?php if ( function_exists( 'kaitoriakiba_recaptcha_field' ) ) { kaitoriakiba_recaptcha_field( 'login' ); } ?>
                         <button type="submit" class="btn btn-primary btn-submit-login" style="width:100%; height:50px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border:none; border-radius:10px; font-weight:800; font-size:16px; color:#fff;">
                             <i class="fa fa-sign-in"></i> ログインする (Sign In)
                         </button>

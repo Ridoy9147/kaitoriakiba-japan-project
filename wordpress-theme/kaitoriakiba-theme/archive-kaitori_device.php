@@ -12,8 +12,8 @@ get_header();
     
     <!-- Breadcrumb -->
     <div style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" style="color:#64748b; text-decoration:none;">ホーム</a> &gt; 
-        <span style="color:#0f172a; font-weight:700;">買取対象機種一覧</span>
+        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" style="color:#64748b; text-decoration:none;"><?php kaitori_te( 'Home', 'ホーム' ); ?></a> &gt;
+        <span style="color:#0f172a; font-weight:700;"><?php kaitori_te( 'Buyback Device List', '買取対象機種一覧' ); ?></span>
     </div>
 
     <!-- Search Box (Dual Search) -->
@@ -136,12 +136,12 @@ get_header();
                     if ( is_tax() ) {
                         single_term_title();
                     } else {
-                        _e( '買取機種・価格一覧 (Device Price List)', 'kaitoriakiba' );
+                        kaitori_te( 'Device Price List', '買取機種・価格一覧' );
                     }
                     ?>
                 </h1>
                 <span style="font-size:13px; color:#64748b;">
-                    全 <?php echo esc_html( $wp_query->found_posts ); ?> 件
+                    <?php printf( kaitori_t( '%s items', '全 %s 件' ), esc_html( $wp_query->found_posts ) ); ?>
                 </span>
             </div>
 
@@ -159,8 +159,8 @@ get_header();
                     <div class="text-center" style="margin-top: 30px;">
                         <?php
                         the_posts_pagination( array(
-                            'prev_text' => '&laquo; 前へ',
-                            'next_text' => '次へ &raquo;',
+                            'prev_text' => kaitori_t( '&laquo; Prev', '&laquo; 前へ' ),
+                            'next_text' => kaitori_t( 'Next &raquo;', '次へ &raquo;' ),
                             'type'      => 'list',
                         ) );
                         ?>
@@ -169,9 +169,9 @@ get_header();
                 <?php else : ?>
                     <div class="alert alert-warning text-center" style="padding: 40px 20px; border-radius: 12px; margin-top: 20px;">
                         <i class="fa fa-search" style="font-size: 32px; color: #f59e0b; margin-bottom: 12px; display: block;"></i>
-                        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">該当する買取機種が見つかりませんでした</h3>
-                        <p style="color: #64748b; font-size: 13.5px; margin-bottom: 16px;">条件を変えて検索するか、お電話・LINEにて直接お問い合わせください。</p>
-                        <a href="<?php echo esc_url( get_post_type_archive_link( 'kaitori_device' ) ); ?>" class="btn btn-default" style="font-weight: 700;">全機種一覧を表示</a>
+                        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;"><?php kaitori_te( 'No matching buyback devices were found', '該当する買取機種が見つかりませんでした' ); ?></h3>
+                        <p style="color: #64748b; font-size: 13.5px; margin-bottom: 16px;"><?php kaitori_te( 'Please try different search conditions, or contact us directly by phone or LINE.', '条件を変えて検索するか、お電話・LINEにて直接お問い合わせください。' ); ?></p>
+                        <a href="<?php echo esc_url( get_post_type_archive_link( 'kaitori_device' ) ); ?>" class="btn btn-default" style="font-weight: 700;"><?php kaitori_te( 'Show all devices', '全機種一覧を表示' ); ?></a>
                     </div>
                 <?php endif; ?>
             </div>

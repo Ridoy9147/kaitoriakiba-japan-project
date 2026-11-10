@@ -192,7 +192,7 @@ class Kaitori_Checkpoints_Widget extends \Elementor\Widget_Base {
                     <div class="clearfix"></div>
                     <div style="text-align:center; margin-top:20px;">
                         <a href="<?php echo esc_url( home_url( '/sell-apply/?type=corporate' ) ); ?>">
-                            <button type="button" class="btn btn-faren col-center"><?php _e( 'Corporate Clients Click Here (法人様買取相談)', 'kaitoriakiba' ); ?></button>
+                            <button type="button" class="btn btn-faren col-center"><?php kaitori_te( 'Corporate Clients Click Here', '法人様買取相談' ); ?></button>
                         </a>
                     </div>
                 </div>

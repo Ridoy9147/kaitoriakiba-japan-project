@@ -29,7 +29,7 @@ get_header();
                 <?php
             endwhile;
         else :
-            echo '<div class="alert alert-info">' . esc_html__( '記事が見つかりませんでした。(Nothing found)', 'kaitoriakiba' ) . '</div>';
+            echo '<div class="alert alert-info">' . esc_html( kaitori_t( 'Nothing found.', '記事が見つかりませんでした。' ) ) . '</div>';
         endif;
         ?>
     </main>

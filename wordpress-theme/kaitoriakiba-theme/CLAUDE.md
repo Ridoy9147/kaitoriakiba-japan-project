@@ -14,17 +14,33 @@ under 古物営業法), and the shop buys the device and pays by bank transfer.
 - **Stack:** WordPress + **Elementor** (page builder), Bootstrap 3, jQuery, Font Awesome 4.
 - **Local dev:** Laragon on Windows. Site URL `http://kaitoriakiba.test`. PHP 8.1 at
   `F:/laragon/laragon/bin/php/php-8.1.10-Win32-vs16-x64/php`. Admin user `admin`.
-- **Version:** see `KAITORIAKIBA_VERSION` in `functions.php` (currently 2.2.3).
+- **Version:** see `KAITORIAKIBA_VERSION` in `functions.php` (currently 2.5.0).
 - **Language / bilingual switcher (EN ⇄ JP):** `inc/i18n-switcher.php` provides
   `kaitori_t($en, $ja)` / `kaitori_te()`. Front remembers the choice in a cookie
   (`kaitori_lang`, default ja) via `?lang=en|ja`; admin per-user meta (`_kaitori_admin_lang`,
   default en) via `?admin_lang=`; toggles in the header utility bar + admin toolbar.
-  JS strings come from the `kaitori_ajax.i18n` localize (built with `kaitori_t`).
-  **Converted so far:** header/footer, home, My Page, FAQ, Access, device card + single
-  device, and the live form widgets (`widget-auth-form`, `widget-kyc-verify`,
-  `widget-sell-apply`). **Still Japanese-only:** native form fallback templates (not
-  rendered on this Elementor install) and the whole admin/L3 (CPT labels, Customers,
-  Demo Import, Buyback Gate, meta-boxes). When adding strings, wrap them in `kaitori_t`.
+  JS strings: a few via the `kaitori_ajax.i18n` localize, and the client-side form
+  validation strings via a JS `kt(en, ja)` helper in `assets/js/theme-app.js` driven by
+  `kaitori_ajax.lang` (mirrors `kaitori_t`). **Front is fully converted:** header/footer,
+  home + all home widgets (announcement banner, news box, FAQ, device grid/single,
+  checkpoints, search box), My Page, FAQ, Access, device card + single device, archive +
+  taxonomy, sidebar, 404, index, the live form widgets AND their native fallback templates
+  (`widget-auth-form`/`page-register`, `widget-kyc-verify`/`page-kyc-verify`,
+  `widget-sell-apply`/`page-sell-apply`, `page-phone-single`), plus **all front-facing AJAX
+  response messages** in `inc/ajax-handlers.php` and the client-side validation popups.
+  **Still Japanese-only:** the admin/L3 layer (CPT labels, Customers, Demo Import, Buyback
+  Gate, meta-boxes, walk-in order, invoice admin UI). When adding strings, wrap them in
+  `kaitori_t` (PHP) or `kt` (theme-app.js).
+- **Google reCAPTCHA v2 (checkbox):** `inc/recaptcha.php` — admin-configurable at
+  **Appearance → reCAPTCHA** (option `kaitori_recaptcha`: master `enabled` + `site_key` +
+  `secret_key` + per-form toggles for register/login/kyc/sell_apply). `kaitoriakiba_recaptcha_field($form)`
+  renders the widget (printed inside each form's widget AND native template, before submit)
+  plus a hidden `kaitori_recaptcha` marker; the api.js is enqueued front-side when active.
+  Server verification hooks the existing `kaitori_captcha_verify` filter (so it runs through
+  `kaitoriakiba_guard_public_form()` / the login handler): it only requires a token when the
+  marker is present, verifies `g-recaptcha-response` at Google's siteverify, and fails open on
+  a network error. Admins are exempt via the existing guard. AJAX forms submit the token
+  automatically because they use `FormData(this)`.
 
 ## 2. Data model (Custom Post Types + Taxonomies) — `inc/cpt.php`
 
@@ -77,6 +93,7 @@ Order statuses: single source of truth `kaitoriakiba_order_statuses()` in `inc/c
 | `crypto.php` | AES field encryption for bank data (`kaitoriakiba_encrypt/decrypt/mask_account`) |
 | `kyc-security.php` | eKYC files in **protected dir** `uploads/kaitori-kyc-secure/`; staff-only streaming endpoint `kaitori_view_kyc_file` |
 | `form-security.php` | Honeypot + timing, IP rate-limit (transients), `kaitori_captcha_verify` hook |
+| `recaptcha.php` | **Google reCAPTCHA v2** (admin config + per-form render helper + server verify via `kaitori_captcha_verify`) |
 | `emails.php` | Customer order-confirmation + status-change emails (HTML `wp_mail`) |
 | `seo.php` | OG/Twitter meta + JSON-LD (LocalBusiness, Product/Offer, FAQPage) |
 | `admin-customers.php` | **Customers admin page** (aggregate list + filters + detail + edit) and admin AJAX (status update, customer update, save-scan) |
@@ -150,6 +167,7 @@ Admins bypass (for previews). Helper: `kaitoriakiba_user_can_sell()` → `[bool,
 - **Invoice** — "Print / Save as PDF" button on the order edit screen and in the Customers detail order list
 - **Appearance → Demo Import** (`themes.php?page=kaitori-demo-import`) — 1-click seed / sample orders / reset
 - **Appearance → Buyback Gate** (`themes.php?page=kaitori-sell-gate`) — eKYC gate mode
+- **Appearance → reCAPTCHA** (`themes.php?page=kaitori-recaptcha`) — enable + site/secret keys + per-form toggles
 - **Users → (any user)** — Kaitori section shows their eKYC + orders
 
 ## 9. Operational notes
