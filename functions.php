@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.5.0' );
+define( 'KAITORIAKIBA_VERSION', '2.5.1' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 

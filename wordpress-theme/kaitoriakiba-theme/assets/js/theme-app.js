@@ -833,6 +833,93 @@
             }
         });
 
+        // 5. Kaitori Loop Carousel Swiper Initialization
+        function initKaitoriLoopCarousel($scope) {
+            var $wrapper = $scope.find('.kaitori-loop-carousel-wrapper');
+            if (!$wrapper.length) return;
+
+            $wrapper.each(function() {
+                var $this = $(this);
+                var rawCfg = $this.attr('data-carousel-config');
+                if (!rawCfg) return;
+                var cfg = JSON.parse(rawCfg);
+                var container = $this.find('.kaitori-loop-swiper')[0];
+                if (!container) return;
+
+                var swiperOpts = {
+                    slidesPerView: cfg.slidesPerView || 1,
+                    spaceBetween: cfg.spaceBetween || 0,
+                    loop: (cfg.loop === true),
+                    speed: cfg.speed || 600,
+                    grabCursor: true,
+                    watchSlidesProgress: true,
+                    observer: true,
+                    observeParents: true
+                };
+
+                if (cfg.effect === 'fade') {
+                    swiperOpts.effect = 'fade';
+                    swiperOpts.fadeEffect = { crossFade: true };
+                }
+
+                if (cfg.autoplay) {
+                    swiperOpts.autoplay = {
+                        delay: cfg.autoplayDelay || 4000,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: (cfg.pauseOnHover === true)
+                    };
+                    swiperOpts.autoplayDisableOnInteraction = false;
+                }
+
+                if (cfg.showArrows) {
+                    var prevEl = $this.find('.kaitori-carousel-prev')[0];
+                    var nextEl = $this.find('.kaitori-carousel-next')[0];
+                    if (prevEl && nextEl) {
+                        swiperOpts.navigation = { prevEl: prevEl, nextEl: nextEl };
+                        swiperOpts.prevButton = prevEl;
+                        swiperOpts.nextButton = nextEl;
+                    }
+                }
+
+                if (cfg.showPagination) {
+                    var pagEl = $this.find('.kaitori-carousel-pagination')[0];
+                    if (pagEl) {
+                        swiperOpts.pagination = {
+                            el: pagEl,
+                            clickable: true,
+                            type: cfg.paginationType || 'bullets'
+                        };
+                        swiperOpts.paginationClickable = true;
+                    }
+                }
+
+                if (cfg.breakpoints) {
+                    swiperOpts.breakpoints = cfg.breakpoints;
+                }
+
+                if (container.swiperInstance && typeof container.swiperInstance.destroy === 'function') {
+                    try { container.swiperInstance.destroy(true, true); } catch(e) {}
+                }
+
+                if (typeof Swiper !== 'undefined') {
+                    container.swiperInstance = new Swiper(container, swiperOpts);
+                } else if (typeof $.fn.swiper === 'function') {
+                    container.swiperInstance = $(container).swiper(swiperOpts);
+                }
+            });
+        }
+
+        // Initialize on ready
+        initKaitoriLoopCarousel($(document));
+
+        // Hook Elementor Live Editor
+        $(window).on('elementor/frontend/init', function() {
+            if (typeof elementorFrontend !== 'undefined' && elementorFrontend.hooks) {
+                elementorFrontend.hooks.addAction('frontend/element_ready/kaitori_loop_carousel.default', function($scope) {
+                    initKaitoriLoopCarousel($scope);
+                });
+            }
+        });
     });
 
 })(jQuery);

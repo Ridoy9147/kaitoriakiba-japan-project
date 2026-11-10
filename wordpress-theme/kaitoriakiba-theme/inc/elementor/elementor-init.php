@@ -65,6 +65,7 @@ function kaitoriakiba_register_elementor_widgets( $widgets_manager = null ) {
         'widget-kyc-verify.php'           => 'Kaitori_KYC_Verify_Widget',
         'widget-auth-form.php'            => 'Kaitori_Auth_Form_Widget',
         'widget-faq.php'                  => 'Kaitori_FAQ_Widget',
+        'widget-loop-carousel.php'        => 'Kaitori_Loop_Carousel_Widget',
     );
 
     foreach ( $widgets_to_load as $file => $class_name ) {
