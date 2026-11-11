@@ -520,7 +520,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
         $this->add_responsive_control(
             'content_valign',
             array(
-                'label'     => __( 'Vertical Alignment', 'kaitoriakiba' ),
+                'label'     => __( 'Vertical Alignment (垂直方向の配置)', 'kaitoriakiba' ),
                 'type'      => \Elementor\Controls_Manager::CHOOSE,
                 'options'   => array(
                     'flex-start' => array(
@@ -538,7 +538,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 ),
                 'default'   => 'center',
                 'selectors' => array(
-                    '{{WRAPPER}} .kaitori-carousel-slide-inner' => 'align-items: {{VALUE}};',
+                    '{{WRAPPER}} .kaitori-carousel-slide-inner' => 'justify-content: {{VALUE}};',
                 ),
             )
         );
@@ -546,7 +546,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
         $this->add_responsive_control(
             'content_halign',
             array(
-                'label'     => __( 'Horizontal Alignment', 'kaitoriakiba' ),
+                'label'     => __( 'Horizontal Alignment (水平方向の配置)', 'kaitoriakiba' ),
                 'type'      => \Elementor\Controls_Manager::CHOOSE,
                 'options'   => array(
                     'left'   => array(
@@ -565,7 +565,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 'default'   => 'center',
                 'selectors' => array(
                     '{{WRAPPER}} .kaitori-carousel-custom-content' => 'text-align: {{VALUE}};',
-                    '{{WRAPPER}} .kaitori-carousel-slide-inner'    => 'justify-content: {{VALUE}};',
+                    '{{WRAPPER}} .kaitori-slide-content-wrap'      => 'text-align: {{VALUE}};',
                 ),
             )
         );
@@ -714,6 +714,15 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
             )
         );
 
+        // Subtitle Heading
+        $this->add_control(
+            'subtitle_style_heading',
+            array(
+                'label'     => __( 'Subtitle / Eyebrow (サブタイトル)', 'kaitoriakiba' ),
+                'type'      => \Elementor\Controls_Manager::HEADING,
+            )
+        );
+
         $this->add_control(
             'subtitle_color',
             array(
@@ -721,7 +730,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => '#38bdf8',
                 'selectors' => array(
-                    '{{WRAPPER}} .kaitori-carousel-subtitle' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-subtitle, {{WRAPPER}} .kaitori-carousel-subtitle' => 'color: {{VALUE}};',
                 ),
             )
         );
@@ -730,7 +739,29 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
             \Elementor\Group_Control_Typography::get_type(),
             array(
                 'name'     => 'subtitle_typography',
-                'selector' => '{{WRAPPER}} .kaitori-carousel-subtitle',
+                'selector' => '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-subtitle, {{WRAPPER}} .kaitori-carousel-subtitle',
+            )
+        );
+
+        $this->add_responsive_control(
+            'subtitle_margin',
+            array(
+                'label'      => __( 'Subtitle Margin', 'kaitoriakiba' ),
+                'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array( 'px', 'em', '%' ),
+                'selectors'  => array(
+                    '{{WRAPPER}} .kaitori-carousel-subtitle' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        // Title Heading
+        $this->add_control(
+            'title_style_heading',
+            array(
+                'label'     => __( 'Title / Heading (タイトル)', 'kaitoriakiba' ),
+                'type'      => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
             )
         );
 
@@ -740,9 +771,8 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 'label'     => __( 'Title Color', 'kaitoriakiba' ),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => '#ffffff',
-                'separator' => 'before',
                 'selectors' => array(
-                    '{{WRAPPER}} .kaitori-carousel-title' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-title, {{WRAPPER}} .kaitori-carousel-title' => 'color: {{VALUE}};',
                 ),
             )
         );
@@ -751,7 +781,29 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
             \Elementor\Group_Control_Typography::get_type(),
             array(
                 'name'     => 'title_typography',
-                'selector' => '{{WRAPPER}} .kaitori-carousel-title',
+                'selector' => '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-title, {{WRAPPER}} .kaitori-carousel-title',
+            )
+        );
+
+        $this->add_responsive_control(
+            'title_margin',
+            array(
+                'label'      => __( 'Title Margin', 'kaitoriakiba' ),
+                'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array( 'px', 'em', '%' ),
+                'selectors'  => array(
+                    '{{WRAPPER}} .kaitori-carousel-title' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        // Description Heading
+        $this->add_control(
+            'desc_style_heading',
+            array(
+                'label'     => __( 'Description Text (説明文)', 'kaitoriakiba' ),
+                'type'      => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
             )
         );
 
@@ -761,9 +813,8 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 'label'     => __( 'Description Color', 'kaitoriakiba' ),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => '#e2e8f0',
-                'separator' => 'before',
                 'selectors' => array(
-                    '{{WRAPPER}} .kaitori-carousel-desc' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-desc, {{WRAPPER}} .kaitori-carousel-desc' => 'color: {{VALUE}};',
                 ),
             )
         );
@@ -772,7 +823,75 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
             \Elementor\Group_Control_Typography::get_type(),
             array(
                 'name'     => 'desc_typography',
-                'selector' => '{{WRAPPER}} .kaitori-carousel-desc',
+                'selector' => '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-desc, {{WRAPPER}} .kaitori-carousel-desc',
+            )
+        );
+
+        $this->add_responsive_control(
+            'desc_align',
+            array(
+                'label'     => __( 'Description Alignment (説明文の配置)', 'kaitoriakiba' ),
+                'type'      => \Elementor\Controls_Manager::CHOOSE,
+                'options'   => array(
+                    'left'    => array(
+                        'title' => __( 'Left', 'kaitoriakiba' ),
+                        'icon'  => 'eicon-text-align-left',
+                    ),
+                    'center'  => array(
+                        'title' => __( 'Center', 'kaitoriakiba' ),
+                        'icon'  => 'eicon-text-align-center',
+                    ),
+                    'right'   => array(
+                        'title' => __( 'Right', 'kaitoriakiba' ),
+                        'icon'  => 'eicon-text-align-right',
+                    ),
+                    'justify' => array(
+                        'title' => __( 'Justify', 'kaitoriakiba' ),
+                        'icon'  => 'eicon-text-align-justify',
+                    ),
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .kaitori-carousel-desc' => 'text-align: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'desc_max_width',
+            array(
+                'label'      => __( 'Description Max Width', 'kaitoriakiba' ),
+                'type'       => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => array( 'px', '%', 'vw' ),
+                'range'      => array(
+                    'px' => array(
+                        'min'  => 200,
+                        'max'  => 1400,
+                        'step' => 10,
+                    ),
+                    '%'  => array(
+                        'min' => 20,
+                        'max' => 100,
+                    ),
+                ),
+                'default'    => array(
+                    'unit' => 'px',
+                    'size' => 650,
+                ),
+                'selectors'  => array(
+                    '{{WRAPPER}} .kaitori-carousel-desc' => 'max-width: {{SIZE}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'desc_margin',
+            array(
+                'label'      => __( 'Description Margin', 'kaitoriakiba' ),
+                'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array( 'px', 'em', '%' ),
+                'selectors'  => array(
+                    '{{WRAPPER}} .kaitori-carousel-desc' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
             )
         );
 
@@ -780,9 +899,17 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'button_style_heading',
             array(
-                'label'     => __( 'Button Style', 'kaitoriakiba' ),
+                'label'     => __( 'Button Style (ボタンスタイル)', 'kaitoriakiba' ),
                 'type'      => \Elementor\Controls_Manager::HEADING,
                 'separator' => 'before',
+            )
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name'     => 'btn_typography',
+                'selector' => '{{WRAPPER}} .kaitori-carousel-slide .kaitori-carousel-btn, {{WRAPPER}} .kaitori-carousel-btn',
             )
         );
 
@@ -855,6 +982,26 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
         $this->end_controls_tab();
 
         $this->end_controls_tabs();
+
+        $this->add_responsive_control(
+            'btn_padding',
+            array(
+                'label'      => __( 'Button Padding', 'kaitoriakiba' ),
+                'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array( 'px', 'em' ),
+                'default'    => array(
+                    'top'      => 10,
+                    'right'    => 24,
+                    'bottom'   => 10,
+                    'left'     => 24,
+                    'unit'     => 'px',
+                    'isLinked' => false,
+                ),
+                'selectors'  => array(
+                    '{{WRAPPER}} .kaitori-carousel-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
 
         $this->add_responsive_control(
             'btn_border_radius',
@@ -1047,6 +1194,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                     height: 100%;
                     display: flex;
                     flex-direction: column;
+                    justify-content: center;
                     background-position: center center;
                     background-size: cover;
                     background-repeat: no-repeat;
@@ -1064,26 +1212,37 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                     z-index: 2;
                     width: 100%;
                 }
-                #<?php echo esc_attr( $widget_id ); ?> .kaitori-carousel-subtitle {
+                #<?php echo esc_attr( $widget_id ); ?> .kaitori-carousel-custom-content {
+                    width: 100%;
+                }
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-subtitle {
                     font-size: 13px;
                     font-weight: 700;
                     letter-spacing: 1px;
                     text-transform: uppercase;
                     margin-bottom: 8px;
+                    display: block;
                 }
-                #<?php echo esc_attr( $widget_id ); ?> .kaitori-carousel-title {
-                    font-size: 26px;
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-title {
+                    font-size: 28px;
                     font-weight: 800;
                     line-height: 1.3;
                     margin: 0 0 12px 0;
                 }
-                #<?php echo esc_attr( $widget_id ); ?> .kaitori-carousel-desc {
-                    font-size: 14px;
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-desc {
+                    font-size: 15px;
                     line-height: 1.6;
-                    margin: 0 0 20px 0;
+                    display: inline-block;
+                    width: 100%;
                     max-width: 650px;
+                    margin: 0 auto 20px auto;
+                    box-sizing: border-box;
                 }
-                #<?php echo esc_attr( $widget_id ); ?> .kaitori-carousel-btn {
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-btn-wrap {
+                    display: block;
+                    width: 100%;
+                }
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-btn {
                     display: inline-block;
                     font-size: 14px;
                     font-weight: 700;
@@ -1198,7 +1357,7 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                                                 $btn_target   = ! empty( $slide['custom_btn_link']['is_external'] ) ? ' target="_blank"' : '';
                                                 $btn_nofollow = ! empty( $slide['custom_btn_link']['nofollow'] ) ? ' rel="nofollow"' : '';
                                             ?>
-                                                <div>
+                                                <div class="kaitori-carousel-btn-wrap">
                                                     <a href="<?php echo esc_url( $slide['custom_btn_link']['url'] ); ?>" class="kaitori-carousel-btn"<?php echo $btn_target . $btn_nofollow; ?>>
                                                         <?php echo esc_html( $slide['custom_btn_text'] ); ?>
                                                     </a>
