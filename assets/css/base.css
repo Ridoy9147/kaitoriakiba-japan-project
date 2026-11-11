@@ -1,11 +1,11 @@
 html{font-size:62.5% !important;background-color:#f7f7f7;}
-h1,h2,h3,h4,h5,h6,{margin:0 !important;padding:0 !important;vertical-align:baseline;font-style:normal;font-weight:normal;font-size:1.0em;}
+h1,h2,h3,h4,h5,h6{margin:0 !important;padding:0 !important;vertical-align:baseline;font-style:normal;font-weight:normal;font-size:1.0em;}
 dl,dt,dd,ul,ol,li,hr,
 table,th,td,embed,object{margin:0;padding:0;vertical-align:baseline;list-style:none;}
 a,button{outline:none !important;}
 a{text-decoration:none !important;}
 .pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{z-index:3;color:#fff;cursor:default;background-color:#fc9a00;border-color:#fc9a00;}
-h2,h3,h4,h5,h6{font-size:inherit !important;margin-top:inherit !important;margin-bottom:inherit !important;display:inline !important;}
+h2:not(.kaitori-carousel-title),h3:not(.kaitori-carousel-title),h4:not(.kaitori-carousel-title),h5:not(.kaitori-carousel-title),h6:not(.kaitori-carousel-title){font-size:inherit !important;margin-top:inherit !important;margin-bottom:inherit !important;display:inline !important;}
 @media (min-width:768px){body{font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;}
 }
 body{font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;color:#878787;background-color:#f7f7f7;line-height:1.68em;font-size:1.5rem;}

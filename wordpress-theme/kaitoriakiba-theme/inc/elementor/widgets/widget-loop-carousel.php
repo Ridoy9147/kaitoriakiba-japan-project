@@ -766,6 +766,26 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'title_html_tag',
+            array(
+                'label'   => __( 'Title HTML Tag', 'kaitoriakiba' ),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'default' => 'div',
+                'options' => array(
+                    'div'  => 'div',
+                    'h1'   => 'H1',
+                    'h2'   => 'H2',
+                    'h3'   => 'H3',
+                    'h4'   => 'H4',
+                    'h5'   => 'H5',
+                    'h6'   => 'H6',
+                    'p'    => 'p',
+                    'span' => 'span',
+                ),
+            )
+        );
+
+        $this->add_control(
             'title_color',
             array(
                 'label'     => __( 'Title Color', 'kaitoriakiba' ),
@@ -1170,6 +1190,11 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 ),
             ),
         );
+
+        $title_tag = ! empty( $settings['title_html_tag'] ) ? esc_attr( $settings['title_html_tag'] ) : 'div';
+        if ( ! in_array( $title_tag, array( 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span' ), true ) ) {
+            $title_tag = 'div';
+        }
         ?>
         <div class="kaitori-loop-carousel-wrapper <?php echo esc_attr( 'arrows-pos-' . $carousel_config['arrowsPosition'] ); ?>" id="<?php echo esc_attr( $widget_id ); ?>" data-carousel-config="<?php echo esc_attr( wp_json_encode( $carousel_config ) ); ?>">
 
@@ -1214,6 +1239,16 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                 }
                 #<?php echo esc_attr( $widget_id ); ?> .kaitori-carousel-custom-content {
                     width: 100%;
+                    display: block;
+                }
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-subtitle-wrap,
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-title-wrap,
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-desc-wrap,
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-btn-wrap {
+                    display: block !important;
+                    width: 100% !important;
+                    clear: both !important;
+                    position: relative;
                 }
                 .kaitori-loop-carousel-wrapper .kaitori-carousel-subtitle {
                     font-size: 13px;
@@ -1221,13 +1256,23 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                     letter-spacing: 1px;
                     text-transform: uppercase;
                     margin-bottom: 8px;
-                    display: block;
+                    display: inline-block;
                 }
-                .kaitori-loop-carousel-wrapper .kaitori-carousel-title {
+                .kaitori-loop-carousel-wrapper .kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper h1.kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper h2.kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper h3.kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper h4.kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper h5.kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper h6.kaitori-carousel-title,
+                .kaitori-loop-carousel-wrapper div.kaitori-carousel-title {
                     font-size: 28px;
                     font-weight: 800;
                     line-height: 1.3;
                     margin: 0 0 12px 0;
+                    display: block !important;
+                    width: 100% !important;
+                    clear: both !important;
                 }
                 .kaitori-loop-carousel-wrapper .kaitori-carousel-desc {
                     font-size: 15px;
@@ -1239,8 +1284,9 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                     box-sizing: border-box;
                 }
                 .kaitori-loop-carousel-wrapper .kaitori-carousel-btn-wrap {
-                    display: block;
-                    width: 100%;
+                    display: block !important;
+                    width: 100% !important;
+                    clear: both !important;
                 }
                 .kaitori-loop-carousel-wrapper .kaitori-carousel-btn {
                     display: inline-block;
@@ -1342,15 +1388,21 @@ class Kaitori_Loop_Carousel_Widget extends \Elementor\Widget_Base {
                                         <!-- Render Custom Content -->
                                         <div class="kaitori-carousel-custom-content">
                                             <?php if ( ! empty( $slide['custom_subtitle'] ) ) : ?>
-                                                <div class="kaitori-carousel-subtitle"><?php echo esc_html( $slide['custom_subtitle'] ); ?></div>
+                                                <div class="kaitori-carousel-subtitle-wrap">
+                                                    <div class="kaitori-carousel-subtitle"><?php echo esc_html( $slide['custom_subtitle'] ); ?></div>
+                                                </div>
                                             <?php endif; ?>
 
                                             <?php if ( ! empty( $slide['custom_title'] ) ) : ?>
-                                                <h3 class="kaitori-carousel-title"><?php echo esc_html( $slide['custom_title'] ); ?></h3>
+                                                <div class="kaitori-carousel-title-wrap">
+                                                    <<?php echo $title_tag; ?> class="kaitori-carousel-title"><?php echo esc_html( $slide['custom_title'] ); ?></<?php echo $title_tag; ?>>
+                                                </div>
                                             <?php endif; ?>
 
                                             <?php if ( ! empty( $slide['custom_description'] ) ) : ?>
-                                                <div class="kaitori-carousel-desc"><?php echo wp_kses_post( $slide['custom_description'] ); ?></div>
+                                                <div class="kaitori-carousel-desc-wrap">
+                                                    <div class="kaitori-carousel-desc"><?php echo wp_kses_post( $slide['custom_description'] ); ?></div>
+                                                </div>
                                             <?php endif; ?>
 
                                             <?php if ( ! empty( $slide['custom_btn_text'] ) && ! empty( $slide['custom_btn_link']['url'] ) ) : 
