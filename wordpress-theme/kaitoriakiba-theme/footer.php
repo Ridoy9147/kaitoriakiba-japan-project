@@ -20,17 +20,17 @@ if ( ! defined( 'ABSPATH' ) ) {
                         KAITORI AKIBA <span style="font-size: 13px; color: #ef4444;"><?php kaitori_te( 'Akihabara', '買取アキバ' ); ?></span>
                     </div>
                     <p style="font-size: 13px; line-height: 1.6; color: #94a3b8;">
-                        <?php kaitori_te( '2 min walk from Akihabara Station. A specialist buyer of iPhone, Android, iPad and MacBook. We promise fair, transparent high-value appraisals based on the latest market rates.', '秋葉原駅徒歩2分。iPhone、Android、iPad、MacBookなどの高価買取専門店。最新の市場相場に基づいた適正・透明な高額査定をお約束します。' ); ?>
+                        <?php echo esc_html( kaitoriakiba_store_setting( 'footer_desc', kaitori_t( '2 min walk from Akihabara Station. A specialist buyer of iPhone, Android, iPad and MacBook. We promise fair, transparent high-value appraisals based on the latest market rates.', '秋葉原駅徒歩2分。iPhone、Android、iPad、MacBookなどの高価買取専門店。最新の市場相場に基づいた適正・透明な高額査定をお約束します。' ) ) ); ?>
                     </p>
                     <div style="font-size: 13px; color: #cbd5e1; margin-top: 14px;">
-                        <i class="fa fa-map-marker" style="color: #ef4444; margin-right: 6px;"></i> <?php kaitori_te( '1 Sotokanda, Chiyoda-ku, Tokyo (Akihabara Store)', '東京都千代田区外神田1丁目（秋葉原店）' ); ?><br>
-                        <i class="fa fa-clock-o" style="color: #ef4444; margin-right: 6px;"></i> <?php kaitori_te( 'Hours: 10:00 - 19:30 (Open daily)', '営業時間: 10:00 〜 19:30 (年中無休)' ); ?>
+                        <i class="fa fa-map-marker" style="color: #ef4444; margin-right: 6px;"></i> <?php echo esc_html( kaitoriakiba_store_setting( 'address', kaitori_t( '1 Sotokanda, Chiyoda-ku, Tokyo (Akihabara Store)', '東京都千代田区外神田1丁目（秋葉原店）' ) ) ); ?><br>
+                        <i class="fa fa-clock-o" style="color: #ef4444; margin-right: 6px;"></i> <?php echo esc_html( kaitori_t( 'Hours: ', '営業時間: ' ) . kaitoriakiba_store_setting( 'hours', kaitori_t( '10:00 - 19:30', '10:00 〜 19:30' ) ) . ' (' . kaitoriakiba_store_setting( 'holiday', kaitori_t( 'Open daily', '年中無休' ) ) . ')' ); ?>
                     </div>
                 </div>
 
                 <!-- Col 2: Services Menu -->
                 <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 24px;">
-                    <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 14px;"><?php kaitori_te( 'Services', 'サービス案内' ); ?></div>
+                    <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 14px;"><?php echo esc_html( kaitoriakiba_store_setting( 'footer_h_services', kaitori_t( 'Services', 'サービス案内' ) ) ); ?></div>
                     <ul style="list-style: none; padding: 0; font-size: 13px; line-height: 2;">
                         <?php
                         if ( has_nav_menu( 'footer_1' ) ) {
@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                 <!-- Col 3: Customer Guide -->
                 <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 24px;">
-                    <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 14px;"><?php kaitori_te( 'Customer Guide', 'ご利用案内' ); ?></div>
+                    <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 14px;"><?php echo esc_html( kaitoriakiba_store_setting( 'footer_h_guide', kaitori_t( 'Customer Guide', 'ご利用案内' ) ) ); ?></div>
                     <ul style="list-style: none; padding: 0; font-size: 13px; line-height: 2;">
                         <?php
                         if ( has_nav_menu( 'footer_2' ) ) {
@@ -78,9 +78,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                 <!-- Col 4: Legal & Antique License -->
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="margin-bottom: 24px;">
-                    <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 14px;"><?php kaitori_te( 'Antique Dealer Act Notice', '古物営業法に基づく表記' ); ?></div>
+                    <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 14px;"><?php echo esc_html( kaitoriakiba_store_setting( 'footer_h_legal', kaitori_t( 'Antique Dealer Act Notice', '古物営業法に基づく表記' ) ) ); ?></div>
                     <p style="font-size: 12px; line-height: 1.6; color: #64748b;">
-                        <?php echo wp_kses_post( kaitori_t( 'Tokyo Public Safety Commission License No. 301031200000<br>Under our privacy policy, identity documents and device data entrusted to us are strictly managed and protected.', '東京都公安委員会許可 第301031200000号<br>個人情報保護方針に基づき、お客様からお預かりした身分証明書および端末データは厳重に管理・保護いたします。' ) ); ?>
+                        <?php echo wp_kses_post( kaitoriakiba_store_setting( 'footer_legal', kaitori_t( 'Tokyo Public Safety Commission License No. 301031200000<br>Under our privacy policy, identity documents and device data entrusted to us are strictly managed and protected.', '東京都公安委員会許可 第301031200000号<br>個人情報保護方針に基づき、お客様からお預かりした身分証明書および端末データは厳重に管理・保護いたします。' ) ) ); ?>
                     </p>
                 </div>
             </div>

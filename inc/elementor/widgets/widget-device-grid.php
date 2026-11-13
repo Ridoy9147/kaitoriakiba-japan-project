@@ -192,11 +192,11 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
         $orderby        = ! empty( $settings['orderby'] ) ? $settings['orderby'] : 'date';
         $order          = ! empty( $settings['order'] ) ? $settings['order'] : 'DESC';
         $columns        = ! empty( $settings['columns'] ) ? $settings['columns'] : '4';
-        $btn_text       = ! empty( $settings['button_text'] ) ? $settings['button_text'] : __( 'Apply for Buyback', 'kaitoriakiba' );
+        $btn_text       = kaitori_elementor_display( isset( $settings['button_text'] ) ? $settings['button_text'] : '', 'Apply for Buyback', '買取を申し込む' );
         $show_header    = isset( $settings['show_section_header'] ) ? $settings['show_section_header'] : 'yes';
-        $section_badge  = ! empty( $settings['section_badge'] ) ? $settings['section_badge'] : kaitori_t( 'High-Value Buyback Boost', '高価買取強化中' );
-        $section_title  = ! empty( $settings['section_title'] ) ? $settings['section_title'] : kaitori_t( 'Featured Buyback Models', '買取強化商品一覧' );
-        $section_sub    = ! empty( $settings['section_subtitle'] ) ? $settings['section_subtitle'] : kaitori_t( 'High-value buyback models including iPhone, the latest smartphones, and tablets', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' );
+        $section_badge  = kaitori_elementor_display( isset( $settings['section_badge'] ) ? $settings['section_badge'] : '', 'High-Value Buyback Boost', '高価買取強化中' );
+        $section_title  = kaitori_elementor_display( isset( $settings['section_title'] ) ? $settings['section_title'] : '', 'Featured Buyback Models', '買取強化商品一覧' );
+        $section_sub    = kaitori_elementor_display( isset( $settings['section_subtitle'] ) ? $settings['section_subtitle'] : '', 'High-value buyback models including iPhone, the latest smartphones, and tablets', 'iPhone・最新スマホ・タブレットなど高額買取対象モデル' );
 
         $args = array(
             'post_type'      => 'kaitori_device',
@@ -299,7 +299,7 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                     <li class="sub-pro-jan-item" style="font-size: 11px; color: #64748b; margin: 2px 0 0 0; line-height: 1.2; padding: 0;">JAN：<?php echo esc_html( $jan ); ?></li>
                                                 </div>
                                                 <li class="sub-pro-jia" style="margin: auto 0 6px 0; padding-top: 6px;">
-                                                    <?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span>
+                                                    <?php echo esc_html( kaitori_t( 'Buyback Price:', '買取価格：' ) ); ?> <span>¥<?php echo number_format( (int)$price ); ?></span>
                                                 </li>
                                                 <li style="margin: 0; padding: 0;">
                                                     <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( get_the_title() ) ) ); ?>" style="display: block; margin: 0; padding: 0;">
@@ -345,7 +345,7 @@ class Kaitori_Device_Grid_Widget extends \Elementor\Widget_Base {
                                                     <li class="sub-pro-jan-item" style="font-size: 11px; color: #64748b; margin: 2px 0 0 0; line-height: 1.2; padding: 0;">JAN：<?php echo esc_html( $dev['jan'] ); ?></li>
                                                 </div>
                                                 <li class="sub-pro-jia" style="margin: auto 0 6px 0; padding-top: 6px;">
-                                                    <?php _e( 'Buyback Price:', 'kaitoriakiba' ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span>
+                                                    <?php echo esc_html( kaitori_t( 'Buyback Price:', '買取価格：' ) ); ?> <span>¥<?php echo number_format( $dev['price'] ); ?></span>
                                                 </li>
                                                 <li style="margin: 0; padding: 0;">
                                                     <a href="<?php echo esc_url( home_url( '/sell-apply/?model=' . urlencode( $dev['title'] ) ) ); ?>" style="display: block; margin: 0; padding: 0;">

@@ -16,12 +16,26 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * When true, an EXTERNAL translation plugin (e.g. GTranslate) owns front-end
+ * translation: the front always renders in Japanese (the source language) and
+ * the custom EN|日本語 toggle is hidden, so the two systems never conflict.
+ * kaitori_t() keeps working (returns the Japanese side on front). The wp-admin
+ * language toggle is unaffected. Set this to false to bring back the custom
+ * front switcher.
+ */
+if ( ! defined( 'KAITORI_USE_EXTERNAL_TRANSLATE' ) ) {
+    define( 'KAITORI_USE_EXTERNAL_TRANSLATE', true );
+}
+
 /** Current UI language: 'en' or 'ja'. */
 function kaitoriakiba_lang() {
     if ( is_admin() ) {
         $uid  = get_current_user_id();
         $lang = $uid ? get_user_meta( $uid, '_kaitori_admin_lang', true ) : '';
         $lang = $lang ? $lang : 'en'; // admin default English
+    } elseif ( KAITORI_USE_EXTERNAL_TRANSLATE ) {
+        $lang = 'ja'; // external plugin (GTranslate) translates from Japanese
     } else {
         $lang = isset( $_COOKIE['kaitori_lang'] ) ? sanitize_key( $_COOKIE['kaitori_lang'] ) : 'ja'; // front default Japanese
     }
@@ -39,6 +53,35 @@ function kaitori_t( $en, $ja ) {
 /** Echo shortcut. */
 function kaitori_te( $en, $ja ) {
     echo kaitori_t( $en, $ja ); // phpcs:ignore WordPress.Security.EscapeOutput
+}
+
+/**
+ * Resolve an Elementor-stored display string so the EN/JP switcher still works.
+ *
+ * Elementor TEXT controls bake their value (usually the English default) into
+ * the saved _elementor_data, which the theme cannot language-switch. For labels
+ * that should follow the switcher we route the stored value through here:
+ *   - empty, or equal to the English/Japanese default  => use the switch pair
+ *   - a leftover English-only string (no Japanese/CJK)  => use the switch pair
+ *   - a genuine custom value containing Japanese        => kept as the admin set it
+ *
+ * @param string $val Stored Elementor value (may be empty).
+ * @param string $en  English text.
+ * @param string $ja  Japanese text.
+ * @return string
+ */
+function kaitori_elementor_display( $val, $en, $ja ) {
+    $sw  = kaitori_t( $en, $ja );
+    $val = trim( (string) $val );
+    if ( '' === $val || $val === $en || $val === $ja ) {
+        return $sw;
+    }
+    // Plain ASCII (no CJK / full-width) => leftover English page data, not a
+    // deliberate bilingual override, so prefer the switchable pair.
+    if ( ! preg_match( '/[\x{3000}-\x{9FFF}\x{FF00}-\x{FFEF}]/u', $val ) ) {
+        return $sw;
+    }
+    return $val;
 }
 
 /** Front-end: apply ?lang=en|ja via cookie, then redirect to a clean URL. */
@@ -70,6 +113,10 @@ add_action( 'admin_init', 'kaitoriakiba_handle_admin_lang' );
 
 /** Front-end switcher markup (placed in the header utility bar). */
 function kaitoriakiba_lang_switcher() {
+    // Hidden when an external translation plugin (GTranslate) owns the front.
+    if ( KAITORI_USE_EXTERNAL_TRANSLATE ) {
+        return;
+    }
     $cur = kaitoriakiba_lang();
     $en  = esc_url( add_query_arg( 'lang', 'en' ) );
     $ja  = esc_url( add_query_arg( 'lang', 'ja' ) );

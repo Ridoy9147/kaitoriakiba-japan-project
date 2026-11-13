@@ -160,48 +160,57 @@ else :
             <h2 style="font-size:19px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:18px; border-bottom:2px solid #f1f5f9; padding-bottom:12px;">
                 <i class="fa fa-sliders" style="color:#ef4444;"></i> <?php kaitori_te( 'Buyback Price by Condition (Rank Pricing)', 'コンディション別買取価格一覧表 (Rank Pricing)' ); ?>
             </h2>
+            <?php
+            // Column labels (also used as mobile stacked-card data-labels).
+            $col_rank  = kaitori_t( 'Rank', 'ランク' );
+            $col_cond  = kaitori_t( 'Condition guide', '状態の目安' );
+            $col_detail = kaitori_t( 'Appraisal details / accessory conditions', '査定詳細・付属品条件' );
+            $col_price = kaitori_t( 'Est. buyback price', '買取目安価格' );
+            ?>
+            <div class="rank-price-table-wrap">
             <table class="rank-price-table">
                 <thead>
                     <tr>
-                        <th style="width:15%;"><?php kaitori_te( 'Rank', 'ランク' ); ?></th>
-                        <th style="width:25%;"><?php kaitori_te( 'Condition guide', '状態の目安' ); ?></th>
-                        <th style="width:35%;"><?php kaitori_te( 'Appraisal details / accessory conditions', '査定詳細・付属品条件' ); ?></th>
-                        <th style="width:25%;"><?php kaitori_te( 'Est. buyback price', '買取目安価格' ); ?></th>
+                        <th style="width:15%;"><?php echo esc_html( $col_rank ); ?></th>
+                        <th style="width:25%;"><?php echo esc_html( $col_cond ); ?></th>
+                        <th style="width:35%;"><?php echo esc_html( $col_detail ); ?></th>
+                        <th style="width:25%;"><?php echo esc_html( $col_price ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><span class="badge-rank badge-rank-s"><?php kaitori_te( 'New (S)', '新品 (S)' ); ?></span></td>
-                        <td><strong><?php kaitori_te( 'Sealed · unused new', '未開封・未使用新品' ); ?></strong></td>
-                        <td><?php kaitori_te( 'Factory seal intact, unopened, before activation.', '元箱の封印シールが剥がされていない未開封品。アクティベーション前。' ); ?></td>
-                        <td><span class="table-price-val" id="rankPriceS">¥<?php echo number_format((int)$price_s); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_rank ); ?>"><span class="badge-rank badge-rank-s"><?php kaitori_te( 'New (S)', '新品 (S)' ); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_cond ); ?>"><strong><?php kaitori_te( 'Sealed · unused new', '未開封・未使用新品' ); ?></strong></td>
+                        <td data-label="<?php echo esc_attr( $col_detail ); ?>"><?php kaitori_te( 'Factory seal intact, unopened, before activation.', '元箱の封印シールが剥がされていない未開封品。アクティベーション前。' ); ?></td>
+                        <td data-label="<?php echo esc_attr( $col_price ); ?>"><span class="table-price-val" id="rankPriceS">¥<?php echo number_format((int)$price_s); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-a"><?php kaitori_te( 'Unused (A)', '未使用 (A)' ); ?></span></td>
-                        <td><strong><?php kaitori_te( 'Opened · unused', '開封済み・未使用品' ); ?></strong></td>
-                        <td><?php kaitori_te( 'Power-on check only. No scratches/dirt on body or screen. No missing accessories.', '通電確認のみ実施。本体・液晶に傷や汚れなし。付属品欠品なし。' ); ?></td>
-                        <td><span class="table-price-val" id="rankPriceA">¥<?php echo number_format((int)$price_a); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_rank ); ?>"><span class="badge-rank badge-rank-a"><?php kaitori_te( 'Unused (A)', '未使用 (A)' ); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_cond ); ?>"><strong><?php kaitori_te( 'Opened · unused', '開封済み・未使用品' ); ?></strong></td>
+                        <td data-label="<?php echo esc_attr( $col_detail ); ?>"><?php kaitori_te( 'Power-on check only. No scratches/dirt on body or screen. No missing accessories.', '通電確認のみ実施。本体・液晶に傷や汚れなし。付属品欠品なし。' ); ?></td>
+                        <td data-label="<?php echo esc_attr( $col_price ); ?>"><span class="table-price-val" id="rankPriceA">¥<?php echo number_format((int)$price_a); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-b"><?php kaitori_te( 'Mint (B)', '美品 (B)' ); ?></span></td>
-                        <td><strong><?php kaitori_te( 'Used, mint (no visible scratches)', '中古美品 (目立つ傷なし)' ); ?></strong></td>
-                        <td><?php kaitori_te( 'Little wear, clean screen and body. Battery max capacity 85% or higher.', '使用感が少なく液晶・外装ともに綺麗な状態。バッテリー最大容量85%以上。' ); ?></td>
-                        <td><span class="table-price-val" id="rankPriceB">¥<?php echo number_format((int)$price_b); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_rank ); ?>"><span class="badge-rank badge-rank-b"><?php kaitori_te( 'Mint (B)', '美品 (B)' ); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_cond ); ?>"><strong><?php kaitori_te( 'Used, mint (no visible scratches)', '中古美品 (目立つ傷なし)' ); ?></strong></td>
+                        <td data-label="<?php echo esc_attr( $col_detail ); ?>"><?php kaitori_te( 'Little wear, clean screen and body. Battery max capacity 85% or higher.', '使用感が少なく液晶・外装ともに綺麗な状態。バッテリー最大容量85%以上。' ); ?></td>
+                        <td data-label="<?php echo esc_attr( $col_price ); ?>"><span class="table-price-val" id="rankPriceB">¥<?php echo number_format((int)$price_b); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-c"><?php kaitori_te( 'Good (C)', '良品 (C)' ); ?></span></td>
-                        <td><strong><?php kaitori_te( 'Used, good (minor scratches/scuffs)', '中古良品 (小傷・スレあり)' ); ?></strong></td>
-                        <td><?php kaitori_te( 'Minor scuffs/small dents from daily use. All functions work.', '日常使用に伴う軽微な擦り傷・小打痕あり。動作全機能正常。' ); ?></td>
-                        <td><span class="table-price-val" id="rankPriceC">¥<?php echo number_format((int)$price_c); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_rank ); ?>"><span class="badge-rank badge-rank-c"><?php kaitori_te( 'Good (C)', '良品 (C)' ); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_cond ); ?>"><strong><?php kaitori_te( 'Used, good (minor scratches/scuffs)', '中古良品 (小傷・スレあり)' ); ?></strong></td>
+                        <td data-label="<?php echo esc_attr( $col_detail ); ?>"><?php kaitori_te( 'Minor scuffs/small dents from daily use. All functions work.', '日常使用に伴う軽微な擦り傷・小打痕あり。動作全機能正常。' ); ?></td>
+                        <td data-label="<?php echo esc_attr( $col_price ); ?>"><span class="table-price-val" id="rankPriceC">¥<?php echo number_format((int)$price_c); ?></span></td>
                     </tr>
                     <tr>
-                        <td><span class="badge-rank badge-rank-d"><?php kaitori_te( 'Faulty (D)', '難あり (D)' ); ?></span></td>
-                        <td><strong><?php kaitori_te( 'Cracked screen/back · faulty', '画面割れ・背面割れ・故障' ); ?></strong></td>
-                        <td><?php kaitori_te( 'Junk condition: cracked glass, camera faults, severe battery degradation, etc.', 'ガラス割れ、カメラ不具合、バッテリー著しい劣化等のジャンク品。' ); ?></td>
-                        <td><span class="table-price-val" id="rankPriceD">¥<?php echo number_format((int)$price_d); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_rank ); ?>"><span class="badge-rank badge-rank-d"><?php kaitori_te( 'Faulty (D)', '難あり (D)' ); ?></span></td>
+                        <td data-label="<?php echo esc_attr( $col_cond ); ?>"><strong><?php kaitori_te( 'Cracked screen/back · faulty', '画面割れ・背面割れ・故障' ); ?></strong></td>
+                        <td data-label="<?php echo esc_attr( $col_detail ); ?>"><?php kaitori_te( 'Junk condition: cracked glass, camera faults, severe battery degradation, etc.', 'ガラス割れ、カメラ不具合、バッテリー著しい劣化等のジャンク品。' ); ?></td>
+                        <td data-label="<?php echo esc_attr( $col_price ); ?>"><span class="table-price-val" id="rankPriceD">¥<?php echo number_format((int)$price_d); ?></span></td>
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Section 3: Installment Notice -->

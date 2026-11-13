@@ -236,6 +236,15 @@ function kaitoriakiba_ajax_submit_kyc() {
     check_ajax_referer( 'kaitori_nonce', 'security' );
     kaitoriakiba_guard_public_form( 'kyc', 15 );
 
+    // eKYC may only be submitted by a registered, logged-in member (defense in
+    // depth; the form is also hidden from guests in the template/widget).
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'Please register or log in before submitting identity verification (eKYC).',
+            '本人確認(eKYC)のご提出には、会員登録・ログインが必要です。'
+        ) ) );
+    }
+
     $name       = isset( $_POST['kyc_name'] ) ? sanitize_text_field( $_POST['kyc_name'] ) : ( isset( $_POST['customer_name'] ) ? sanitize_text_field( $_POST['customer_name'] ) : '' );
     $kana       = isset( $_POST['kyc_kana'] ) ? sanitize_text_field( $_POST['kyc_kana'] ) : '';
     $email      = isset( $_POST['kyc_email'] ) ? sanitize_email( $_POST['kyc_email'] ) : ( isset( $_POST['customer_email'] ) ? sanitize_email( $_POST['customer_email'] ) : '' );
@@ -441,6 +450,11 @@ function kaitoriakiba_ajax_submit_kyc() {
         update_post_meta( $kyc_id, '_kyc_selfie_file', $selfie_path );
     }
 
+    // Confirmation email to the customer that their eKYC documents were received.
+    if ( function_exists( 'kaitoriakiba_send_kyc_submitted' ) ) {
+        kaitoriakiba_send_kyc_submitted( $kyc_id );
+    }
+
     wp_send_json_success( array(
         'kyc_id'  => $kyc_id,
         'message' => kaitori_t( 'Your identity documents were uploaded successfully. Please wait a little while for the review to complete.', '本人確認書類のアップロードが完了いたしました。審査完了まで今しばらくお待ちください。' ),
@@ -476,60 +490,13 @@ add_action( 'wp_ajax_nopriv_kaitori_live_estimate', 'kaitoriakiba_ajax_live_esti
  * Live Device Filter AJAX Query
  */
 function kaitoriakiba_ajax_filter_devices() {
-    $keyword = isset( $_GET['q'] ) ? sanitize_text_field( $_GET['q'] ) : '';
-    $cat     = isset( $_GET['cat'] ) ? sanitize_text_field( $_GET['cat'] ) : '';
-    $carrier = isset( $_GET['s_career'] ) ? sanitize_text_field( $_GET['s_career'] ) : '';
-    $brand   = isset( $_GET['brand'] ) ? sanitize_text_field( $_GET['brand'] ) : '';
-    $series  = isset( $_GET['series'] ) ? sanitize_text_field( $_GET['series'] ) : '';
-
-    $args = array(
-        'post_type'      => 'kaitori_device',
-        'posts_per_page' => 24,
-        'post_status'    => 'publish',
-    );
-
-    if ( ! empty( $keyword ) ) {
-        $args['s'] = $keyword;
-    }
-
-    $tax_query = array();
-
-    if ( ! empty( $cat ) ) {
-        $tax_query[] = array(
-            'taxonomy' => 'device_category',
-            'field'    => is_numeric( $cat ) ? 'term_id' : 'slug',
-            'terms'    => $cat,
-        );
-    }
-    if ( ! empty( $carrier ) ) {
-        $tax_query[] = array(
-            'taxonomy' => 'carrier',
-            'field'    => is_numeric( $carrier ) ? 'term_id' : 'slug',
-            'terms'    => $carrier,
-        );
-    }
-    if ( ! empty( $brand ) ) {
-        $tax_query[] = array(
-            'taxonomy' => 'brand',
-            'field'    => is_numeric( $brand ) ? 'term_id' : 'slug',
-            'terms'    => $brand,
-        );
-    }
-    if ( ! empty( $series ) ) {
-        $tax_query[] = array(
-            'taxonomy' => 'series',
-            'field'    => is_numeric( $series ) ? 'term_id' : 'slug',
-            'terms'    => $series,
-        );
-    }
-
-    if ( ! empty( $tax_query ) ) {
-        $tax_query['relation'] = 'AND';
-        $args['tax_query'] = $tax_query;
-    }
-
+    // Shared filter logic (same as the main archive query) lives in inc/device-filter.php.
+    $p     = kaitoriakiba_device_filter_params();
+    $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
+    $args  = kaitoriakiba_device_query_args( $p, $paged, 24 );
     $query = new WP_Query( $args );
 
+    ob_start();
     if ( $query->have_posts() ) {
         echo '<div class="row pro_list_row">';
         while ( $query->have_posts() ) {
@@ -537,14 +504,36 @@ function kaitoriakiba_ajax_filter_devices() {
             get_template_part( 'template-parts/content', 'device-card' );
         }
         echo '</div>';
+
+        // Pagination (links handled by theme-app.js → AJAX, no reload).
+        $total = (int) $query->max_num_pages;
+        if ( $total > 1 ) {
+            echo '<div class="text-center pro-ajax-pagination" style="margin-top:30px;">';
+            echo '<ul class="page-numbers" style="list-style:none;padding:0;margin:0;display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:center;">';
+            for ( $i = 1; $i <= $total; $i++ ) {
+                $is    = ( $i === $paged );
+                $style = 'display:inline-block;min-width:38px;text-align:center;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700;border:1.5px solid '
+                    . ( $is ? '#ef4444;background:#ef4444;color:#fff;' : '#e2e8f0;background:#fff;color:#334155;' );
+                echo '<li><a href="#" data-paged="' . esc_attr( $i ) . '" class="page-number' . ( $is ? ' current' : '' ) . '" style="' . esc_attr( $style ) . '">' . esc_html( $i ) . '</a></li>';
+            }
+            echo '</ul></div>';
+        }
         wp_reset_postdata();
     } else {
-        echo '<div class="alert alert-warning text-center" style="margin: 30px 0;">'
-           . '<i class="fa fa-info-circle"></i> 条件に該当する端末が見つかりませんでした。別のキーワードまたは条件でお試しください。'
-           . '</div>';
+        echo '<div class="alert alert-warning text-center" style="padding:40px 20px;border-radius:12px;margin-top:20px;">'
+            . '<i class="fa fa-search" style="font-size:28px;color:#f59e0b;display:block;margin-bottom:10px;"></i>'
+            . '<strong>' . esc_html( kaitori_t( 'No matching buyback devices were found', '該当する買取機種が見つかりませんでした' ) ) . '</strong><br>'
+            . '<span style="color:#64748b;font-size:13px;">' . esc_html( kaitori_t( 'Please try different search conditions.', '条件を変えて検索してください。' ) ) . '</span>'
+            . '</div>';
     }
+    $html  = ob_get_clean();
+    $count = (int) $query->found_posts;
 
-    wp_die();
+    wp_send_json_success( array(
+        'html'        => $html,
+        'count'       => $count,
+        'count_label' => sprintf( kaitori_t( '%s items', '全 %s 件' ), number_format_i18n( $count ) ),
+    ) );
 }
 add_action( 'wp_ajax_kaitori_filter_devices', 'kaitoriakiba_ajax_filter_devices' );
 add_action( 'wp_ajax_nopriv_kaitori_filter_devices', 'kaitoriakiba_ajax_filter_devices' );
@@ -606,6 +595,11 @@ function kaitoriakiba_ajax_register_user() {
     if ( ! empty( $phone ) ) {
         update_user_meta( $user_id, 'billing_phone', $phone );
         update_user_meta( $user_id, 'phone_number', $phone );
+    }
+
+    // Welcome email to the new member (requires an SMTP mailer to actually deliver).
+    if ( function_exists( 'kaitoriakiba_send_registration_welcome' ) ) {
+        kaitoriakiba_send_registration_welcome( $user_id );
     }
 
     // Auto sign-in new user

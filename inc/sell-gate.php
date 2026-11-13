@@ -149,6 +149,30 @@ function kaitoriakiba_maybe_block_sell_form() {
     return true;
 }
 
+/**
+ * eKYC form gate: the eKYC form may only be used by a logged-in member (a customer
+ * must register/login BEFORE they can submit identity documents). Admins and the
+ * Elementor editor/preview are never blocked. Renders the "login required" notice
+ * and returns true when the current (guest) visitor should be blocked.
+ *
+ * @return bool blocked
+ */
+function kaitoriakiba_maybe_block_kyc_form() {
+    // Never block while designing in the Elementor editor/preview.
+    if ( function_exists( 'kaitoriakiba_is_elementor_active' ) && kaitoriakiba_is_elementor_active() ) {
+        return false;
+    }
+    // Admins/staff can preview the form.
+    if ( current_user_can( 'manage_options' ) ) {
+        return false;
+    }
+    if ( is_user_logged_in() ) {
+        return false;
+    }
+    kaitoriakiba_render_sell_gate( 'login' );
+    return true;
+}
+
 /* ----------------------------- Settings page ----------------------------- */
 
 /** Add the gate setting under Appearance. */

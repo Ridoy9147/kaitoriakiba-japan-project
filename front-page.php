@@ -374,7 +374,7 @@ else :
                             </a>
                         </div>
                         <div class="swiper-slide">
-                            <a href="https://lin.ee/5wvtHzl" target="_blank" rel="noopener">
+                            <a href="<?php echo esc_url( function_exists( 'kaitoriakiba_social_url' ) ? kaitoriakiba_social_url( 'line', 'https://lin.ee/5wvtHzl' ) : 'https://lin.ee/5wvtHzl' ); ?>" target="_blank" rel="noopener">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20210621/member_rank02.png" alt="LINE Official Support" class="img-responsive" style="width:100%; border-radius:8px;">
                             </a>
                         </div>
@@ -402,7 +402,7 @@ else :
                         <div class="topicHeader">
                             <p class="topicTtl">
                                 <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/subpage/trumpet_icon.png" width="32px" style="margin-right: 16px" alt="News Icon" />
-                                <?php _e( "What's News (新着情報・お知らせ)", 'kaitoriakiba' ); ?>
+                                <?php echo esc_html( kaitori_t( "What's News", '新着情報・お知らせ' ) ); ?>
                             </p>
                             <ul class="topicCategory">
                                 <li class="tc01 cur"><span class="all" data-id="all"><?php kaitori_te( 'All', 'すべて' ); ?></span></li>

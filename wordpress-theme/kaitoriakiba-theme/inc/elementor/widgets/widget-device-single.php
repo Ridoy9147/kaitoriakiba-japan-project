@@ -188,7 +188,7 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                     <h3 style="font-size:17px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:16px;">
                         <i class="fa fa-sliders" style="color:#ef4444;"></i> <?php kaitori_te( 'Buyback Price List by Condition', 'コンディション別買取価格一覧表' ); ?>
                     </h3>
-                    <table class="table table-bordered table-striped" style="margin-bottom:0;">
+                    <table class="table table-bordered table-striped rank-price-table" style="margin-bottom:0;">
                         <thead>
                             <tr style="background:#f8fafc;">
                                 <th><?php kaitori_te( 'Rank', 'ランク' ); ?></th>

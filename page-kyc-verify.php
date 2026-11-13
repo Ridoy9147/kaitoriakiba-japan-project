@@ -35,6 +35,13 @@ else :
         if ( empty( $pre_name ) ) $pre_name = $cur_user->display_name;
         if ( empty( $pre_email ) ) $pre_email = $cur_user->user_email;
     }
+
+    // eKYC requires a registered, logged-in account: block guests with a
+    // register/login notice instead of showing the form.
+    if ( function_exists( 'kaitoriakiba_maybe_block_kyc_form' ) && kaitoriakiba_maybe_block_kyc_form() ) {
+        get_footer();
+        return;
+    }
     ?>
     <div class="container" style="margin-top: 36px; margin-bottom: 60px;">
         <div class="kyc-container" style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">

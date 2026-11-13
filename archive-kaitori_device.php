@@ -22,15 +22,15 @@ get_header();
             <!-- Col 1: Keyword Search -->
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-keyword">
                 <div class="search_title">
-                    <div class="search_title_h2"><?php _e( 'Search by device model name or model number!', 'kaitoriakiba' ); ?></div>
-                    <div class="search_title_h3"><?php _e( 'Please enter device name, model number, JAN code, etc.', 'kaitoriakiba' ); ?></div>					
+                    <div class="search_title_h2"><?php echo esc_html( kaitori_t( 'Search by device model name or model number!', '機種名・型番で検索！' ) ); ?></div>
+                    <div class="search_title_h3"><?php echo esc_html( kaitori_t( 'Please enter device name, model number, JAN code, etc.', '機種名・型番・JANコード等をご入力ください。' ) ); ?></div>					
                 </div>
                 <div class="search_box">
                     <form method="get" action="<?php echo esc_url( get_post_type_archive_link( 'kaitori_device' ) ); ?>">
                         <div class="form-group mbtm0 clearfix">
                             <div class="keyword_search">
                                 <select class="form-control fw_cat" name="cat" style="height: 44px; min-height: 44px; padding: 10px 28px 10px 14px; border-radius: 8px; line-height: normal;">
-                                    <option value=""><?php _e( 'All Categories', 'kaitoriakiba' ); ?></option>
+                                    <option value=""><?php echo esc_html( kaitori_t( 'All Categories', 'すべてのカテゴリ' ) ); ?></option>
                                     <?php
                                     $cats = get_terms( array( 'taxonomy' => 'device_category', 'hide_empty' => false ) );
                                     if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
@@ -41,8 +41,8 @@ get_header();
                                     }
                                     ?>
                                 </select>
-                                <input type="text" class="form-control keyword_search_text q" name="q" value="<?php echo esc_attr( get_query_var( 's' ) ?: ( isset( $_GET['q'] ) ? $_GET['q'] : '' ) ); ?>" placeholder="<?php esc_attr_e( 'Keyword search', 'kaitoriakiba' ); ?>" autocomplete="off">
-                                <button class="btn search_word" type="submit"><?php _e( 'Search', 'kaitoriakiba' ); ?> <i class="fa fa-search"></i></button>
+                                <input type="text" class="form-control keyword_search_text q" name="q" value="<?php echo esc_attr( get_query_var( 's' ) ?: ( isset( $_GET['q'] ) ? $_GET['q'] : '' ) ); ?>" placeholder="<?php echo esc_attr( kaitori_t( 'Keyword search', 'キーワード検索' ) ); ?>" autocomplete="off">
+                                <button class="btn search_word" type="submit"><?php echo esc_html( kaitori_t( 'Search', '検索' ) ); ?> <i class="fa fa-search"></i></button>
                             </div>
                         </div>
                     </form>
@@ -52,8 +52,8 @@ get_header();
             <!-- Col 2: Step-by-Step Search -->
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 search-col-step">
                 <div class="search_title">
-                    <div class="search_title_h2"><?php _e( 'Step-by-Step Category Search', 'kaitoriakiba' ); ?></div>
-                    <div class="search_title_h3"><?php _e( 'Select one or more filters', 'kaitoriakiba' ); ?></div>					
+                    <div class="search_title_h2"><?php echo esc_html( kaitori_t( 'Step-by-Step Category Search', 'カテゴリから絞り込み検索' ) ); ?></div>
+                    <div class="search_title_h3"><?php echo esc_html( kaitori_t( 'Select one or more filters', '条件を1つ以上選択してください' ) ); ?></div>					
                 </div>
                 <div class="search_box">
                     <form method="get" action="<?php echo esc_url( get_post_type_archive_link( 'kaitori_device' ) ); ?>">
@@ -61,7 +61,7 @@ get_header();
                             <div class="step_search">
                                 <div class="step_search_filters">
                                     <select class="form-control s_cat" name="cat">
-                                        <option value=""><?php _e( 'Select Category', 'kaitoriakiba' ); ?></option>
+                                        <option value=""><?php echo esc_html( kaitori_t( 'Select Category', 'カテゴリを選択' ) ); ?></option>
                                         <?php
                                         if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
                                             foreach ( $cats as $c ) {
@@ -73,7 +73,7 @@ get_header();
                                     </select>
 
                                     <select class="form-control s_career" name="s_career">
-                                        <option value=""><?php _e( 'By Carrier', 'kaitoriakiba' ); ?></option>
+                                        <option value=""><?php echo esc_html( kaitori_t( 'By Carrier', 'キャリアで選択' ) ); ?></option>
                                         <?php
                                         $carriers = get_terms( array( 'taxonomy' => 'carrier', 'hide_empty' => false ) );
                                         if ( ! empty( $carriers ) && ! is_wp_error( $carriers ) ) {
@@ -86,7 +86,7 @@ get_header();
                                     </select>
 
                                     <select class="form-control s_brand" name="brand">
-                                        <option value=""><?php _e( 'By Brand', 'kaitoriakiba' ); ?></option>
+                                        <option value=""><?php echo esc_html( kaitori_t( 'By Brand', 'ブランドで選択' ) ); ?></option>
                                         <?php
                                         $brands = get_terms( array( 'taxonomy' => 'brand', 'hide_empty' => false ) );
                                         if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
@@ -99,7 +99,7 @@ get_header();
                                     </select>
 
                                     <select class="form-control s_series" name="series">
-                                        <option value=""><?php _e( 'By Series', 'kaitoriakiba' ); ?></option>
+                                        <option value=""><?php echo esc_html( kaitori_t( 'By Series', 'シリーズで選択' ) ); ?></option>
                                         <?php
                                         $series = get_terms( array( 'taxonomy' => 'series', 'hide_empty' => false ) );
                                         if ( ! empty( $series ) && ! is_wp_error( $series ) ) {
@@ -111,7 +111,7 @@ get_header();
                                         ?>
                                     </select>
                                 </div>
-                                <button class="btn step_search_btn" type="submit"><?php _e( 'Search', 'kaitoriakiba' ); ?> <i class="fa fa-search"></i></button>
+                                <button class="btn step_search_btn" type="submit"><?php echo esc_html( kaitori_t( 'Search', '検索' ) ); ?> <i class="fa fa-search"></i></button>
                             </div>
                         </div>
                     </form>
@@ -140,7 +140,7 @@ get_header();
                     }
                     ?>
                 </h1>
-                <span style="font-size:13px; color:#64748b;">
+                <span id="device-result-count" style="font-size:13px; color:#64748b;">
                     <?php printf( kaitori_t( '%s items', '全 %s 件' ), esc_html( $wp_query->found_posts ) ); ?>
                 </span>
             </div>

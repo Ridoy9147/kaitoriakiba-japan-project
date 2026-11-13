@@ -96,11 +96,11 @@ class Kaitori_Process_Flow_Widget extends \Elementor\Widget_Base {
         $settings = $this->get_settings_for_display();
         $theme_uri = get_template_directory_uri();
 
-        $b1_txt = ! empty( $settings['btn1_text'] ) ? $settings['btn1_text'] : __( 'In-Store Buyback', 'kaitoriakiba' );
+        $b1_txt = kaitori_elementor_display( isset( $settings['btn1_text'] ) ? $settings['btn1_text'] : '', 'In-Store Buyback', '店頭買取' );
         $b1_url = ! empty( $settings['btn1_url'] ) ? esc_url( home_url( $settings['btn1_url'] ) ) : esc_url( home_url( '/sell-apply/?delivery=store' ) );
-        $b2_txt = ! empty( $settings['btn2_text'] ) ? $settings['btn2_text'] : __( 'Mail-in Buyback', 'kaitoriakiba' );
+        $b2_txt = kaitori_elementor_display( isset( $settings['btn2_text'] ) ? $settings['btn2_text'] : '', 'Mail-in Buyback', '宅配買取' );
         $b2_url = ! empty( $settings['btn2_url'] ) ? esc_url( home_url( $settings['btn2_url'] ) ) : esc_url( home_url( '/sell-apply/?delivery=mail' ) );
-        $b3_txt = ! empty( $settings['btn3_text'] ) ? $settings['btn3_text'] : __( 'Corporate Buyback', 'kaitoriakiba' );
+        $b3_txt = kaitori_elementor_display( isset( $settings['btn3_text'] ) ? $settings['btn3_text'] : '', 'Corporate Buyback', '法人買取' );
         $b3_url = ! empty( $settings['btn3_url'] ) ? esc_url( home_url( $settings['btn3_url'] ) ) : esc_url( home_url( '/sell-apply/?type=corporate' ) );
         ?>
         <div class="guid">

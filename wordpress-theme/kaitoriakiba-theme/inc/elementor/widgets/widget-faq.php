@@ -36,6 +36,16 @@ class Kaitori_FAQ_Widget extends \Elementor\Widget_Base {
             )
         );
 
+        $this->add_control(
+            'faq_heading',
+            array(
+                'label'       => __( 'Heading', 'kaitoriakiba' ),
+                'type'        => \Elementor\Controls_Manager::TEXT,
+                'default'     => 'よくあるご質問 (FAQ)',
+                'label_block' => true,
+            )
+        );
+
         $repeater = new \Elementor\Repeater();
         $repeater->add_control(
             'question',
@@ -110,7 +120,7 @@ class Kaitori_FAQ_Widget extends \Elementor\Widget_Base {
         ?>
         <div class="kaitori-faq-widget" style="background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; padding:24px; margin:20px 0;">
             <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:18px; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">
-                <i class="fa fa-question-circle" style="color:#ef4444;"></i> <?php kaitori_te( 'Frequently Asked Questions (FAQ)', 'よくあるご質問 (FAQ)' ); ?>
+                <i class="fa fa-question-circle" style="color:#ef4444;"></i> <?php echo esc_html( kaitori_elementor_display( isset( $settings['faq_heading'] ) ? $settings['faq_heading'] : '', 'Frequently Asked Questions (FAQ)', 'よくあるご質問 (FAQ)' ) ); ?>
             </h3>
             <div class="faq-accordion-list">
                 <?php foreach ( $faq_list as $index => $item ) : ?>

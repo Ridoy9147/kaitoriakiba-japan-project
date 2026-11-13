@@ -817,21 +817,94 @@
             });
         });
 
-        // 4. Step Search / Filter Auto-Submit or AJAX
-        $('.step_search select, .keyword_search select').on('change', function() {
-            var $form = $(this).closest('form');
-            // If inside live filter container
-            if ($('#live-device-results').length > 0) {
-                var queryData = $form.serialize();
-                queryData += '&action=kaitori_filter_devices';
+        // 4. Live Device Filter (AJAX, no page reload) — /devices/ archive.
+        //    Collects keyword + category + carrier + brand + series from BOTH the
+        //    keyword form and the step form, so they always combine. Runs on
+        //    dropdown change, debounced keyword typing, Search-button/Enter, and
+        //    pagination clicks. Falls back to normal navigation off this page.
+        (function deviceLiveFilter() {
+            var $results = $('#live-device-results');
+            if (!$results.length) { return; } // only on the device list page
 
-                $('#live-device-results').html('<div class="text-center" style="padding:40px;"><i class="fa fa-spinner fa-spin fa-2x"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.loading) || 'Loading…') + '</div>');
+            var $count  = $('#device-result-count');
+            var kwTimer = null;
 
-                $.get(kaitori_ajax.ajax_url, queryData, function(html) {
-                    $('#live-device-results').html(html);
+            function readCat() {
+                // Two selects share name="cat" (keyword form + step form); use whichever is set.
+                var cat = '';
+                $('select[name="cat"]').each(function() {
+                    if ($(this).val()) { cat = $(this).val(); }
+                });
+                return cat;
+            }
+
+            function collect() {
+                return {
+                    q:        ($('.keyword_search_text').first().val() || '').trim(),
+                    cat:      readCat(),
+                    s_career: $('select[name="s_career"]').val() || '',
+                    brand:    $('select[name="brand"]').val() || '',
+                    series:   $('select[name="series"]').val() || ''
+                };
+            }
+
+            function run(paged) {
+                var data = collect();
+                data.action = 'kaitori_filter_devices';
+                data.paged  = paged || 1;
+
+                $results.html('<div class="text-center" style="padding:40px;"><i class="fa fa-spinner fa-spin fa-2x"></i> ' + ((kaitori_ajax.i18n && kaitori_ajax.i18n.loading) || 'Loading…') + '</div>');
+
+                $.get(kaitori_ajax.ajax_url, data, function(res) {
+                    if (res && res.success && res.data) {
+                        $results.html(res.data.html);
+                        if ($count.length && typeof res.data.count_label !== 'undefined') {
+                            $count.text(res.data.count_label);
+                        }
+                    } else if (typeof res === 'string') {
+                        $results.html(res); // defensive fallback
+                    }
+                }).fail(function() {
+                    $results.html('<div class="alert alert-warning text-center" style="margin:30px 0;"><i class="fa fa-exclamation-triangle"></i> ' + (kaitori_ajax.i18n_error || 'Error') + '</div>');
                 });
             }
-        });
+
+            // Keep the two category selects in sync so the UI never contradicts itself.
+            $(document).on('change', 'select[name="cat"]', function() {
+                var v = $(this).val();
+                $('select[name="cat"]').not(this).val(v);
+            });
+
+            // Dropdown change → filter.
+            $(document).on('change', 'select[name="cat"], select[name="s_career"], select[name="brand"], select[name="series"]', function() {
+                run(1);
+            });
+
+            // Keyword typing → debounced filter (fires on empty, or 2+ chars).
+            $(document).on('input', '.keyword_search_text', function() {
+                clearTimeout(kwTimer);
+                kwTimer = setTimeout(function() {
+                    var v = ($('.keyword_search_text').first().val() || '').trim();
+                    if (v.length === 0 || v.length >= 2) { run(1); }
+                }, 450);
+            });
+
+            // Search button / Enter → AJAX instead of a page reload.
+            $('.search_box form').on('submit', function(e) {
+                e.preventDefault();
+                run(1);
+            });
+
+            // Pagination (delegated; links carry data-paged).
+            $results.on('click', '.pro-ajax-pagination a', function(e) {
+                e.preventDefault();
+                var paged = parseInt($(this).data('paged'), 10) || 1;
+                run(paged);
+                if ($results.offset()) {
+                    $('html, body').animate({ scrollTop: $results.offset().top - 120 }, 250);
+                }
+            });
+        })();
 
         // 5. Kaitori Loop Carousel Swiper Initialization
         function initKaitoriLoopCarousel($scope) {

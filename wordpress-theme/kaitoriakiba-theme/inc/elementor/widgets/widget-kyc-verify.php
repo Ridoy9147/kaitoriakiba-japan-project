@@ -122,6 +122,12 @@ class Kaitori_KYC_Verify_Widget extends \Elementor\Widget_Base {
             if ( empty( $pre_name ) ) $pre_name = $cur_user->display_name;
             if ( empty( $pre_email ) ) $pre_email = $cur_user->user_email;
         }
+
+        // eKYC requires a logged-in member. Guests see a register/login notice
+        // instead of the form (admins & the Elementor editor are not blocked).
+        if ( function_exists( 'kaitoriakiba_maybe_block_kyc_form' ) && kaitoriakiba_maybe_block_kyc_form() ) {
+            return;
+        }
         ?>
         <div class="kyc-container" style="margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
             

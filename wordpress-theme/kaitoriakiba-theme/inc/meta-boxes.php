@@ -502,33 +502,18 @@ function kaitoriakiba_order_meta_box_render( $post ) {
             </div>
         </div>
 
-        <div style="margin-top:14px; padding-top:10px; border-top:1px dashed #e2e8f0; display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px;">
+        <div style="margin-top:14px; padding-top:10px; border-top:1px dashed #e2e8f0;">
             <?php
-            // Check connected WP User
-            $customer_user_id = get_post_meta( $post->ID, '_customer_user_id', true );
+            // Raw stored links are what we persist; detect-by-email is only a display fallback.
+            $customer_user_id_raw = get_post_meta( $post->ID, '_customer_user_id', true );
+            $kyc_id_raw           = get_post_meta( $post->ID, '_order_kyc_record_id', true );
+
+            $customer_user_id = $customer_user_id_raw;
             if ( ! $customer_user_id && $email ) {
                 $u = get_user_by( 'email', $email );
                 if ( $u ) { $customer_user_id = $u->ID; }
             }
-            if ( $customer_user_id ) :
-                $u_data = get_userdata( $customer_user_id );
-                if ( $u_data ) :
-                ?>
-                <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 12px;">
-                    <i class="dashicons dashicons-admin-users" style="color:#2563eb; vertical-align:middle;"></i>
-                    <strong><?php echo kaitori_t( 'Linked WP Account:', '紐付け会員アカウント:' ); ?></strong>
-                    <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $customer_user_id ) ); ?>" target="_blank" style="font-weight:bold; color:#1d4ed8;">
-                        <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html( $customer_user_id ); ?>)
-                    </a>
-                </div>
-                <?php
-                endif;
-            endif;
-            ?>
-
-            <?php
-            // Check linked eKYC
-            $kyc_id = get_post_meta( $post->ID, '_order_kyc_record_id', true );
+            $kyc_id = $kyc_id_raw;
             if ( ! $kyc_id && $email ) {
                 $found_kyc = get_posts( array(
                     'post_type'   => 'kyc_record',
@@ -537,28 +522,99 @@ function kaitoriakiba_order_meta_box_render( $post ) {
                     'numberposts' => 1,
                     'post_status' => 'any',
                 ) );
-                if ( ! empty( $found_kyc ) ) {
-                    $kyc_id = $found_kyc[0]->ID;
-                }
+                if ( ! empty( $found_kyc ) ) { $kyc_id = $found_kyc[0]->ID; }
             }
-            if ( $kyc_id ) :
-                $k_status = get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending';
-                $k_doc    = get_post_meta( $kyc_id, '_kyc_doc_type', true );
             ?>
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:6px 12px;">
-                    <i class="dashicons dashicons-id-alt" style="color:#16a34a; vertical-align:middle;"></i>
-                    <strong><?php echo kaitori_t( 'eKYC Status:', '本人確認状況:' ); ?></strong>
-                    <span style="font-weight:800; color:#15803d;"><?php echo esc_html( ucfirst($k_status) ); ?></span>
-                    <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $kyc_id . '&action=edit' ) ); ?>" target="_blank" style="margin-left:8px; text-decoration:underline; font-weight:bold;">
-                        <?php echo kaitori_t( 'Review KYC Record &rarr;', '本人確認レコードを開く &rarr;' ); ?>
-                    </a>
-                </div>
-            <?php else : ?>
-                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:6px; padding:6px 12px; color:#854d0e;">
-                    <i class="dashicons dashicons-warning" style="vertical-align:middle;"></i>
-                    <?php echo kaitori_t( 'eKYC Record: Unverified / Not Uploaded Yet', 'eKYC: 未提出・未承認' ); ?>
-                </div>
-            <?php endif; ?>
+            <input type="hidden" name="_customer_user_id" id="kaitori_assign_user_id" value="<?php echo esc_attr( $customer_user_id_raw ); ?>">
+            <input type="hidden" name="_order_kyc_record_id" id="kaitori_assign_kyc_id" value="<?php echo esc_attr( $kyc_id_raw ); ?>">
+
+            <label style="font-weight:700; display:block; margin-bottom:6px;"><span class="dashicons dashicons-search" style="vertical-align:middle;"></span> <?php echo kaitori_t( 'Assign customer account &amp; eKYC (search by email)', 'お客様アカウント・eKYCを紐付け（メールで検索）' ); ?></label>
+            <input type="text" id="kaitori_assign_q" class="regular-text" placeholder="<?php echo esc_attr( kaitori_t( 'Search by email…', 'メールアドレスで検索…' ) ); ?>" style="width:280px;">
+            <button type="button" class="button" id="kaitori_assign_search"><?php echo kaitori_t( 'Search', '検索' ); ?></button>
+            <p style="margin:4px 0 0; color:#64748b; font-size:12px;"><?php echo kaitori_t( 'Assigning a customer auto-links their eKYC (and vice-versa) when you save.', 'お客様を紐付けて保存するとeKYCも自動で連携されます（逆も同様）。' ); ?></p>
+            <div id="kaitori_assign_results" style="margin-top:8px; max-width:560px;"></div>
+
+            <div id="kaitori_assign_current" style="margin-top:12px; display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px;">
+                <?php if ( $customer_user_id ) :
+                    $u_data = get_userdata( $customer_user_id );
+                    if ( $u_data ) : ?>
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 12px;">
+                        <i class="dashicons dashicons-admin-users" style="color:#2563eb; vertical-align:middle;"></i>
+                        <strong><?php echo kaitori_t( 'Linked WP Account:', '紐付け会員アカウント:' ); ?></strong>
+                        <a href="<?php echo esc_url( admin_url( 'user-edit.php?user_id=' . $customer_user_id ) ); ?>" target="_blank" style="font-weight:bold; color:#1d4ed8;">
+                            <?php echo esc_html( $u_data->display_name ?: $u_data->user_login ); ?> (#<?php echo esc_html( $customer_user_id ); ?>)
+                        </a>
+                    </div>
+                <?php endif; endif; ?>
+
+                <?php if ( $kyc_id ) :
+                    $k_status = get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending'; ?>
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:6px 12px;">
+                        <i class="dashicons dashicons-id-alt" style="color:#16a34a; vertical-align:middle;"></i>
+                        <strong><?php echo kaitori_t( 'eKYC Status:', '本人確認状況:' ); ?></strong>
+                        <span style="font-weight:800; color:#15803d;"><?php echo esc_html( ucfirst( $k_status ) ); ?></span>
+                        <a href="<?php echo esc_url( admin_url( 'post.php?post=' . $kyc_id . '&action=edit' ) ); ?>" target="_blank" style="margin-left:8px; text-decoration:underline; font-weight:bold;">
+                            <?php echo kaitori_t( 'Review KYC Record &rarr;', '本人確認レコードを開く &rarr;' ); ?>
+                        </a>
+                    </div>
+                <?php else : ?>
+                    <div style="background:#fefce8; border:1px solid #fef08a; border-radius:6px; padding:6px 12px; color:#854d0e;">
+                        <i class="dashicons dashicons-warning" style="vertical-align:middle;"></i>
+                        <?php echo kaitori_t( 'eKYC Record: Unverified / Not Uploaded Yet', 'eKYC: 未提出・未承認' ); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <script>
+            (function(){
+                var $ = window.jQuery; if (!$ || typeof ajaxurl === 'undefined') return;
+                var nonce = '<?php echo esc_js( wp_create_nonce( 'kaitori_walkin_lookup' ) ); ?>';
+                var L = {
+                    verified: '<?php echo esc_js( kaitori_t( 'eKYC verified', 'eKYC承認済' ) ); ?>',
+                    pending:  '<?php echo esc_js( kaitori_t( 'eKYC pending', 'eKYC審査中' ) ); ?>',
+                    rejected: '<?php echo esc_js( kaitori_t( 'eKYC rejected', 'eKYC不備' ) ); ?>',
+                    nokyc:    '<?php echo esc_js( kaitori_t( 'no eKYC', 'eKYCなし' ) ); ?>',
+                    short:    '<?php echo esc_js( kaitori_t( 'Type at least 2 characters.', '2文字以上入力してください。' ) ); ?>',
+                    searching:'<?php echo esc_js( kaitori_t( 'Searching…', '検索中…' ) ); ?>',
+                    fail:     '<?php echo esc_js( kaitori_t( 'Search failed.', '検索に失敗しました。' ) ); ?>',
+                    none:     '<?php echo esc_js( kaitori_t( 'No matching customer.', '該当するお客様が見つかりません。' ) ); ?>',
+                    assign:   '<?php echo esc_js( kaitori_t( 'Assign', '紐付け' ) ); ?>'
+                };
+                function esc(s){ return $('<div>').text(s==null?'':s).html(); }
+                function col(st){ return st==='verified'?'#16a34a':(st==='rejected'?'#dc2626':(st?'#d97706':'#94a3b8')); }
+                function run(){
+                    var q = $.trim($('#kaitori_assign_q').val()||'');
+                    if (q.length<2){ $('#kaitori_assign_results').html('<em style="color:#94a3b8;">'+L.short+'</em>'); return; }
+                    $('#kaitori_assign_results').html(L.searching);
+                    $.get(ajaxurl,{action:'kaitori_walkin_lookup',security:nonce,q:q},function(res){
+                        if(!res||!res.success){ $('#kaitori_assign_results').html('<em style="color:#dc2626;">'+L.fail+'</em>'); return; }
+                        var rows=(res.data&&res.data.results)||[];
+                        if(!rows.length){ $('#kaitori_assign_results').html('<em style="color:#94a3b8;">'+L.none+'</em>'); return; }
+                        var h='<ul style="list-style:none;margin:0;padding:0;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#fff;">';
+                        rows.forEach(function(r){
+                            var kl=r.kyc_status?(L[r.kyc_status]||r.kyc_status):L.nokyc, kc=col(r.kyc_status);
+                            h+='<li style="padding:8px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;gap:10px;">'
+                             +'<span><strong>'+esc(r.name)+'</strong> <span style="color:'+kc+';font-weight:700;font-size:12px;">● '+esc(kl)+'</span><br><span style="color:#64748b;font-size:12px;">'+esc(r.email)+'</span></span>'
+                             +'<button type="button" class="button button-small kaitori-pick" data-uid="'+r.user_id+'" data-kid="'+r.kyc_id+'" data-name="'+esc(r.name)+'" data-email="'+esc(r.email)+'" data-kl="'+esc(kl)+'" data-kc="'+kc+'">'+L.assign+'</button>'
+                             +'</li>';
+                        });
+                        h+='</ul>';
+                        $('#kaitori_assign_results').html(h);
+                    });
+                }
+                $(document).on('click','#kaitori_assign_search',run);
+                $(document).on('keydown','#kaitori_assign_q',function(e){ if(e.which===13){ e.preventDefault(); run(); }});
+                $(document).on('click','.kaitori-pick',function(){
+                    var b=$(this);
+                    $('#kaitori_assign_user_id').val(b.data('uid'));
+                    $('#kaitori_assign_kyc_id').val(b.data('kid'));
+                    if(!$('[name="_applicant_name"]').val()) $('[name="_applicant_name"]').val(b.data('name'));
+                    if(!$('[name="_applicant_email"]').val()) $('[name="_applicant_email"]').val(b.data('email'));
+                    $('#kaitori_assign_current').html('<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:6px 12px;color:#166534;"><strong>✔ '+esc(b.data('name'))+'</strong> ('+esc(b.data('email'))+') — <span style="color:'+b.data('kc')+';font-weight:700;">'+esc(b.data('kl'))+'</span></div>');
+                    $('#kaitori_assign_results').html('');
+                });
+            })();
+            </script>
         </div>
     </div>
 
@@ -808,6 +864,42 @@ function kaitoriakiba_save_order_meta( $post_id ) {
     if ( isset( $_POST['_bank_holder_kana'] ) ) {
         $clean_holder = sanitize_text_field( wp_unslash( $_POST['_bank_holder_kana'] ) );
         update_post_meta( $post_id, '_bank_holder_kana', function_exists( 'kaitoriakiba_encrypt' ) ? kaitoriakiba_encrypt( $clean_holder ) : $clean_holder );
+    }
+
+    // --- Customer account / eKYC assignment (two-way: either fills the other) ---
+    if ( isset( $_POST['_customer_user_id'] ) || isset( $_POST['_order_kyc_record_id'] ) ) {
+        $assign_user = isset( $_POST['_customer_user_id'] ) ? (int) $_POST['_customer_user_id'] : 0;
+        $assign_kyc  = isset( $_POST['_order_kyc_record_id'] ) ? (int) $_POST['_order_kyc_record_id'] : 0;
+
+        if ( $assign_user && ! $assign_kyc && function_exists( 'kaitoriakiba_find_user_kyc_record' ) ) {
+            $assign_kyc = kaitoriakiba_find_user_kyc_record( $assign_user );
+        }
+        if ( $assign_kyc && ! $assign_user ) {
+            $assign_user = (int) get_post_meta( $assign_kyc, '_kyc_user_id', true );
+        }
+
+        update_post_meta( $post_id, '_customer_user_id', $assign_user );
+
+        if ( $assign_kyc && 'kyc_record' === get_post_type( $assign_kyc ) ) {
+            update_post_meta( $post_id, '_order_kyc_record_id', $assign_kyc );
+            update_post_meta( $post_id, '_order_kyc_status', get_post_meta( $assign_kyc, '_kyc_status', true ) ?: 'pending' );
+            if ( ! get_post_meta( $assign_kyc, '_kyc_order_id', true ) ) {
+                update_post_meta( $assign_kyc, '_kyc_order_id', $post_id );
+            }
+        } else {
+            update_post_meta( $post_id, '_order_kyc_record_id', $assign_kyc );
+        }
+    }
+
+    // --- Auto-generate the application ID (post title) for manually-added orders ---
+    $cur = get_post( $post_id );
+    if ( $cur && ( '' === trim( (string) $cur->post_title ) || 'Auto Draft' === $cur->post_title ) ) {
+        $m = get_post_meta( $post_id, '_device_model', true );
+        $s = get_post_meta( $post_id, '_device_storage', true );
+        $auto_title = 'KB-' . date( 'Ymd' ) . '-' . wp_rand( 1000, 9999 ) . ' [' . trim( $m . ' ' . $s ) . ']';
+        remove_action( 'save_post_buyback_order', 'kaitoriakiba_save_order_meta' );
+        wp_update_post( array( 'ID' => $post_id, 'post_title' => $auto_title ) );
+        add_action( 'save_post_buyback_order', 'kaitoriakiba_save_order_meta' );
     }
 }
 add_action( 'save_post_buyback_order', 'kaitoriakiba_save_order_meta' );

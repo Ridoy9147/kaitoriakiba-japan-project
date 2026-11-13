@@ -121,3 +121,115 @@ function kaitoriakiba_order_status_changed_email( $meta_id, $post_id, $meta_key,
     wp_mail( $email, $subject, apply_filters( 'kaitori_status_email_html', $html, $post_id, $status ), kaitoriakiba_email_headers() );
 }
 add_action( 'updated_post_meta', 'kaitoriakiba_order_status_changed_email', 10, 4 );
+
+/**
+ * Welcome email sent to a customer right after they register an account.
+ *
+ * @param int $user_id
+ */
+function kaitoriakiba_send_registration_welcome( $user_id ) {
+    $user = get_userdata( $user_id );
+    if ( ! $user || ! is_email( $user->user_email ) ) {
+        return;
+    }
+    $name = trim( $user->last_name . ' ' . $user->first_name );
+    if ( '' === $name ) {
+        $name = $user->display_name;
+    }
+    $apply_url   = home_url( '/sell-apply/' );
+    $kyc_url     = home_url( '/kyc-verify/' );
+    $account_url = function_exists( 'kaitoriakiba_get_account_url' ) ? kaitoriakiba_get_account_url() : home_url( '/mypage/' );
+
+    $body  = '<p>' . sprintf( esc_html__( '%s 様', 'kaitoriakiba' ), esc_html( $name ) ) . '</p>';
+    $body .= '<p>' . esc_html__( 'この度は会員登録いただき誠にありがとうございます。アカウントの作成が完了いたしました。', 'kaitoriakiba' ) . '</p>';
+    $body .= '<p>' . esc_html__( 'マイページから買取のお申込み・進捗確認・お気に入り機種の管理がご利用いただけます。', 'kaitoriakiba' ) . '</p>';
+    $body .= '<p>' . esc_html__( '※ 古物営業法に基づき、初回のお取引には本人確認（eKYC）が必要です。', 'kaitoriakiba' ) . '</p>';
+    $body .= '<p style="margin-top:18px;">';
+    $body .= '<a href="' . esc_url( $apply_url ) . '" style="display:inline-block;background:#ef4444;color:#fff;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;margin:0 8px 8px 0;">' . esc_html__( '買取を申し込む', 'kaitoriakiba' ) . '</a>';
+    $body .= '<a href="' . esc_url( $account_url ) . '" style="display:inline-block;background:#0f172a;color:#fff;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;margin:0 8px 8px 0;">' . esc_html__( 'マイページ', 'kaitoriakiba' ) . '</a>';
+    $body .= '</p>';
+    $body .= '<p style="font-size:12px;color:#94a3b8;">' . sprintf( esc_html__( '本人確認はこちら: %s', 'kaitoriakiba' ), esc_url( $kyc_url ) ) . '</p>';
+
+    $subject = esc_html__( '【買取アキバ】会員登録が完了しました', 'kaitoriakiba' );
+    $html    = kaitoriakiba_email_wrap( esc_html__( '会員登録ありがとうございます', 'kaitoriakiba' ), $body );
+
+    wp_mail( $user->user_email, $subject, apply_filters( 'kaitori_registration_welcome_html', $html, $user_id ), kaitoriakiba_email_headers() );
+}
+
+/**
+ * Confirmation email sent to the customer when they submit eKYC documents.
+ *
+ * @param int $kyc_id
+ */
+function kaitoriakiba_send_kyc_submitted( $kyc_id ) {
+    $email = get_post_meta( $kyc_id, '_kyc_email', true );
+    if ( ! is_email( $email ) ) {
+        return;
+    }
+    $name        = get_post_meta( $kyc_id, '_kyc_name', true );
+    $account_url = function_exists( 'kaitoriakiba_get_account_url' ) ? kaitoriakiba_get_account_url() : home_url( '/mypage/' );
+
+    $body  = '<p>' . sprintf( esc_html__( '%s 様', 'kaitoriakiba' ), esc_html( $name ) ) . '</p>';
+    $body .= '<p>' . esc_html__( '本人確認書類（eKYC）のご提出を受け付けました。', 'kaitoriakiba' ) . '</p>';
+    $body .= '<p>' . esc_html__( '担当スタッフが内容を確認いたします。審査が完了しましたら、改めてメールにてお知らせいたします。今しばらくお待ちください。', 'kaitoriakiba' ) . '</p>';
+    $body .= '<p><a href="' . esc_url( $account_url ) . '" style="display:inline-block;background:#0f172a;color:#fff;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;">' . esc_html__( 'マイページで確認', 'kaitoriakiba' ) . '</a></p>';
+
+    $subject = esc_html__( '【買取アキバ】本人確認書類を受け付けました', 'kaitoriakiba' );
+    $html    = kaitoriakiba_email_wrap( esc_html__( '本人確認書類 受付のお知らせ', 'kaitoriakiba' ), $body );
+
+    wp_mail( $email, $subject, apply_filters( 'kaitori_kyc_submitted_html', $html, $kyc_id ), kaitoriakiba_email_headers() );
+}
+
+/**
+ * Notify the customer when an admin approves or rejects their eKYC.
+ * Hooked on meta update so it fires on a real status change (verified/rejected).
+ *
+ * @param int    $meta_id
+ * @param int    $post_id
+ * @param string $meta_key
+ * @param mixed  $meta_value
+ */
+function kaitoriakiba_kyc_status_changed_email( $meta_id, $post_id, $meta_key, $meta_value ) {
+    if ( '_kyc_status' !== $meta_key ) {
+        return;
+    }
+    if ( 'kyc_record' !== get_post_type( $post_id ) ) {
+        return;
+    }
+    $status = (string) $meta_value;
+    // Only notify on the two decisive outcomes, never on the initial "pending".
+    if ( 'verified' !== $status && 'rejected' !== $status ) {
+        return;
+    }
+    $email = get_post_meta( $post_id, '_kyc_email', true );
+    if ( ! is_email( $email ) ) {
+        return;
+    }
+    $name        = get_post_meta( $post_id, '_kyc_name', true );
+    $apply_url   = home_url( '/sell-apply/' );
+    $kyc_url     = home_url( '/kyc-verify/' );
+    $account_url = function_exists( 'kaitoriakiba_get_account_url' ) ? kaitoriakiba_get_account_url() : home_url( '/mypage/' );
+
+    $body = '<p>' . sprintf( esc_html__( '%s 様', 'kaitoriakiba' ), esc_html( $name ) ) . '</p>';
+
+    if ( 'verified' === $status ) {
+        $body   .= '<p style="font-size:16px;"><strong style="color:#16a34a;">' . esc_html__( '本人確認が完了いたしました。', 'kaitoriakiba' ) . '</strong></p>';
+        $body   .= '<p>' . esc_html__( 'ご提出いただいた書類の確認が取れました。買取のお申込みをお進めいただけます。', 'kaitoriakiba' ) . '</p>';
+        $body   .= '<p><a href="' . esc_url( $apply_url ) . '" style="display:inline-block;background:#ef4444;color:#fff;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;">' . esc_html__( '買取を申し込む', 'kaitoriakiba' ) . '</a></p>';
+        $title   = esc_html__( '本人確認完了のお知らせ', 'kaitoriakiba' );
+        $subject = esc_html__( '【買取アキバ】本人確認が完了しました', 'kaitoriakiba' );
+    } else {
+        $body   .= '<p style="font-size:16px;"><strong style="color:#dc2626;">' . esc_html__( '本人確認書類に不備がございました。', 'kaitoriakiba' ) . '</strong></p>';
+        $body   .= '<p>' . esc_html__( '恐れ入りますが、書類が確認できなかったため、再度ご提出をお願いいたします。鮮明で有効期限内の書類をアップロードしてください。', 'kaitoriakiba' ) . '</p>';
+        $body   .= '<p><a href="' . esc_url( $kyc_url ) . '" style="display:inline-block;background:#ef4444;color:#fff;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;">' . esc_html__( '本人確認 (eKYC) に進む', 'kaitoriakiba' ) . '</a></p>';
+        $title   = esc_html__( '本人確認書類 再提出のお願い', 'kaitoriakiba' );
+        $subject = esc_html__( '【買取アキバ】本人確認書類について（再提出のお願い）', 'kaitoriakiba' );
+    }
+
+    $body .= '<p style="margin-top:14px;"><a href="' . esc_url( $account_url ) . '" style="color:#0f172a;">' . esc_html__( 'マイページで確認する', 'kaitoriakiba' ) . '</a></p>';
+
+    $html = kaitoriakiba_email_wrap( $title, $body );
+
+    wp_mail( $email, $subject, apply_filters( 'kaitori_kyc_status_email_html', $html, $post_id, $status ), kaitoriakiba_email_headers() );
+}
+add_action( 'updated_post_meta', 'kaitoriakiba_kyc_status_changed_email', 10, 4 );

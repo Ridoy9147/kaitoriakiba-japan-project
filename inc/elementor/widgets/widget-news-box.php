@@ -53,7 +53,7 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings  = $this->get_settings_for_display();
         $theme_uri = get_template_directory_uri();
-        $title     = ! empty( $settings['news_title'] ) ? $settings['news_title'] : kaitori_t( "What's News", '新着情報・お知らせ' );
+        $title     = kaitori_elementor_display( isset( $settings['news_title'] ) ? $settings['news_title'] : '', "What's News", '新着情報・お知らせ' );
         ?>
         <div class="topicInner home" style="margin-bottom: 25px;">
             <div class="topicHeader">
@@ -62,9 +62,9 @@ class Kaitori_News_Widget extends \Elementor\Widget_Base {
                     <?php echo esc_html( $title ); ?>
                 </p>
                 <ul class="topicCategory">
-                    <li class="tc01 cur"><span class="all" data-id="all"><?php _e( 'All', 'kaitoriakiba' ); ?></span></li>
-                    <li class="tc02" data-id="1"><span class="blogTopic"><?php _e( 'Topics', 'kaitoriakiba' ); ?></span></li>
-                    <li class="tc02" data-id="2"><span class="blogTopic"><?php _e( 'Information', 'kaitoriakiba' ); ?></span></li>
+                    <li class="tc01 cur"><span class="all" data-id="all"><?php echo esc_html( kaitori_t( 'All', 'すべて' ) ); ?></span></li>
+                    <li class="tc02" data-id="1"><span class="blogTopic"><?php echo esc_html( kaitori_t( 'Topics', 'トピックス' ) ); ?></span></li>
+                    <li class="tc02" data-id="2"><span class="blogTopic"><?php echo esc_html( kaitori_t( 'Information', 'インフォメーション' ) ); ?></span></li>
                 </ul>
             </div>
             <div class="topicList">

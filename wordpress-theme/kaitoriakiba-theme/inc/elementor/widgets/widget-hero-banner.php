@@ -107,7 +107,7 @@ class Kaitori_Hero_Banner_Widget extends \Elementor\Widget_Base {
                                     </a>
                                 </div>
                                 <div class="swiper-slide">
-                                    <a href="https://lin.ee/5wvtHzl" target="_blank">
+                                    <a href="<?php echo esc_url( function_exists( 'kaitoriakiba_social_url' ) ? kaitoriakiba_social_url( 'line', 'https://lin.ee/5wvtHzl' ) : 'https://lin.ee/5wvtHzl' ); ?>" target="_blank" rel="noopener">
                                         <img src="<?php echo esc_url( $theme_uri ); ?>/upload/ad/20220222/450216 Kaitori Akibaスライドバナー.png" alt="LINE Official Support" class="img-responsive" style="width:100%; border-radius:8px;">
                                     </a>
                                 </div>

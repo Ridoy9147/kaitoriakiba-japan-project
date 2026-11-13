@@ -94,11 +94,17 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
         $tax = ! empty( $settings['taxonomy_type'] ) ? $settings['taxonomy_type'] : 'carrier';
         $cols = isset( $settings['columns'] ) ? max( 1, min( 3, (int) $settings['columns'] ) ) : 2;
 
-        $default_titles = array(
-            'carrier'         => __( 'Browse by Carrier', 'kaitoriakiba' ),
-            'brand'           => __( 'Browse by Brand', 'kaitoriakiba' ),
-            'series'          => __( 'Browse by Series', 'kaitoriakiba' ),
-            'device_category' => __( 'Browse by Category', 'kaitoriakiba' ),
+        $titles_en = array(
+            'carrier'         => 'Browse by Carrier',
+            'brand'           => 'Browse by Brand',
+            'series'          => 'Browse by Series',
+            'device_category' => 'Browse by Category',
+        );
+        $titles_ja = array(
+            'carrier'         => 'キャリアから探す',
+            'brand'           => 'ブランドから探す',
+            'series'          => 'シリーズから探す',
+            'device_category' => 'カテゴリから探す',
         );
         $icons = array(
             'carrier'         => 'fa-signal',
@@ -107,7 +113,9 @@ class Kaitori_Taxonomy_Browse_Widget extends \Elementor\Widget_Base {
             'device_category' => 'fa-th-large',
         );
 
-        $box_title = ! empty( $settings['custom_title'] ) ? $settings['custom_title'] : ( isset( $default_titles[ $tax ] ) ? $default_titles[ $tax ] : __( 'Browse Devices', 'kaitoriakiba' ) );
+        $title_en  = isset( $titles_en[ $tax ] ) ? $titles_en[ $tax ] : 'Browse Devices';
+        $title_ja  = isset( $titles_ja[ $tax ] ) ? $titles_ja[ $tax ] : '端末を探す';
+        $box_title = kaitori_elementor_display( isset( $settings['custom_title'] ) ? $settings['custom_title'] : '', $title_en, $title_ja );
         $icon      = isset( $icons[ $tax ] ) ? $icons[ $tax ] : 'fa-list';
         $num_items = ! empty( $settings['number_of_items'] ) ? intval( $settings['number_of_items'] ) : 12;
 

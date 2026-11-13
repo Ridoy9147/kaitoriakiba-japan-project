@@ -18,7 +18,17 @@
                 <span class="notice-text hidden-xs"><?php kaitori_te( 'iPhone, Smartphone & Mobile Phone Specialist [Tokyo Akihabara]', 'iPhone・スマホ・携帯電話 買取専門店【東京・秋葉原】' ); ?></span>
             </div>
             <ul class="top-nav-links">
-                <?php if ( function_exists( 'kaitoriakiba_lang_switcher' ) ) { kaitoriakiba_lang_switcher(); } ?>
+                <?php
+                // Language selector in the header utility bar.
+                // Prefer the GTranslate plugin's selector when it is active;
+                // otherwise fall back to the theme's custom switcher (which is
+                // itself hidden while KAITORI_USE_EXTERNAL_TRANSLATE is on).
+                if ( function_exists( 'shortcode_exists' ) && shortcode_exists( 'gtranslate' ) ) {
+                    echo '<li class="kaitori-gt-switch" style="display:inline-flex;align-items:center;white-space:nowrap;">' . do_shortcode( '[gtranslate]' ) . '</li>';
+                } elseif ( function_exists( 'kaitoriakiba_lang_switcher' ) ) {
+                    kaitoriakiba_lang_switcher();
+                }
+                ?>
                 <?php
                 if ( has_nav_menu( 'top_utility' ) ) {
                     wp_nav_menu( array(
@@ -30,8 +40,10 @@
                 } else {
                     ?>
                     <li><a href="<?php echo esc_url( home_url( '/sell-apply/' ) ); ?>" class="link-highlight"><i class="fa fa-shopping-cart"></i> <?php kaitori_te( 'iPhone Buyback', 'iPhone買取' ); ?></a></li>
+                    <?php if ( is_user_logged_in() ) : // eKYC is only for registered members ?>
                     <li><a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>"><i class="fa fa-id-card-o"></i> <?php kaitori_te( 'eKYC Verify', '本人確認(eKYC)' ); ?></a></li>
                     <li><a href="<?php echo esc_url( kaitoriakiba_get_account_url() ); ?>"><i class="fa fa-user-circle-o"></i> <?php kaitori_te( 'My Account', 'マイページ' ); ?></a></li>
+                    <?php endif; ?>
                     <?php if ( is_user_logged_in() ) : ?>
                         <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>"><i class="fa fa-sign-out"></i> <?php kaitori_te( 'Logout', 'ログアウト' ); ?></a></li>
                     <?php else : ?>
@@ -77,7 +89,12 @@
                         <i class="fa fa-map-marker"></i>
                         <div class="shop-info-text">
                             <span class="shop-title"><?php kaitori_te( 'Akihabara Store', '秋葉原店' ); ?></span>
-                            <span class="shop-sub"><?php kaitori_te( 'Open 10:00 - 19:30', '営業 10:00〜19:30' ); ?></span>
+                            <span class="shop-sub"><?php
+                                // Business hours come from Appearance → Store & Footer (store_info), so the
+                                // header, footer and Access page always show the same hours.
+                                $kt_hours = function_exists( 'kaitoriakiba_store_info' ) ? kaitoriakiba_store_info() : array( 'hours' => kaitori_t( '10:00 - 19:30', '10:00〜19:30' ) );
+                                echo esc_html( kaitori_t( 'Open ', '営業 ' ) . ( isset( $kt_hours['hours'] ) ? $kt_hours['hours'] : '' ) );
+                            ?></span>
                         </div>
                     </a>
                 </div>

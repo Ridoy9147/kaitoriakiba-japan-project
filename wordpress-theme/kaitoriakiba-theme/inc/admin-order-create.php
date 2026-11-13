@@ -109,6 +109,73 @@ function kaitoriakiba_create_walkin_order() {
     return $order_id;
 }
 
+/**
+ * Find the most relevant eKYC record id for a user: the one stored on the user
+ * profile (_kaitori_kyc_record_id), else the newest kyc_record whose _kyc_user_id
+ * matches. Returns 0 when the user has no eKYC on file.
+ *
+ * @param int $user_id
+ * @return int
+ */
+function kaitoriakiba_find_user_kyc_record( $user_id ) {
+    $user_id = (int) $user_id;
+    if ( ! $user_id ) {
+        return 0;
+    }
+    $rid = get_user_meta( $user_id, '_kaitori_kyc_record_id', true );
+    if ( $rid && 'kyc_record' === get_post_type( $rid ) ) {
+        return (int) $rid;
+    }
+    $found = get_posts( array(
+        'post_type'      => 'kyc_record',
+        'posts_per_page' => 1,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'meta_key'       => '_kyc_user_id',
+        'meta_value'     => $user_id,
+    ) );
+    return ! empty( $found ) ? (int) $found[0] : 0;
+}
+
+/**
+ * Admin AJAX: search registered customers by email / name / login so staff can
+ * attach an existing account (and its eKYC) to a walk-in order.
+ */
+function kaitoriakiba_ajax_walkin_lookup() {
+    if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {
+        wp_send_json_error( array( 'message' => 'denied' ) );
+    }
+    check_ajax_referer( 'kaitori_walkin_lookup', 'security' );
+
+    $q = isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : '';
+    if ( strlen( $q ) < 2 ) {
+        wp_send_json_success( array( 'results' => array() ) );
+    }
+
+    $users = get_users( array(
+        'search'         => '*' . $q . '*',
+        'search_columns' => array( 'user_email', 'user_login', 'display_name' ),
+        'number'         => 10,
+    ) );
+
+    $results = array();
+    foreach ( $users as $u ) {
+        $kyc_id  = kaitoriakiba_find_user_kyc_record( $u->ID );
+        $kstatus = $kyc_id ? ( get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending' ) : '';
+        $results[] = array(
+            'user_id'    => (int) $u->ID,
+            'name'       => $u->display_name,
+            'email'      => $u->user_email,
+            'kyc_id'     => (int) $kyc_id,
+            'kyc_status' => $kstatus,
+        );
+    }
+    wp_send_json_success( array( 'results' => $results ) );
+}
+add_action( 'wp_ajax_kaitori_walkin_lookup', 'kaitoriakiba_ajax_walkin_lookup' );
+
 /** Render the walk-in order form + handle submission. */
 function kaitoriakiba_new_order_page() {
     if ( ! current_user_can( kaitoriakiba_manage_cap() ) ) {

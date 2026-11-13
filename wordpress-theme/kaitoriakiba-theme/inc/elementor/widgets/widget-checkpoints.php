@@ -79,7 +79,7 @@ class Kaitori_Checkpoints_Widget extends \Elementor\Widget_Base {
                 <div class="mainpage-box">
                     <div class="mainpage-title col-center">
                         <img src="<?php echo esc_url( $theme_uri ); ?>/assets/images/mainpage/mainpage_title_1.jpg" alt="Key Checkpoints to Sell Your Phone at the Highest Price" class="img-responsive" /> 
-                        <h2><?php _e( 'Key Selling Points', 'kaitoriakiba' ); ?></h2>
+                        <h2><?php echo esc_html( kaitori_t( 'Key Selling Points', '選ばれる理由' ) ); ?></h2>
                     </div>
                     <ul class="gutter-0" style="list-style:none; padding:0; margin:0;">
                         <li class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center">

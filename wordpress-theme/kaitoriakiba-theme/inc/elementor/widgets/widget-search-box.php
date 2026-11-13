@@ -152,12 +152,12 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
-        $kw_title       = ! empty( $settings['kw_title'] ) ? $settings['kw_title'] : __( 'Search by device model name or model number!', 'kaitoriakiba' );
-        $kw_subtitle    = ! empty( $settings['kw_subtitle'] ) ? $settings['kw_subtitle'] : __( 'Please enter device name, model number, JAN code, etc.', 'kaitoriakiba' );
-        $kw_btn_text    = ! empty( $settings['kw_button_text'] ) ? $settings['kw_button_text'] : __( 'Search', 'kaitoriakiba' );
-        $step_title     = ! empty( $settings['step_title'] ) ? $settings['step_title'] : __( 'Step-by-Step Category Search', 'kaitoriakiba' );
-        $step_subtitle  = ! empty( $settings['step_subtitle'] ) ? $settings['step_subtitle'] : __( 'Select one or more categories (Multiple selection supported)', 'kaitoriakiba' );
-        $step_btn_text  = ! empty( $settings['step_button_text'] ) ? $settings['step_button_text'] : __( 'Search', 'kaitoriakiba' );
+        $kw_title       = kaitori_elementor_display( isset( $settings['kw_title'] ) ? $settings['kw_title'] : '', 'Search by device model name or model number!', '機種名・型番で検索！' );
+        $kw_subtitle    = kaitori_elementor_display( isset( $settings['kw_subtitle'] ) ? $settings['kw_subtitle'] : '', 'Please enter device name, model number, JAN code, etc.', '機種名・型番・JANコード等をご入力ください。' );
+        $kw_btn_text    = kaitori_elementor_display( isset( $settings['kw_button_text'] ) ? $settings['kw_button_text'] : '', 'Search', '検索' );
+        $step_title     = kaitori_elementor_display( isset( $settings['step_title'] ) ? $settings['step_title'] : '', 'Step-by-Step Category Search', 'カテゴリから絞り込み検索' );
+        $step_subtitle  = kaitori_elementor_display( isset( $settings['step_subtitle'] ) ? $settings['step_subtitle'] : '', 'Select one or more categories (Multiple selection supported)', '条件を選択してください（複数選択可）' );
+        $step_btn_text  = kaitori_elementor_display( isset( $settings['step_button_text'] ) ? $settings['step_button_text'] : '', 'Search', '検索' );
 
         $keywords_list  = ! empty( $settings['keywords_list'] ) && is_iterable( $settings['keywords_list'] ) ? $settings['keywords_list'] : array(
             array( 'keyword' => 'iPhone 16' ),
@@ -186,7 +186,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                             <div class="form-group mbtm0 clearfix">
                                 <div class="keyword_search">
                                     <select class="form-control fw_cat" name="cat" style="height: 44px; min-height: 44px; padding: 10px 28px 10px 14px; border-radius: 8px; line-height: normal;">
-                                        <option value=""><?php _e( 'All Categories', 'kaitoriakiba' ); ?></option>
+                                        <option value=""><?php echo esc_html( kaitori_t( 'All Categories', 'すべてのカテゴリ' ) ); ?></option>
                                         <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
                                             <?php foreach ( $categories as $cat ) : ?>
                                                 <option value="<?php echo esc_attr( $cat->slug ); ?>"><?php echo esc_html( $cat->name ); ?></option>
@@ -197,14 +197,14 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                             <option value="tablet">Tablets</option>
                                         <?php endif; ?>
                                     </select>
-                                    <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php esc_attr_e( 'Keyword search (2+ characters)', 'kaitoriakiba' ); ?>" required="required" autocomplete="off">
+                                    <input type="text" class="form-control keyword_search_text q" name="q" placeholder="<?php echo esc_attr( kaitori_t( 'Keyword search (2+ characters)', 'キーワード検索（2文字以上）' ) ); ?>" required="required" autocomplete="off">
                                     <button class="btn search_word" type="submit"><?php echo esc_html( $kw_btn_text ); ?> <i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </form>
                         <?php if ( ! empty( $keywords_list ) ) : ?>
                             <div class="title" style="margin-top: 14px; font-size: 13px; font-weight: bold; color: #475569;">
-                                <?php _e( 'Popular Search Keywords!', 'kaitoriakiba' ); ?>
+                                <?php echo esc_html( kaitori_t( 'Popular Search Keywords!', '人気の検索キーワード！' ) ); ?>
                                 <ul class="hotword" style="margin-top: 6px;">
                                     <?php foreach ( $keywords_list as $kw_item ) : 
                                         $kw_name = isset( $kw_item['keyword'] ) ? $kw_item['keyword'] : '';
@@ -230,7 +230,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                 <div class="step_search">
                                     <div class="step_search_filters">
                                         <select class="form-control s_cat" name="cat">
-                                            <option value=""><?php _e( 'Select Category', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php echo esc_html( kaitori_t( 'Select Category', 'カテゴリを選択' ) ); ?></option>
                                             <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
                                                 <?php foreach ( $categories as $cat ) : ?>
                                                     <option value="<?php echo esc_attr( $cat->slug ); ?>"><?php echo esc_html( $cat->name ); ?></option>
@@ -242,7 +242,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                         </select>
 
                                         <select class="form-control s_career" name="s_career">
-                                            <option value=""><?php _e( 'By Carrier', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php echo esc_html( kaitori_t( 'By Carrier', 'キャリアで選択' ) ); ?></option>
                                             <?php if ( ! empty( $carriers ) && ! is_wp_error( $carriers ) ) : ?>
                                                 <?php foreach ( $carriers as $car ) : ?>
                                                     <option value="<?php echo esc_attr( $car->slug ); ?>"><?php echo esc_html( $car->name ); ?></option>
@@ -256,7 +256,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                         </select>
 
                                         <select class="form-control s_brand" name="brand">
-                                            <option value=""><?php _e( 'By Brand', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php echo esc_html( kaitori_t( 'By Brand', 'ブランドで選択' ) ); ?></option>
                                             <?php if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) : ?>
                                                 <?php foreach ( $brands as $b ) : ?>
                                                     <option value="<?php echo esc_attr( $b->slug ); ?>"><?php echo esc_html( $b->name ); ?></option>
@@ -269,7 +269,7 @@ class Kaitori_Search_Widget extends \Elementor\Widget_Base {
                                         </select>
 
                                         <select class="form-control s_series" name="series">
-                                            <option value=""><?php _e( 'By Series', 'kaitoriakiba' ); ?></option>
+                                            <option value=""><?php echo esc_html( kaitori_t( 'By Series', 'シリーズで選択' ) ); ?></option>
                                             <?php if ( ! empty( $series_list ) && ! is_wp_error( $series_list ) ) : ?>
                                                 <?php foreach ( $series_list as $ser ) : ?>
                                                     <option value="<?php echo esc_attr( $ser->slug ); ?>"><?php echo esc_html( $ser->name ); ?></option>

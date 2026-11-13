@@ -205,6 +205,39 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                             <span class="badge-req" style="background:#fee2e2; color:#ef4444; font-size:11px; padding:2px 8px; border-radius:4px;"><?php kaitori_te( 'Required', '必須' ); ?></span>
                         </label>
                         <select name="device_model" id="input_model" class="form-control-custom" required style="height:46px; border-radius:10px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <?php
+                            // Populate the model list from the Buyback Devices catalog (kaitori_device CPT),
+                            // so it stays in sync with the devices shown on the site and the single-device
+                            // "Apply for Buyback" button (which deep-links ?model=<device title>) preselects
+                            // the exact device here. The quote engine also looks devices up by this title.
+                            $cpt_devices = get_posts( array(
+                                'post_type'      => 'kaitori_device',
+                                'post_status'    => 'publish',
+                                'posts_per_page' => 60,
+                                'orderby'        => 'date',
+                                'order'          => 'DESC',
+                            ) );
+                            if ( ! empty( $cpt_devices ) ) :
+                                // A deep-linked model that isn't (or is no longer) in the catalog is kept
+                                // as a selected option so the customer's choice is never lost.
+                                $pre_in_catalog = false;
+                                foreach ( $cpt_devices as $d ) {
+                                    if ( '' !== $pre_model && $pre_model === $d->post_title ) { $pre_in_catalog = true; break; }
+                                }
+                                if ( '' !== $pre_model && ! $pre_in_catalog ) {
+                                    echo '<option value="' . esc_attr( $pre_model ) . '" selected>' . esc_html( $pre_model ) . '</option>';
+                                }
+                                foreach ( $cpt_devices as $dev ) :
+                                    $maxp  = get_post_meta( $dev->ID, '_max_buyback_price', true );
+                                    $label = $dev->post_title;
+                                    if ( '' !== $maxp && is_numeric( $maxp ) ) {
+                                        $label .= ' (' . kaitori_t( 'Max ¥', '最高買取額 ¥' ) . number_format( (float) $maxp ) . ')';
+                                    }
+                                    echo '<option value="' . esc_attr( $dev->post_title ) . '" ' . selected( $pre_model, $dev->post_title, false ) . '>' . esc_html( $label ) . '</option>';
+                                endforeach;
+                            else :
+                            // Fallback list when the catalog has no devices yet.
+                            ?>
                             <option value="iPhone 16 Pro Max" <?php selected($pre_model, 'iPhone 16 Pro Max'); ?>>iPhone 16 Pro Max (<?php kaitori_te( 'Max ¥', '最高買取額 ¥' ); ?>235,000)</option>
                             <option value="iPhone 16 Pro" <?php selected($pre_model === '' || $pre_model === 'iPhone 16 Pro', true); ?>>iPhone 16 Pro (<?php kaitori_te( 'Max ¥', '最高買取額 ¥' ); ?>195,000)</option>
                             <option value="iPhone 16 Plus" <?php selected($pre_model, 'iPhone 16 Plus'); ?>>iPhone 16 Plus (<?php kaitori_te( 'Max ¥', '最高買取額 ¥' ); ?>145,000)</option>
@@ -215,6 +248,7 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                             <option value="Google Pixel 9 Pro" <?php selected($pre_model, 'Google Pixel 9 Pro'); ?>>Google Pixel 9 Pro (<?php kaitori_te( 'Max ¥', '最高買取額 ¥' ); ?>135,000)</option>
                             <option value="Google Pixel 9" <?php selected($pre_model, 'Google Pixel 9'); ?>>Google Pixel 9 (<?php kaitori_te( 'Max ¥', '最高買取額 ¥' ); ?>98,000)</option>
                             <option value="Galaxy S24 Ultra" <?php selected($pre_model, 'Galaxy S24 Ultra'); ?>>Galaxy S24 Ultra (<?php kaitori_te( 'Max ¥', '最高買取額 ¥' ); ?>155,000)</option>
+                            <?php endif; ?>
                         </select>
                     </div>
 

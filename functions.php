@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.5.3' );
+define( 'KAITORIAKIBA_VERSION', '2.9.1' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 
@@ -64,6 +64,7 @@ function kaitoriakiba_theme_setup() {
         'top_utility' => __( 'Top Utility Bar Links', 'kaitoriakiba' ),
         'footer_1'    => __( 'Footer Services Menu', 'kaitoriakiba' ),
         'footer_2'    => __( 'Footer Guides Menu', 'kaitoriakiba' ),
+        'sidebar_quick' => __( 'Sidebar Quick Links', 'kaitoriakiba' ),
     ) );
 }
 add_action( 'after_setup_theme', 'kaitoriakiba_theme_setup' );
@@ -127,6 +128,7 @@ require_once KAITORIAKIBA_DIR . '/inc/recaptcha.php';
 require_once KAITORIAKIBA_DIR . '/inc/seo.php';
 require_once KAITORIAKIBA_DIR . '/inc/crypto.php';
 require_once KAITORIAKIBA_DIR . '/inc/pricing.php';
+require_once KAITORIAKIBA_DIR . '/inc/device-filter.php';
 require_once KAITORIAKIBA_DIR . '/inc/kyc-security.php';
 require_once KAITORIAKIBA_DIR . '/inc/cpt.php';
 require_once KAITORIAKIBA_DIR . '/inc/staff-roles.php';
@@ -135,6 +137,8 @@ require_once KAITORIAKIBA_DIR . '/inc/admin-customers.php';
 require_once KAITORIAKIBA_DIR . '/inc/invoice.php';
 require_once KAITORIAKIBA_DIR . '/inc/admin-order-create.php';
 require_once KAITORIAKIBA_DIR . '/inc/sell-gate.php';
+require_once KAITORIAKIBA_DIR . '/inc/store-settings.php';
+require_once KAITORIAKIBA_DIR . '/inc/sidebar-settings.php';
 require_once KAITORIAKIBA_DIR . '/inc/emails.php';
 require_once KAITORIAKIBA_DIR . '/inc/ajax-handlers.php';
 require_once KAITORIAKIBA_DIR . '/inc/demo-data.php';
@@ -258,14 +262,17 @@ add_filter( 'theme_page_templates', 'kaitoriakiba_add_page_templates' );
  * @return array
  */
 function kaitoriakiba_store_info() {
+    // Admin-editable values come from Appearance → Store & Footer; each falls back
+    // to the theme default when the admin left the field blank.
+    $ss = function_exists( 'kaitoriakiba_store_setting' ) ? 'kaitoriakiba_store_setting' : null;
     return apply_filters( 'kaitori_store_info', array(
-        'name'    => kaitori_t( 'Kaitori Akiba Akihabara Main Store', 'Kaitori Akiba 秋葉原総本店' ),
-        'address' => kaitori_t( '1 Sotokanda, Chiyoda-ku, Tokyo (2 min from Akihabara Sta.)', '東京都千代田区外神田1丁目（秋葉原駅 徒歩2分）' ),
-        'hours'   => kaitori_t( '10:00 - 19:30', '10:00 〜 19:30' ),
-        'holiday' => kaitori_t( 'Open daily', '年中無休' ),
-        'access'  => kaitori_t( '2 min walk from JR Akihabara Sta. Electric Town Exit', 'JR秋葉原駅 電気街口より徒歩2分' ),
-        'phone'   => '',
-        'license' => kaitori_t( 'Tokyo Public Safety Commission License No. 301031200000', '東京都公安委員会許可 第301031200000号' ),
+        'name'    => $ss ? $ss( 'store_name', kaitori_t( 'Kaitori Akiba Akihabara Main Store', 'Kaitori Akiba 秋葉原総本店' ) ) : kaitori_t( 'Kaitori Akiba Akihabara Main Store', 'Kaitori Akiba 秋葉原総本店' ),
+        'address' => $ss ? $ss( 'address', kaitori_t( '1 Sotokanda, Chiyoda-ku, Tokyo (2 min from Akihabara Sta.)', '東京都千代田区外神田1丁目（秋葉原駅 徒歩2分）' ) ) : kaitori_t( '1 Sotokanda, Chiyoda-ku, Tokyo (2 min from Akihabara Sta.)', '東京都千代田区外神田1丁目（秋葉原駅 徒歩2分）' ),
+        'hours'   => $ss ? $ss( 'hours', kaitori_t( '10:00 - 19:30', '10:00 〜 19:30' ) ) : kaitori_t( '10:00 - 19:30', '10:00 〜 19:30' ),
+        'holiday' => $ss ? $ss( 'holiday', kaitori_t( 'Open daily', '年中無休' ) ) : kaitori_t( 'Open daily', '年中無休' ),
+        'access'  => $ss ? $ss( 'access', kaitori_t( '2 min walk from JR Akihabara Sta. Electric Town Exit', 'JR秋葉原駅 電気街口より徒歩2分' ) ) : kaitori_t( '2 min walk from JR Akihabara Sta. Electric Town Exit', 'JR秋葉原駅 電気街口より徒歩2分' ),
+        'phone'   => $ss ? $ss( 'phone', '' ) : '',
+        'license' => $ss ? $ss( 'license', kaitori_t( 'Tokyo Public Safety Commission License No. 301031200000', '東京都公安委員会許可 第301031200000号' ) ) : kaitori_t( 'Tokyo Public Safety Commission License No. 301031200000', '東京都公安委員会許可 第301031200000号' ),
     ) );
 }
 

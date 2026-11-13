@@ -61,7 +61,7 @@ class Kaitori_Announcement_Widget extends \Elementor\Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-        $title    = ! empty( $settings['announcement_title'] ) ? $settings['announcement_title'] : kaitori_t( '[Important] Announcements from Kaitori Akiba', '【重要】買取アキバからのお知らせ' );
+        $title    = kaitori_elementor_display( isset( $settings['announcement_title'] ) ? $settings['announcement_title'] : '', '[Important] Announcements from Kaitori Akiba', '【重要】買取アキバからのお知らせ' );
         $show_ql  = ( 'yes' === $settings['show_quick_links'] );
         ?>
         <div class="maintop" style="margin-top: 15px;">
