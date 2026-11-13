@@ -154,6 +154,8 @@ function kaitoriakiba_maybe_block_sell_form() {
  * must register/login BEFORE they can submit identity documents). Admins and the
  * Elementor editor/preview are never blocked. Renders the "login required" notice
  * and returns true when the current (guest) visitor should be blocked.
+ * If the user has already been verified, shows the already-verified completion screen
+ * and returns true so the upload form is not shown.
  *
  * @return bool blocked
  */
@@ -162,15 +164,69 @@ function kaitoriakiba_maybe_block_kyc_form() {
     if ( function_exists( 'kaitoriakiba_is_elementor_active' ) && kaitoriakiba_is_elementor_active() ) {
         return false;
     }
-    // Admins/staff can preview the form.
-    if ( current_user_can( 'manage_options' ) ) {
+
+    // Admins/staff can preview the raw form with ?preview_form=1
+    if ( current_user_can( 'manage_options' ) && ! empty( $_GET['preview_form'] ) ) {
         return false;
     }
-    if ( is_user_logged_in() ) {
-        return false;
+
+    // Guest users must log in first.
+    if ( ! is_user_logged_in() ) {
+        kaitoriakiba_render_sell_gate( 'login' );
+        return true;
     }
-    kaitoriakiba_render_sell_gate( 'login' );
-    return true;
+
+    // Check if the current user is already verified.
+    $user_id = get_current_user_id();
+    $email   = wp_get_current_user()->user_email;
+    $status  = function_exists( 'kaitoriakiba_lookup_kyc_status' )
+        ? kaitoriakiba_lookup_kyc_status( $email, $user_id )
+        : ( get_user_meta( $user_id, '_kaitori_kyc_status', true ) ?: 'none' );
+
+    if ( 'verified' === $status ) {
+        kaitoriakiba_render_kyc_already_verified();
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Output the "Identity Verification Already Completed" notice on /kyc-verify/.
+ */
+function kaitoriakiba_render_kyc_already_verified() {
+    $sell_url   = home_url( '/sell-apply/' );
+    $top_url    = home_url( '/' );
+    $mypage_url = home_url( '/mypage/' );
+    ?>
+    <div class="container" style="margin:40px auto; padding:0 15px;">
+        <div style="max-width:580px; margin:0 auto; background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.05); padding:44px 32px; text-align:center;">
+            <div style="width:76px; height:76px; border-radius:50%; background:#dcfce7; color:#16a34a; font-size:36px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                <i class="fa fa-check-circle"></i>
+            </div>
+            <div style="display:inline-block; background:#dcfce7; color:#15803d; font-weight:800; font-size:12px; padding:4px 14px; border-radius:20px; margin-bottom:12px;">
+                <?php kaitori_te( 'Identity Verification Status: Verified', '本人確認ステータス：承認済み' ); ?>
+            </div>
+            <h1 style="font-size:22px; font-weight:900; color:#0f172a; margin-bottom:12px;">
+                <?php kaitori_te( 'Your identity verification (eKYC) is already completed', 'お客様の本人確認（eKYC）は完了しています' ); ?>
+            </h1>
+            <p style="color:#475569; font-size:14px; line-height:1.8; margin-bottom:26px;">
+                <?php kaitori_te( 'Your identity verification documents have already been approved. You do not need to resubmit them. You can proceed directly to apply for buybacks.', 'ご提出いただいた本人確認書類はすでに承認済みです。改めて書類をご提出いただく必要はございません。そのまま買取お申込みをご利用いただけます。' ); ?>
+            </p>
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <a href="<?php echo esc_url( $sell_url ); ?>" class="btn btn-primary" style="font-weight:800; border-radius:10px; padding:12px 28px; background:#ef4444; border-color:#ef4444; color:#fff; font-size:15px;">
+                    <i class="fa fa-mobile" style="margin-right:6px; font-size:17px;"></i> <?php kaitori_te( 'Proceed to Buyback Application', '買取お申込みへ進む' ); ?>
+                </a>
+                <a href="<?php echo esc_url( $mypage_url ); ?>" class="btn btn-default" style="font-weight:700; border-radius:10px; padding:12px 24px; font-size:15px;">
+                    <i class="fa fa-user-circle-o" style="margin-right:6px;"></i> <?php kaitori_te( 'My Page', 'マイページ' ); ?>
+                </a>
+                <a href="<?php echo esc_url( $top_url ); ?>" class="btn btn-default" style="font-weight:700; border-radius:10px; padding:12px 24px; font-size:15px;">
+                    <?php kaitori_te( 'Back to Top', 'トップページへ' ); ?>
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php
 }
 
 /* ----------------------------- Settings page ----------------------------- */

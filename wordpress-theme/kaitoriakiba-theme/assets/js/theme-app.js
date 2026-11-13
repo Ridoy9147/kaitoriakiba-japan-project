@@ -558,13 +558,24 @@
                         if (document.getElementById('displayOrderCode')) {
                             document.getElementById('displayOrderCode').innerText = response.data.order_code;
                         }
-                        if (response.data.order_code) {
-                            var appName  = $('input[name="applicant_name"]').val() || '';
-                            var appEmail = $('input[name="applicant_email"]').val() || '';
-                            var appPhone = $('input[name="applicant_phone"]').val() || '';
-                            var kycUrl = kaitori_ajax.home_url + 'kyc-verify/?order=' + encodeURIComponent(response.data.order_code) + '&name=' + encodeURIComponent(appName) + '&email=' + encodeURIComponent(appEmail) + '&phone=' + encodeURIComponent(appPhone);
-                            $('#btnGoToKyc, .btn-goto-kyc').attr('href', kycUrl);
+
+                        // Toggle verified notice vs eKYC upload prompt
+                        var isVerified = response.data && (response.data.kyc_status === 'verified');
+                        if (isVerified) {
+                            $('#kyc-needed-box, #btnGoToKyc, .btn-goto-kyc').hide();
+                            $('#kyc-verified-success-box').show();
+                        } else {
+                            $('#kyc-verified-success-box').hide();
+                            $('#kyc-needed-box, #btnGoToKyc').show();
+                            if (response.data.order_code) {
+                                var appName  = $('input[name="applicant_name"]').val() || '';
+                                var appEmail = $('input[name="applicant_email"]').val() || '';
+                                var appPhone = $('input[name="applicant_phone"]').val() || '';
+                                var kycUrl = kaitori_ajax.home_url + 'kyc-verify/?order=' + encodeURIComponent(response.data.order_code) + '&name=' + encodeURIComponent(appName) + '&email=' + encodeURIComponent(appEmail) + '&phone=' + encodeURIComponent(appPhone);
+                                $('#btnGoToKyc, .btn-goto-kyc').attr('href', kycUrl);
+                            }
                         }
+
                         kaitoriPopup(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.app_success) || 'Done', 'success');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {

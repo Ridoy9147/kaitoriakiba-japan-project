@@ -35,6 +35,16 @@ else :
     $pre_storage  = isset( $_GET['storage'] ) ? sanitize_text_field( $_GET['storage'] ) : '256GB';
     $pre_carrier  = isset( $_GET['carrier'] ) ? sanitize_text_field( $_GET['carrier'] ) : 'SIMフリー';
     $pre_delivery = isset( $_GET['delivery'] ) ? sanitize_text_field( $_GET['delivery'] ) : 'mail';
+
+    $is_kyc_verified = false;
+    if ( is_user_logged_in() ) {
+        $cur_uid   = get_current_user_id();
+        $cur_email = wp_get_current_user()->user_email;
+        $kyc_st    = function_exists( 'kaitoriakiba_lookup_kyc_status' )
+            ? kaitoriakiba_lookup_kyc_status( $cur_email, $cur_uid )
+            : ( get_user_meta( $cur_uid, '_kaitori_kyc_status', true ) ?: 'none' );
+        $is_kyc_verified = ( 'verified' === $kyc_st );
+    }
     ?>
     <div class="container" style="margin-top: 30px; margin-bottom: 60px;">
         <div class="apply-container" style="max-width: 860px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 36px 32px;">
@@ -65,18 +75,45 @@ else :
                 <div style="width:72px; height:72px; border-radius:50%; background:#dcfce7; color:#16a34a; font-size:36px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto;">
                     <i class="fa fa-check"></i>
                 </div>
-                <h2 style="font-size:24px; font-weight:900; color:#0f172a; margin-bottom:12px;">買取お申込みが完了いたしました！</h2>
+                <h2 style="font-size:24px; font-weight:900; color:#0f172a; margin-bottom:12px;"><?php kaitori_te( 'Your buyback application is complete!', '買取お申込みが完了いたしました！' ); ?></h2>
                 <p style="color:#475569; font-size:15px; margin-bottom:20px;">
-                    受付番号: <strong id="displayOrderCode" style="color:#ef4444; font-size:18px;"></strong><br>
-                    ご登録のメールアドレスに受付完了のご案内をお送りいたしました。
+                    <?php kaitori_te( 'Order No.', '受付番号' ); ?>: <strong id="displayOrderCode" style="color:#ef4444; font-size:18px;"></strong><br>
+                    <?php kaitori_te( 'A confirmation has been sent to your registered email address.', 'ご登録のメールアドレスに受付完了のご案内をお送りいたしました。' ); ?>
                 </p>
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; max-width:540px; margin:0 auto 24px auto; text-align:left;">
-                    <h4 style="font-weight:800; margin-bottom:8px; color:#1e293b;"><i class="fa fa-id-card-o" style="color:#ef4444;"></i> 次のステップ：本人確認 (eKYC)</h4>
-                    <p style="font-size:13px; color:#64748b; margin:0;">古物営業法により、初回のご利用には身分証明書の提出が必要です。オンラインで運転免許証またはマイナンバーカードの撮影・アップロードを行ってください。</p>
+
+                <!-- Block for ALREADY VERIFIED users -->
+                <div id="kyc-verified-success-box" style="<?php echo $is_kyc_verified ? '' : 'display:none;'; ?> max-width:540px; margin:0 auto 24px auto;">
+                    <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:12px; padding:20px; text-align:left; margin-bottom:20px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                            <span style="background:#22c55e; color:#fff; width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:13px;"><i class="fa fa-check"></i></span>
+                            <h4 style="font-weight:800; margin:0; color:#15803d; font-size:15px;">
+                                <?php kaitori_te( 'Identity Verification (eKYC) Completed', '本人確認（eKYC）完了済み' ); ?>
+                            </h4>
+                        </div>
+                        <p style="font-size:13px; color:#166534; margin:0; line-height:1.7;">
+                            <?php kaitori_te( 'Your identity verification has already been completed and approved. No further document submission is required. Please prepare your device for shipping or bring it directly to our store.', 'お客様の本人確認（eKYC）は既に完了・承認済みです。追加の書類提出は必要ございません。端末の発送または店頭へのお持ち込みをご準備ください。' ); ?>
+                        </p>
+                    </div>
+                    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                        <a href="<?php echo esc_url( home_url( '/mypage/' ) ); ?>" class="btn btn-primary" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:12px 28px; border-radius:10px; font-size:15px;">
+                            <i class="fa fa-user-circle-o" style="margin-right:6px;"></i> <?php kaitori_te( 'View My Page', 'マイページで確認する' ); ?>
+                        </a>
+                        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn btn-default" style="font-weight:700; padding:12px 24px; border-radius:10px; font-size:15px;">
+                            <?php kaitori_te( 'Back to Home', 'トップページへ戻る' ); ?>
+                        </a>
+                    </div>
                 </div>
-                <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>" id="btnGoToKyc" class="btn btn-primary" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:12px 32px; border-radius:10px; font-size:16px;">
-                    本人確認 (eKYC) に進む &rarr;
-                </a>
+
+                <!-- Block for UNVERIFIED / FIRST TIME users -->
+                <div id="kyc-needed-box" style="<?php echo $is_kyc_verified ? 'display:none;' : ''; ?>">
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; max-width:540px; margin:0 auto 24px auto; text-align:left;">
+                        <h4 style="font-weight:800; margin-bottom:8px; color:#1e293b;"><i class="fa fa-id-card-o" style="color:#ef4444;"></i> <?php kaitori_te( 'Next step: Identity Verification (eKYC)', '次のステップ：本人確認 (eKYC)' ); ?></h4>
+                        <p style="font-size:13px; color:#64748b; margin:0;"><?php kaitori_te( 'Under the Antique Dealer Act, first-time use requires submitting an ID. Please photograph and upload your driver license or My Number card online.', '古物営業法により、初回のご利用には身分証明書の提出が必要です。オンラインで運転免許証またはマイナンバーカードの撮影・アップロードを行ってください。' ); ?></p>
+                    </div>
+                    <a href="<?php echo esc_url( home_url( '/kyc-verify/' ) ); ?>" id="btnGoToKyc" class="btn btn-primary" style="background:#ef4444; border-color:#ef4444; font-weight:800; padding:12px 32px; border-radius:10px; font-size:16px;">
+                        <?php kaitori_te( 'Proceed to Identity Verification (eKYC)', '本人確認 (eKYC) に進む' ); ?> &rarr;
+                    </a>
+                </div>
             </div>
 
             <!-- Form -->

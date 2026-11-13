@@ -233,6 +233,11 @@ function kaitoriakiba_ajax_submit_application() {
     }
     update_post_meta( $order_id, '_customer_user_id', $user_id );
 
+    // Determine overall KYC status for this customer
+    $kyc_lookup = function_exists( 'kaitoriakiba_lookup_kyc_status' )
+        ? kaitoriakiba_lookup_kyc_status( $email, $user_id )
+        : ( $user_id ? ( get_user_meta( $user_id, '_kaitori_kyc_status', true ) ?: 'none' ) : 'none' );
+
     // Check if customer already has a submitted or verified eKYC record
     $existing_kyc = get_posts( array(
         'post_type'   => 'kyc_record',
@@ -243,12 +248,19 @@ function kaitoriakiba_ajax_submit_application() {
     ) );
     if ( ! empty( $existing_kyc ) ) {
         $kyc_st = get_post_meta( $existing_kyc[0]->ID, '_kyc_status', true ) ?: 'pending';
+        if ( 'verified' === $kyc_lookup ) {
+            $kyc_st = 'verified';
+        }
         update_post_meta( $order_id, '_order_kyc_status', $kyc_st );
         update_post_meta( $order_id, '_order_kyc_record_id', $existing_kyc[0]->ID );
         update_post_meta( $existing_kyc[0]->ID, '_kyc_order_id', $order_id );
         update_post_meta( $existing_kyc[0]->ID, '_kyc_order_code', $order_title );
     } else {
-        update_post_meta( $order_id, '_order_kyc_status', 'unverified' );
+        if ( 'verified' === $kyc_lookup ) {
+            update_post_meta( $order_id, '_order_kyc_status', 'verified' );
+        } else {
+            update_post_meta( $order_id, '_order_kyc_status', 'unverified' );
+        }
     }
 
     // Send admin notification
@@ -274,6 +286,7 @@ function kaitoriakiba_ajax_submit_application() {
     wp_send_json_success( array(
         'order_id'    => $order_id,
         'order_code'  => $order_title,
+        'kyc_status'  => $kyc_lookup,
         'message'     => kaitori_t( 'Your buyback application was submitted successfully. Please check your confirmation email.', '買取申込が正常に送信されました。確認メールをご確認ください。' ),
     ) );
 }
@@ -293,6 +306,19 @@ function kaitoriakiba_ajax_submit_kyc() {
         wp_send_json_error( array( 'message' => kaitori_t(
             'Please register or log in before submitting identity verification (eKYC).',
             '本人確認(eKYC)のご提出には、会員登録・ログインが必要です。'
+        ) ) );
+    }
+
+    // If the user is already verified (and not an admin testing with preview), reject duplicate submission
+    $cur_uid        = get_current_user_id();
+    $cur_user_email = wp_get_current_user()->user_email;
+    $existing_kyc_st = function_exists( 'kaitoriakiba_lookup_kyc_status' )
+        ? kaitoriakiba_lookup_kyc_status( $cur_user_email, $cur_uid )
+        : ( get_user_meta( $cur_uid, '_kaitori_kyc_status', true ) ?: 'none' );
+    if ( 'verified' === $existing_kyc_st && ! ( current_user_can( 'manage_options' ) && ! empty( $_REQUEST['preview_form'] ) ) ) {
+        wp_send_json_error( array( 'message' => kaitori_t(
+            'Your identity verification (eKYC) is already completed. Resubmission is not required.',
+            'お客様の本人確認（eKYC）は既に完了・承認済みです。再提出は不要です。'
         ) ) );
     }
 
