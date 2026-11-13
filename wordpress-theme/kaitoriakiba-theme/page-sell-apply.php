@@ -309,6 +309,29 @@ else :
                     </div>
 
                     <!-- Customer Basic Info (Optional) -->
+                    <?php
+                    $prefill_name  = '';
+                    $prefill_kana  = '';
+                    $prefill_email = '';
+                    $prefill_phone = '';
+                    if ( is_user_logged_in() ) {
+                        $cur_u = wp_get_current_user();
+                        $u_full = trim( $cur_u->last_name . ' ' . $cur_u->first_name );
+                        $prefill_name  = $u_full ?: ( $cur_u->display_name ?: '' );
+                        $prefill_email = $cur_u->user_email;
+                        $prefill_phone = get_user_meta( $cur_u->ID, 'phone_number', true ) ?: ( get_user_meta( $cur_u->ID, 'billing_phone', true ) ?: '' );
+                        $prefill_kana  = get_user_meta( $cur_u->ID, 'applicant_kana', true ) ?: ( get_user_meta( $cur_u->ID, 'last_name_kana', true ) ?: '' );
+
+                        if ( function_exists( 'kaitoriakiba_find_user_kyc_record' ) ) {
+                            $u_kyc = kaitoriakiba_find_user_kyc_record( $cur_u->ID );
+                            if ( $u_kyc ) {
+                                if ( ! $prefill_name )  { $prefill_name  = get_post_meta( $u_kyc, '_kyc_name', true ); }
+                                if ( ! $prefill_kana )  { $prefill_kana  = get_post_meta( $u_kyc, '_kyc_kana', true ); }
+                                if ( ! $prefill_phone ) { $prefill_phone = get_post_meta( $u_kyc, '_kyc_phone', true ); }
+                            }
+                        }
+                    }
+                    ?>
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-bottom:24px;">
                         <h4 style="font-size:14px; font-weight:800; color:#1e293b; margin-top:0; margin-bottom:12px;">
                             <i class="fa fa-id-badge" style="color:#ef4444;"></i> お申込者様情報 (任意)
@@ -319,28 +342,28 @@ else :
                                     <span>お名前 (Name)</span>
                                     <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;">任意</span>
                                 </label>
-                                <input type="text" name="applicant_name" class="form-control-custom" placeholder="山田 太郎 (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                                <input type="text" name="applicant_name" value="<?php echo esc_attr( $prefill_name ); ?>" class="form-control-custom" placeholder="山田 太郎 (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             </div>
                             <div class="col-md-6 form-group" style="margin-bottom:14px;">
                                 <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:13px; margin-bottom:4px;">
                                     <span>フリガナ (Katakana)</span>
                                     <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;">任意</span>
                                 </label>
-                                <input type="text" name="applicant_kana" class="form-control-custom" placeholder="ヤマダ タロウ (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                                <input type="text" name="applicant_kana" value="<?php echo esc_attr( $prefill_kana ); ?>" class="form-control-custom" placeholder="ヤマダ タロウ (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             </div>
                             <div class="col-md-6 form-group" style="margin-bottom:14px;">
                                 <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:13px; margin-bottom:4px;">
                                     <span>メールアドレス (Email)</span>
                                     <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;">任意</span>
                                 </label>
-                                <input type="email" name="applicant_email" class="form-control-custom" placeholder="taro@example.com (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                                <input type="email" name="applicant_email" value="<?php echo esc_attr( $prefill_email ); ?>" class="form-control-custom" placeholder="taro@example.com (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             </div>
                             <div class="col-md-6 form-group" style="margin-bottom:14px;">
                                 <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:13px; margin-bottom:4px;">
                                     <span>電話番号 (Phone)</span>
                                     <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;">任意</span>
                                 </label>
-                                <input type="tel" name="applicant_phone" class="form-control-custom" placeholder="09012345678 (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                                <input type="tel" name="applicant_phone" value="<?php echo esc_attr( $prefill_phone ); ?>" class="form-control-custom" placeholder="09012345678 (任意)" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                             </div>
                         </div>
                     </div>

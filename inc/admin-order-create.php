@@ -164,10 +164,21 @@ function kaitoriakiba_ajax_walkin_lookup() {
     foreach ( $users as $u ) {
         $kyc_id  = kaitoriakiba_find_user_kyc_record( $u->ID );
         $kstatus = $kyc_id ? ( get_post_meta( $kyc_id, '_kyc_status', true ) ?: 'pending' ) : '';
+        $phone   = get_user_meta( $u->ID, 'phone_number', true ) ?: ( get_user_meta( $u->ID, 'billing_phone', true ) ?: '' );
+        $kana    = get_user_meta( $u->ID, 'applicant_kana', true ) ?: ( get_user_meta( $u->ID, 'last_name_kana', true ) ?: '' );
+        if ( ! $phone && $kyc_id ) {
+            $phone = get_post_meta( $kyc_id, '_kyc_phone', true );
+        }
+        if ( ! $kana && $kyc_id ) {
+            $kana = get_post_meta( $kyc_id, '_kyc_kana', true );
+        }
+        $name = trim( $u->last_name . ' ' . $u->first_name ) ?: ( $u->display_name ?: $u->user_login );
         $results[] = array(
             'user_id'    => (int) $u->ID,
-            'name'       => $u->display_name,
+            'name'       => $name,
             'email'      => $u->user_email,
+            'phone'      => $phone,
+            'kana'       => $kana,
             'kyc_id'     => (int) $kyc_id,
             'kyc_status' => $kstatus,
         );

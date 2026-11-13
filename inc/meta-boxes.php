@@ -403,6 +403,63 @@ function kaitoriakiba_order_meta_box_render( $post ) {
     $kana           = get_post_meta( $post->ID, '_applicant_kana', true );
     $email          = get_post_meta( $post->ID, '_applicant_email', true );
     $phone          = get_post_meta( $post->ID, '_applicant_phone', true );
+
+    // Auto-fallback from linked customer account or KYC record if contact fields are blank
+    $customer_user_id_raw = get_post_meta( $post->ID, '_customer_user_id', true );
+    $kyc_id_raw           = get_post_meta( $post->ID, '_order_kyc_record_id', true );
+
+    $customer_user_id = $customer_user_id_raw;
+    if ( ! $customer_user_id && $email ) {
+        $u = get_user_by( 'email', $email );
+        if ( $u ) { $customer_user_id = $u->ID; }
+    }
+    $kyc_id = $kyc_id_raw;
+    if ( ! $kyc_id && $email ) {
+        $found_kyc = get_posts( array(
+            'post_type'   => 'kyc_record',
+            'meta_key'    => '_kyc_email',
+            'meta_value'  => $email,
+            'numberposts' => 1,
+            'post_status' => 'any',
+        ) );
+        if ( ! empty( $found_kyc ) ) { $kyc_id = $found_kyc[0]->ID; }
+    }
+
+    // Auto-populate from linked WP User if fields are empty or Guest Customer
+    if ( $customer_user_id ) {
+        $u_info = get_userdata( $customer_user_id );
+        if ( $u_info ) {
+            if ( empty( $name ) || 'Guest Customer' === $name ) {
+                $u_full = trim( $u_info->last_name . ' ' . $u_info->first_name );
+                $name   = $u_full ?: ( $u_info->display_name ?: $u_info->user_login );
+            }
+            if ( empty( $email ) ) {
+                $email = $u_info->user_email;
+            }
+            if ( empty( $phone ) ) {
+                $phone = get_user_meta( $customer_user_id, 'phone_number', true ) ?: ( get_user_meta( $customer_user_id, 'billing_phone', true ) ?: '' );
+            }
+            if ( empty( $kana ) ) {
+                $kana = get_user_meta( $customer_user_id, 'applicant_kana', true ) ?: ( get_user_meta( $customer_user_id, 'last_name_kana', true ) ?: '' );
+            }
+        }
+    }
+
+    // Auto-populate from linked KYC record if still empty
+    if ( $kyc_id ) {
+        if ( empty( $name ) || 'Guest Customer' === $name ) {
+            $name = get_post_meta( $kyc_id, '_kyc_name', true );
+        }
+        if ( empty( $kana ) ) {
+            $kana = get_post_meta( $kyc_id, '_kyc_kana', true );
+        }
+        if ( empty( $email ) ) {
+            $email = get_post_meta( $kyc_id, '_kyc_email', true );
+        }
+        if ( empty( $phone ) ) {
+            $phone = get_post_meta( $kyc_id, '_kyc_phone', true );
+        }
+    }
     $model          = get_post_meta( $post->ID, '_device_model', true );
     $storage        = get_post_meta( $post->ID, '_device_storage', true );
     $color          = get_post_meta( $post->ID, '_device_color', true );
@@ -594,8 +651,8 @@ function kaitoriakiba_order_meta_box_render( $post ) {
                         rows.forEach(function(r){
                             var kl=r.kyc_status?(L[r.kyc_status]||r.kyc_status):L.nokyc, kc=col(r.kyc_status);
                             h+='<li style="padding:8px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;gap:10px;">'
-                             +'<span><strong>'+esc(r.name)+'</strong> <span style="color:'+kc+';font-weight:700;font-size:12px;">● '+esc(kl)+'</span><br><span style="color:#64748b;font-size:12px;">'+esc(r.email)+'</span></span>'
-                             +'<button type="button" class="button button-small kaitori-pick" data-uid="'+r.user_id+'" data-kid="'+r.kyc_id+'" data-name="'+esc(r.name)+'" data-email="'+esc(r.email)+'" data-kl="'+esc(kl)+'" data-kc="'+kc+'">'+L.assign+'</button>'
+                             +'<span><strong>'+esc(r.name)+'</strong> <span style="color:'+kc+';font-weight:700;font-size:12px;">● '+esc(kl)+'</span><br><span style="color:#64748b;font-size:12px;">'+esc(r.email)+(r.phone?' · '+esc(r.phone):'')+'</span></span>'
+                             +'<button type="button" class="button button-small kaitori-pick" data-uid="'+r.user_id+'" data-kid="'+r.kyc_id+'" data-name="'+esc(r.name)+'" data-email="'+esc(r.email)+'" data-phone="'+esc(r.phone||'')+'" data-kana="'+esc(r.kana||'')+'" data-kl="'+esc(kl)+'" data-kc="'+kc+'">'+L.assign+'</button>'
                              +'</li>';
                         });
                         h+='</ul>';
@@ -608,8 +665,10 @@ function kaitoriakiba_order_meta_box_render( $post ) {
                     var b=$(this);
                     $('#kaitori_assign_user_id').val(b.data('uid'));
                     $('#kaitori_assign_kyc_id').val(b.data('kid'));
-                    if(!$('[name="_applicant_name"]').val()) $('[name="_applicant_name"]').val(b.data('name'));
+                    if(!$('[name="_applicant_name"]').val() || $('[name="_applicant_name"]').val() === 'Guest Customer') $('[name="_applicant_name"]').val(b.data('name'));
                     if(!$('[name="_applicant_email"]').val()) $('[name="_applicant_email"]').val(b.data('email'));
+                    if(!$('[name="_applicant_phone"]').val() && b.data('phone')) $('[name="_applicant_phone"]').val(b.data('phone'));
+                    if(!$('[name="_applicant_kana"]').val() && b.data('kana')) $('[name="_applicant_kana"]').val(b.data('kana'));
                     $('#kaitori_assign_current').html('<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:6px 12px;color:#166534;"><strong>✔ '+esc(b.data('name'))+'</strong> ('+esc(b.data('email'))+') — <span style="color:'+b.data('kc')+';font-weight:700;">'+esc(b.data('kl'))+'</span></div>');
                     $('#kaitori_assign_results').html('');
                 });
@@ -824,6 +883,59 @@ function kaitoriakiba_save_order_meta( $post_id ) {
 
     if ( isset( $_POST['_applicant_email'] ) ) {
         update_post_meta( $post_id, '_applicant_email', sanitize_email( wp_unslash( $_POST['_applicant_email'] ) ) );
+    }
+
+    // If contact fields are blank or Guest Customer, auto-sync from linked WP user or KYC
+    $saved_name  = get_post_meta( $post_id, '_applicant_name', true );
+    $saved_email = get_post_meta( $post_id, '_applicant_email', true );
+    $saved_phone = get_post_meta( $post_id, '_applicant_phone', true );
+    $saved_kana  = get_post_meta( $post_id, '_applicant_kana', true );
+    $uid         = isset( $_POST['_customer_user_id'] ) ? (int) $_POST['_customer_user_id'] : (int) get_post_meta( $post_id, '_customer_user_id', true );
+    $kid         = isset( $_POST['_order_kyc_record_id'] ) ? (int) $_POST['_order_kyc_record_id'] : (int) get_post_meta( $post_id, '_order_kyc_record_id', true );
+
+    if ( $uid ) {
+        $u = get_userdata( $uid );
+        if ( $u ) {
+            if ( empty( $saved_name ) || 'Guest Customer' === $saved_name ) {
+                $saved_name = trim( $u->last_name . ' ' . $u->first_name ) ?: ( $u->display_name ?: $u->user_login );
+                update_post_meta( $post_id, '_applicant_name', $saved_name );
+            }
+            if ( empty( $saved_email ) ) {
+                $saved_email = $u->user_email;
+                update_post_meta( $post_id, '_applicant_email', $saved_email );
+            }
+            if ( empty( $saved_phone ) ) {
+                $saved_phone = get_user_meta( $uid, 'phone_number', true ) ?: ( get_user_meta( $uid, 'billing_phone', true ) ?: '' );
+                if ( $saved_phone ) {
+                    update_post_meta( $post_id, '_applicant_phone', $saved_phone );
+                }
+            }
+            if ( empty( $saved_kana ) ) {
+                $saved_kana = get_user_meta( $uid, 'applicant_kana', true ) ?: ( get_user_meta( $uid, 'last_name_kana', true ) ?: '' );
+                if ( $saved_kana ) {
+                    update_post_meta( $post_id, '_applicant_kana', $saved_kana );
+                }
+            }
+        }
+    }
+
+    if ( $kid ) {
+        if ( empty( $saved_name ) || 'Guest Customer' === $saved_name ) {
+            $kname = get_post_meta( $kid, '_kyc_name', true );
+            if ( $kname ) { update_post_meta( $post_id, '_applicant_name', $kname ); }
+        }
+        if ( empty( $saved_kana ) ) {
+            $kkana = get_post_meta( $kid, '_kyc_kana', true );
+            if ( $kkana ) { update_post_meta( $post_id, '_applicant_kana', $kkana ); }
+        }
+        if ( empty( $saved_email ) ) {
+            $kemail = get_post_meta( $kid, '_kyc_email', true );
+            if ( $kemail ) { update_post_meta( $post_id, '_applicant_email', $kemail ); }
+        }
+        if ( empty( $saved_phone ) ) {
+            $kphone = get_post_meta( $kid, '_kyc_phone', true );
+            if ( $kphone ) { update_post_meta( $post_id, '_applicant_phone', $kphone ); }
+        }
     }
 
     if ( isset( $_POST['_device_imei'] ) ) {

@@ -86,11 +86,62 @@ function kaitoriakiba_ajax_submit_application() {
     ) );
 
     // Customer
-    $name           = isset( $_POST['applicant_name'] ) ? sanitize_text_field( $_POST['applicant_name'] ) : 'Guest Customer';
+    $name           = isset( $_POST['applicant_name'] ) ? sanitize_text_field( $_POST['applicant_name'] ) : '';
     $kana           = isset( $_POST['applicant_kana'] ) ? sanitize_text_field( $_POST['applicant_kana'] ) : '';
     $email          = isset( $_POST['applicant_email'] ) ? sanitize_email( $_POST['applicant_email'] ) : '';
     $phone          = isset( $_POST['applicant_phone'] ) ? sanitize_text_field( $_POST['applicant_phone'] ) : '';
     $accessories    = isset( $_POST['accessories'] ) && is_array( $_POST['accessories'] ) ? array_map( 'sanitize_text_field', $_POST['accessories'] ) : array();
+
+    // Link & Auto-populate from WordPress User Profile if logged in or matched
+    $user_id = is_user_logged_in() ? get_current_user_id() : 0;
+    if ( ! $user_id && ! empty( $email ) ) {
+        $found_user = get_user_by( 'email', $email );
+        if ( $found_user ) {
+            $user_id = $found_user->ID;
+        }
+    }
+
+    if ( $user_id ) {
+        $u_prof = get_userdata( $user_id );
+        if ( $u_prof ) {
+            if ( empty( $name ) || 'Guest Customer' === $name ) {
+                $u_full = trim( $u_prof->last_name . ' ' . $u_prof->first_name );
+                $name   = $u_full ?: ( $u_prof->display_name ?: $u_prof->user_login );
+            }
+            if ( empty( $email ) ) {
+                $email = $u_prof->user_email;
+            }
+            if ( empty( $phone ) ) {
+                $phone = get_user_meta( $user_id, 'phone_number', true ) ?: ( get_user_meta( $user_id, 'billing_phone', true ) ?: '' );
+            }
+            if ( empty( $kana ) ) {
+                $kana = get_user_meta( $user_id, 'applicant_kana', true ) ?: ( get_user_meta( $user_id, 'last_name_kana', true ) ?: '' );
+            }
+        }
+    }
+
+    // Auto-populate from customer's verified or existing KYC record if still missing
+    if ( $user_id && function_exists( 'kaitoriakiba_find_user_kyc_record' ) ) {
+        $user_kyc_id = kaitoriakiba_find_user_kyc_record( $user_id );
+        if ( $user_kyc_id ) {
+            if ( empty( $name ) || 'Guest Customer' === $name ) {
+                $name = get_post_meta( $user_kyc_id, '_kyc_name', true );
+            }
+            if ( empty( $kana ) ) {
+                $kana = get_post_meta( $user_kyc_id, '_kyc_kana', true );
+            }
+            if ( empty( $phone ) ) {
+                $phone = get_post_meta( $user_kyc_id, '_kyc_phone', true );
+            }
+            if ( empty( $email ) ) {
+                $email = get_post_meta( $user_kyc_id, '_kyc_email', true );
+            }
+        }
+    }
+
+    if ( empty( $name ) ) {
+        $name = 'Guest Customer';
+    }
 
     // Server-side validation for Application Fields
     $invalid_app_fields = array();

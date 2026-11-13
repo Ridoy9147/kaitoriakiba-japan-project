@@ -363,6 +363,29 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                 </div>
 
                 <!-- STEP 2: Your Details & Payout Bank Account (Optional) -->
+                <?php
+                $prefill_name  = '';
+                $prefill_kana  = '';
+                $prefill_email = '';
+                $prefill_phone = '';
+                if ( is_user_logged_in() ) {
+                    $cur_u = wp_get_current_user();
+                    $u_full = trim( $cur_u->last_name . ' ' . $cur_u->first_name );
+                    $prefill_name  = $u_full ?: ( $cur_u->display_name ?: '' );
+                    $prefill_email = $cur_u->user_email;
+                    $prefill_phone = get_user_meta( $cur_u->ID, 'phone_number', true ) ?: ( get_user_meta( $cur_u->ID, 'billing_phone', true ) ?: '' );
+                    $prefill_kana  = get_user_meta( $cur_u->ID, 'applicant_kana', true ) ?: ( get_user_meta( $cur_u->ID, 'last_name_kana', true ) ?: '' );
+
+                    if ( function_exists( 'kaitoriakiba_find_user_kyc_record' ) ) {
+                        $u_kyc = kaitoriakiba_find_user_kyc_record( $cur_u->ID );
+                        if ( $u_kyc ) {
+                            if ( ! $prefill_name )  { $prefill_name  = get_post_meta( $u_kyc, '_kyc_name', true ); }
+                            if ( ! $prefill_kana )  { $prefill_kana  = get_post_meta( $u_kyc, '_kyc_kana', true ); }
+                            if ( ! $prefill_phone ) { $prefill_phone = get_post_meta( $u_kyc, '_kyc_phone', true ); }
+                        }
+                    }
+                }
+                ?>
                 <div class="form-step" id="step-2" style="display:none;">
                     <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
                         <span style="color:#ef4444;">STEP 2</span> <?php kaitori_te( 'Your details & payout bank account', 'お客様情報および買取金お振込口座' ); ?>
@@ -375,14 +398,14 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                                 <span><?php kaitori_te( 'Full Name (Kanji)', '氏名 (漢字)' ); ?></span>
                                 <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;"><?php kaitori_te( 'Optional', '任意' ); ?></span>
                             </label>
-                            <input type="text" name="applicant_name" placeholder="<?php echo esc_attr( kaitori_t( 'Taro Yamada (Optional)', '山田 太郎 (任意)' ) ); ?>" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="text" name="applicant_name" value="<?php echo esc_attr( $prefill_name ); ?>" placeholder="<?php echo esc_attr( kaitori_t( 'Taro Yamada (Optional)', '山田 太郎 (任意)' ) ); ?>" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:16px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:13.5px; margin-bottom:4px;">
                                 <span><?php kaitori_te( 'Furigana (Katakana)', 'フリガナ (カタカナ)' ); ?></span>
                                 <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;"><?php kaitori_te( 'Optional', '任意' ); ?></span>
                             </label>
-                            <input type="text" name="applicant_kana" placeholder="<?php echo esc_attr( kaitori_t( 'ヤマダ タロウ (Optional)', 'ヤマダ タロウ (任意)' ) ); ?>" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="text" name="applicant_kana" value="<?php echo esc_attr( $prefill_kana ); ?>" placeholder="<?php echo esc_attr( kaitori_t( 'ヤマダ タロウ (Optional)', 'ヤマダ タロウ (任意)' ) ); ?>" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                     </div>
 
@@ -392,14 +415,14 @@ class Kaitori_Sell_Apply_Widget extends \Elementor\Widget_Base {
                                 <span><?php kaitori_te( 'Phone Number', '電話番号' ); ?></span>
                                 <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;"><?php kaitori_te( 'Optional', '任意' ); ?></span>
                             </label>
-                            <input type="tel" name="applicant_phone" placeholder="09012345678" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="tel" name="applicant_phone" value="<?php echo esc_attr( $prefill_phone ); ?>" placeholder="09012345678" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                         <div class="col-md-6 form-group" style="margin-bottom:16px;">
                             <label class="form-label" style="display:flex; justify-content:space-between; font-weight:700; font-size:13.5px; margin-bottom:4px;">
                                 <span><?php kaitori_te( 'Email Address', 'メールアドレス' ); ?></span>
                                 <span class="badge-opt" style="background:#f1f5f9; color:#64748b; font-size:11px; padding:2px 6px; border-radius:4px;"><?php kaitori_te( 'Optional', '任意' ); ?></span>
                             </label>
-                            <input type="email" name="applicant_email" placeholder="example@kaitori-akiba.com" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
+                            <input type="email" name="applicant_email" value="<?php echo esc_attr( $prefill_email ); ?>" placeholder="example@kaitori-akiba.com" class="form-control-custom" style="height:44px; border-radius:8px; border:1.5px solid #cbd5e1; width:100%; padding:8px 12px;">
                         </div>
                     </div>
 
