@@ -105,10 +105,12 @@ else :
                         <div style="font-size:13px; font-weight:700; color:#c2410c; margin-bottom:6px;">
                             <i class="fa fa-bolt"></i> <?php kaitori_te( "Today's maximum buyback price (brand-new, unopened, SIM-free)", '本日の最高買取上限価格 (新品未開封・SIMフリー)' ); ?>
                         </div>
-                        <div style="display:flex; align-items:baseline; gap:8px;">
-                            <span style="font-size:24px; font-weight:800; color:#dc2626;">¥</span>
-                            <span id="livePriceNum" style="font-size:38px; font-weight:900; color:#dc2626; line-height:1;"><?php echo number_format((int)$base_price); ?></span>
-                            <span style="font-size:12px; font-weight:700; color:#78350f; background:#fed7aa; padding:3px 10px; border-radius:20px; margin-left:8px;"><?php kaitori_te( 'Tax incl. / ¥0 fees', '税込・手数料0円' ); ?></span>
+                        <div style="display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px;">
+                            <div style="display:inline-flex; align-items:baseline; gap:4px;">
+                                <span style="font-size:24px; font-weight:800; color:#dc2626;">¥</span>
+                                <span id="livePriceNum" style="font-size:38px; font-weight:900; color:#dc2626; line-height:1;"><?php echo number_format((int)$base_price); ?></span>
+                            </div>
+                            <span class="price-tax-badge" style="font-size:11px; font-weight:700; color:#78350f; background:#fed7aa; padding:2px 8px; border-radius:12px; white-space:nowrap !important; display:inline-flex; align-items:center; line-height:1.2; flex-shrink:0;"><?php kaitori_te( 'Tax incl.', '税込・手数料0' ); ?></span>
                         </div>
                         <div style="font-size:12px; color:#9a3412; margin-top:8px;">
                             <i class="fa fa-shield"></i> <?php kaitori_te( 'Apply for an online assessment today and we fully guarantee the above price', '本日中のWeb査定申し込みで上記価格を完全保証いたします' ); ?>

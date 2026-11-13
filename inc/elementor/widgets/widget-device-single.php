@@ -155,9 +155,9 @@ class Kaitori_Device_Single_Widget extends \Elementor\Widget_Base {
                         <!-- Price display -->
                         <div style="background:linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%); border:2px solid #fed7aa; border-radius:12px; padding:16px 20px; margin-bottom:20px;">
                             <div style="font-size:12px; font-weight:700; color:#c2410c;"><?php kaitori_te( "Today's maximum buyback price (brand-new, unopened, SIM-free)", '本日の最高買取上限価格 (新品未開封・SIMフリー)' ); ?></div>
-                            <div style="font-size:36px; font-weight:900; color:#dc2626; line-height:1.2;">
-                                ¥<span id="elCalcPrice"><?php echo number_format( (int)$base_price ); ?></span>
-                                <small style="font-size:12px; color:#78350f; font-weight:700; background:#fed7aa; padding:2px 8px; border-radius:12px; vertical-align:middle; margin-left:8px;"><?php kaitori_te( 'Tax incl. / ¥0 fees', '税込・手数料0円' ); ?></small>
+                            <div style="font-size:36px; font-weight:900; color:#dc2626; line-height:1.2; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px;">
+                                <span>¥<span id="elCalcPrice"><?php echo number_format( (int)$base_price ); ?></span></span>
+                                <small class="price-tax-badge" style="font-size:11px; color:#78350f; font-weight:700; background:#fed7aa; padding:2px 8px; border-radius:12px; vertical-align:middle; white-space:nowrap !important; display:inline-flex; align-items:center; line-height:1.2; flex-shrink:0;"><?php kaitori_te( 'Tax incl.', '税込・手数料0' ); ?></small>
                             </div>
                         </div>
 
