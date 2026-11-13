@@ -626,21 +626,7 @@ function kaitoriakiba_ajax_login_user() {
             'セッションの有効期限が切れました。ページを再読み込みしてお試しください。'
         ) ) );
     }
-    // Brute-force throttle (filterable). 10 attempts / 10 min per IP by default —
-    // raised from 5 so repeated legitimate/in-house attempts aren't locked out too soon.
-    $login_max = (int) apply_filters( 'kaitori_login_rate_max', 10 );
-    if ( ! kaitoriakiba_rate_limit( 'login', $login_max, 600 ) ) {
-        wp_send_json_error( array( 'message' => kaitori_t(
-            'Too many login attempts. Please wait about 10 minutes and try again.',
-            'ログイン試行回数が多すぎます。10分ほど待って再度お試しください。'
-        ) ) );
-    }
-    if ( ! kaitoriakiba_check_honeypot() || ! kaitoriakiba_captcha_ok() ) {
-        wp_send_json_error( array( 'message' => kaitori_t(
-            'An invalid submission was detected. Please reload the page and try again.',
-            '不正な送信が検出されました。ページを再読み込みしてお試しください。'
-        ) ) );
-    }
+    kaitoriakiba_guard_public_form( 'login', 15 );
 
     $user_login = isset( $_POST['log'] ) ? sanitize_text_field( $_POST['log'] ) : '';
     $user_pass  = isset( $_POST['pwd'] ) ? $_POST['pwd'] : '';

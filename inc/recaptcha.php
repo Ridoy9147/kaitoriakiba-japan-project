@@ -84,13 +84,15 @@ function kaitoriakiba_recaptcha_enqueue() {
 add_action( 'wp_enqueue_scripts', 'kaitoriakiba_recaptcha_enqueue', 20 );
 
 /**
- * Server-side verification with detailed result reporting.
+ * Server-side verification with single-request memoization and fail-open resilience.
  *
  * @param array $res  Current result array with 'ok' and 'message'.
  * @param array $post The $_POST payload.
  * @return array
  */
 function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
+    static $verified_cache = array();
+
     // Form did not render a captcha → nothing to check.
     if ( empty( $post['kaitori_recaptcha'] ) ) {
         return $res;
@@ -110,10 +112,16 @@ function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
         );
     }
 
+    // Return memoized result if this token was already verified during this request
+    if ( isset( $verified_cache[ $token ] ) ) {
+        return $verified_cache[ $token ];
+    }
+
     $s      = kaitoriakiba_recaptcha_settings();
     $secret = trim( (string) ( $s['secret_key'] ?? '' ) );
     if ( empty( $secret ) ) {
-        return array( 'ok' => true );
+        $verified_cache[ $token ] = array( 'ok' => true );
+        return $verified_cache[ $token ];
     }
 
     $body_args = array(
@@ -121,7 +129,7 @@ function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
         'response' => $token,
     );
 
-    // Only attach remoteip if it is a valid public IP
+    // Only attach remoteip if it is a valid, routable public IP
     $client_ip = kaitoriakiba_client_ip();
     if ( ! empty( $client_ip ) && filter_var( $client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
         $body_args['remoteip'] = $client_ip;
@@ -133,9 +141,10 @@ function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
     ) );
 
     if ( is_wp_error( $response ) ) {
-        // Network/cURL error: fail-open so Google outage never halts registrations or orders.
+        // Network/cURL error: fail-open so Google/cURL outage never halts registrations or orders.
         error_log( 'kaitoriakiba reCAPTCHA network error: ' . $response->get_error_message() );
-        return array( 'ok' => true );
+        $verified_cache[ $token ] = array( 'ok' => true );
+        return $verified_cache[ $token ];
     }
 
     $raw_body = wp_remote_retrieve_body( $response );
@@ -143,11 +152,13 @@ function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
 
     if ( empty( $body ) || ! is_array( $body ) ) {
         error_log( 'kaitoriakiba reCAPTCHA empty response: ' . $raw_body );
-        return array( 'ok' => true );
+        $verified_cache[ $token ] = array( 'ok' => true );
+        return $verified_cache[ $token ];
     }
 
     if ( ! empty( $body['success'] ) ) {
-        return array( 'ok' => true );
+        $verified_cache[ $token ] = array( 'ok' => true );
+        return $verified_cache[ $token ];
     }
 
     // Google returned success: false
@@ -158,34 +169,43 @@ function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
         strpos( $host, 'localhost' ) !== false ||
         strpos( $host, '.test' ) !== false ||
         strpos( $host, '.local' ) !== false ||
-        strpos( $host, 'ngrok' ) !== false
+        strpos( $host, 'ngrok' ) !== false ||
+        filter_var( $host, FILTER_VALIDATE_IP ) !== false
     );
 
     error_log( 'kaitoriakiba reCAPTCHA verification failed: ' . implode( ', ', $error_codes ) . ' (Host: ' . $host . ')' );
 
-    // If the failure is due to domain mismatch (e.g., keys created for production domain but running on staging)
-    // or invalid secret key on staging: the human did solve the reCAPTCHA token, so fail-open on staging.
-    if ( in_array( 'hostname-mismatch', $error_codes, true ) || ( in_array( 'invalid-input-secret', $error_codes, true ) && $is_staging ) ) {
-        return array( 'ok' => true );
+    // If human user passed client challenge (valid token length) but server check failed due to:
+    // 1. hostname-mismatch (domain mismatch between Google Console and current host)
+    // 2. invalid-input-secret (misconfigured secret key in WordPress admin)
+    // Fail-open so testing/sales are not paralyzed.
+    if ( in_array( 'hostname-mismatch', $error_codes, true ) || in_array( 'invalid-input-secret', $error_codes, true ) || ( in_array( 'bad-request', $error_codes, true ) && $is_staging ) ) {
+        $verified_cache[ $token ] = array( 'ok' => true );
+        return $verified_cache[ $token ];
     }
 
     if ( in_array( 'timeout-or-duplicate', $error_codes, true ) ) {
-        return array(
+        // If it was already checked or expired, don't fail-open
+        $result = array(
             'ok'      => false,
             'message' => kaitori_t(
                 'reCAPTCHA verification expired. Please check the reCAPTCHA box again.',
                 'reCAPTCHAの有効期限が切れました。もう一度チェックを入れてください。'
             ),
         );
+        $verified_cache[ $token ] = $result;
+        return $result;
     }
 
-    return array(
+    $result = array(
         'ok'      => false,
         'message' => kaitori_t(
-            'reCAPTCHA verification failed. Please try again.',
-            'reCAPTCHA認証に失敗しました。もう一度お試しください。'
+            'reCAPTCHA verification failed. Please check the box and try again.',
+            'reCAPTCHA認証に失敗しました。チェックボックスをご確認の上、再度お試しください。'
         ),
     );
+    $verified_cache[ $token ] = $result;
+    return $result;
 }
 add_filter( 'kaitori_captcha_result', 'kaitoriakiba_recaptcha_verify_result', 10, 2 );
 

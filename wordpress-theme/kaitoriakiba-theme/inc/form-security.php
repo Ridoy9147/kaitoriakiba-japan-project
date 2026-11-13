@@ -135,10 +135,7 @@ function kaitoriakiba_captcha_result() {
  */
 function kaitoriakiba_captcha_ok() {
     $res = kaitoriakiba_captcha_result();
-    if ( ! empty( $res['ok'] ) ) {
-        return (bool) apply_filters( 'kaitori_captcha_verify', true, $_POST );
-    }
-    return false;
+    return ! empty( $res['ok'] );
 }
 
 /**
@@ -164,7 +161,7 @@ function kaitoriakiba_guard_public_form( $action, $max_attempts = 15 ) {
 
     // 2. CAPTCHA verification (gives precise message when captcha fails)
     $captcha_res = kaitoriakiba_captcha_result();
-    if ( ! empty( $captcha_res ) && empty( $captcha_res['ok'] ) ) {
+    if ( empty( $captcha_res['ok'] ) ) {
         $msg = ! empty( $captcha_res['message'] ) ? $captcha_res['message'] : kaitori_t(
             'reCAPTCHA verification failed. Please check the checkbox and try again.',
             'reCAPTCHA認証に失敗しました。チェックボックスをご確認の上、再度お試しください。'
@@ -172,15 +169,7 @@ function kaitoriakiba_guard_public_form( $action, $max_attempts = 15 ) {
         wp_send_json_error( array( 'message' => $msg ) );
     }
 
-    // 3. Fallback check for legacy boolean filter
-    if ( ! kaitoriakiba_captcha_ok() ) {
-        wp_send_json_error( array( 'message' => kaitori_t(
-            'reCAPTCHA verification failed. Please check the checkbox and try again.',
-            'reCAPTCHA認証に失敗しました。チェックボックスをご確認の上、再度お試しください。'
-        ) ) );
-    }
-
-    // 4. Rate limiting
+    // 3. Rate limiting
     $max_attempts = (int) apply_filters( 'kaitori_rate_limit_max', $max_attempts, $action );
     if ( ! kaitoriakiba_rate_limit( $action, $max_attempts ) ) {
         wp_send_json_error( array( 'message' => kaitori_t(

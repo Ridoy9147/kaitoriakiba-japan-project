@@ -510,6 +510,22 @@
                 return false;
             }
 
+            // Client-side reCAPTCHA check if active on form
+            if ($form.find('.g-recaptcha').length) {
+                var rCheckSell = $form.find('textarea[name="g-recaptcha-response"]').val();
+                if (!rCheckSell && typeof grecaptcha !== 'undefined') {
+                    try { rCheckSell = grecaptcha.getResponse(); } catch(err) {}
+                }
+                if (!rCheckSell) {
+                    kaitoriPopup(
+                        (kaitori_ajax.i18n && kaitori_ajax.i18n.recaptcha_required) ||
+                        'Please verify that you are not a robot by checking the reCAPTCHA box.',
+                        'warning'
+                    );
+                    return false;
+                }
+            }
+
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-app, #btnSubmitSell, #btnFinalSubmit');
             var originalText = $submitBtn.html();
 
@@ -518,6 +534,15 @@
             var formData = new FormData(this);
             formData.append('action', 'kaitori_submit_application');
             formData.append('security', kaitori_ajax.security);
+
+            // Ensure g-recaptcha-response is explicitly included
+            var formTokenSell = $form.find('textarea[name="g-recaptcha-response"]').val();
+            if (!formTokenSell && typeof grecaptcha !== 'undefined') {
+                try { formTokenSell = grecaptcha.getResponse(); } catch(err) {}
+            }
+            if (formTokenSell) {
+                formData.set('g-recaptcha-response', formTokenSell);
+            }
 
             $.ajax({
                 url: kaitori_ajax.ajax_url,
@@ -543,6 +568,9 @@
                         kaitoriPopup(response.data.message || (kaitori_ajax.i18n && kaitori_ajax.i18n.app_success) || 'Done', 'success');
                         window.scrollTo({ top: 100, behavior: 'smooth' });
                     } else {
+                        if (typeof grecaptcha !== 'undefined') {
+                            try { grecaptcha.reset(); } catch (err) {}
+                        }
                         // Check if specific field errors returned by server
                         if (response.data && response.data.invalid_fields) {
                             var serverErrors = [];
@@ -583,6 +611,9 @@
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
+                    if (typeof grecaptcha !== 'undefined') {
+                        try { grecaptcha.reset(); } catch (err) {}
+                    }
                     kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
@@ -603,6 +634,22 @@
                 return false;
             }
 
+            // Client-side reCAPTCHA check if active on form
+            if ($form.find('.g-recaptcha').length) {
+                var rCheckKyc = $form.find('textarea[name="g-recaptcha-response"]').val();
+                if (!rCheckKyc && typeof grecaptcha !== 'undefined') {
+                    try { rCheckKyc = grecaptcha.getResponse(); } catch(err) {}
+                }
+                if (!rCheckKyc) {
+                    kaitoriPopup(
+                        (kaitori_ajax.i18n && kaitori_ajax.i18n.recaptcha_required) ||
+                        'Please verify that you are not a robot by checking the reCAPTCHA box.',
+                        'warning'
+                    );
+                    return false;
+                }
+            }
+
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-kyc, #btnSubmitKyc');
             var originalText = $submitBtn.html();
 
@@ -611,6 +658,15 @@
             var formData = new FormData(this);
             formData.append('action', 'kaitori_submit_kyc');
             formData.append('security', kaitori_ajax.security);
+
+            // Ensure g-recaptcha-response is explicitly included
+            var formTokenKyc = $form.find('textarea[name="g-recaptcha-response"]').val();
+            if (!formTokenKyc && typeof grecaptcha !== 'undefined') {
+                try { formTokenKyc = grecaptcha.getResponse(); } catch(err) {}
+            }
+            if (formTokenKyc) {
+                formData.set('g-recaptcha-response', formTokenKyc);
+            }
 
             $.ajax({
                 url: kaitori_ajax.ajax_url,
@@ -651,11 +707,17 @@
                             });
                             showFieldErrors($form, serverErrors, response.data.message);
                         }
+                        if (typeof grecaptcha !== 'undefined') {
+                            try { grecaptcha.reset(); } catch (err) {}
+                        }
                         kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
+                    if (typeof grecaptcha !== 'undefined') {
+                        try { grecaptcha.reset(); } catch (err) {}
+                    }
                     kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
@@ -668,8 +730,11 @@
             var $form = $(this);
 
             // Client-side reCAPTCHA check if active on form
-            if (typeof grecaptcha !== 'undefined' && $form.find('.g-recaptcha').length) {
-                var rCheck = grecaptcha.getResponse();
+            if ($form.find('.g-recaptcha').length) {
+                var rCheck = $form.find('textarea[name="g-recaptcha-response"]').val();
+                if (!rCheck && typeof grecaptcha !== 'undefined') {
+                    try { rCheck = grecaptcha.getResponse(); } catch(err) {}
+                }
                 if (!rCheck) {
                     kaitoriPopup(
                         (kaitori_ajax.i18n && kaitori_ajax.i18n.recaptcha_required) ||
@@ -690,11 +755,12 @@
             formData.append('security', kaitori_ajax.security);
 
             // Ensure g-recaptcha-response is explicitly included
-            if (typeof grecaptcha !== 'undefined') {
-                var rToken = grecaptcha.getResponse();
-                if (rToken) {
-                    formData.set('g-recaptcha-response', rToken);
-                }
+            var formTokenReg = $form.find('textarea[name="g-recaptcha-response"]').val();
+            if (!formTokenReg && typeof grecaptcha !== 'undefined') {
+                try { formTokenReg = grecaptcha.getResponse(); } catch(err) {}
+            }
+            if (formTokenReg) {
+                formData.set('g-recaptcha-response', formTokenReg);
             }
 
             $.ajax({
@@ -735,9 +801,12 @@
             var $form = $(this);
 
             // Client-side reCAPTCHA check if active on form
-            if (typeof grecaptcha !== 'undefined' && $form.find('.g-recaptcha').length) {
-                var rCheck = grecaptcha.getResponse();
-                if (!rCheck) {
+            if ($form.find('.g-recaptcha').length) {
+                var rCheckLog = $form.find('textarea[name="g-recaptcha-response"]').val();
+                if (!rCheckLog && typeof grecaptcha !== 'undefined') {
+                    try { rCheckLog = grecaptcha.getResponse(); } catch(err) {}
+                }
+                if (!rCheckLog) {
                     kaitoriPopup(
                         (kaitori_ajax.i18n && kaitori_ajax.i18n.recaptcha_required) ||
                         'Please verify that you are not a robot by checking the reCAPTCHA box.',
@@ -757,11 +826,12 @@
             formData.append('security', kaitori_ajax.security);
 
             // Ensure g-recaptcha-response is explicitly included
-            if (typeof grecaptcha !== 'undefined') {
-                var rToken = grecaptcha.getResponse();
-                if (rToken) {
-                    formData.set('g-recaptcha-response', rToken);
-                }
+            var formTokenLog = $form.find('textarea[name="g-recaptcha-response"]').val();
+            if (!formTokenLog && typeof grecaptcha !== 'undefined') {
+                try { formTokenLog = grecaptcha.getResponse(); } catch(err) {}
+            }
+            if (formTokenLog) {
+                formData.set('g-recaptcha-response', formTokenLog);
             }
 
             $.ajax({
