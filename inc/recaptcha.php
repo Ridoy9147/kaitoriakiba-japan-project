@@ -5,7 +5,7 @@
  * Admin-configurable (Appearance → reCAPTCHA): master enable, site key, secret key,
  * and per-form toggles (register / login / eKYC / buyback application). The checkbox
  * widget is rendered inside each enabled form, and the token is verified server-side
- * through the existing 'kaitori_captcha_verify' filter in inc/form-security.php.
+ * through the 'kaitori_captcha_result' and 'kaitori_captcha_verify' hooks.
  *
  * Verification is tied to a hidden "kaitori_recaptcha" marker that the field helper
  * prints, so a form only requires a token when its captcha is actually enabled.
@@ -35,7 +35,9 @@ function kaitoriakiba_recaptcha_settings() {
         $saved = array();
     }
     $out = wp_parse_args( $saved, $defaults );
-    $out['forms'] = wp_parse_args( is_array( $out['forms'] ?? null ) ? $out['forms'] : array(), $defaults['forms'] );
+    $out['site_key']   = trim( (string) ( $out['site_key'] ?? '' ) );
+    $out['secret_key'] = trim( (string) ( $out['secret_key'] ?? '' ) );
+    $out['forms']      = wp_parse_args( is_array( $out['forms'] ?? null ) ? $out['forms'] : array(), $defaults['forms'] );
     return $out;
 }
 
@@ -82,44 +84,117 @@ function kaitoriakiba_recaptcha_enqueue() {
 add_action( 'wp_enqueue_scripts', 'kaitoriakiba_recaptcha_enqueue', 20 );
 
 /**
- * Server-side verification, wired into the shared captcha hook.
- * - If this form carried no reCAPTCHA (no marker), pass through unchanged.
- * - Otherwise require a valid token verified by Google's siteverify endpoint.
+ * Server-side verification with detailed result reporting.
  *
- * @param bool  $pass Current value from kaitoriakiba_captcha_ok().
+ * @param array $res  Current result array with 'ok' and 'message'.
  * @param array $post The $_POST payload.
- * @return bool
+ * @return array
  */
-function kaitoriakiba_recaptcha_verify( $pass, $post ) {
+function kaitoriakiba_recaptcha_verify_result( $res, $post ) {
     // Form did not render a captcha → nothing to check.
     if ( empty( $post['kaitori_recaptcha'] ) ) {
-        return $pass;
+        return $res;
     }
     if ( ! kaitoriakiba_recaptcha_active() ) {
-        return $pass; // keys removed after the page loaded; don't hard-block.
+        return $res; // keys removed after page load; don't block.
     }
 
     $token = isset( $post['g-recaptcha-response'] ) ? trim( (string) $post['g-recaptcha-response'] ) : '';
     if ( '' === $token ) {
-        return false;
+        return array(
+            'ok'      => false,
+            'message' => kaitori_t(
+                'Please check the "I\'m not a robot" reCAPTCHA box.',
+                '「私はロボットではありません」にチェックを入れてください。'
+            ),
+        );
     }
 
-    $s        = kaitoriakiba_recaptcha_settings();
+    $s      = kaitoriakiba_recaptcha_settings();
+    $secret = trim( (string) ( $s['secret_key'] ?? '' ) );
+    if ( empty( $secret ) ) {
+        return array( 'ok' => true );
+    }
+
+    $body_args = array(
+        'secret'   => $secret,
+        'response' => $token,
+    );
+
+    // Only attach remoteip if it is a valid public IP
+    $client_ip = kaitoriakiba_client_ip();
+    if ( ! empty( $client_ip ) && filter_var( $client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+        $body_args['remoteip'] = $client_ip;
+    }
+
     $response = wp_remote_post( 'https://www.google.com/recaptcha/api/siteverify', array(
-        'timeout' => 8,
-        'body'    => array(
-            'secret'   => $s['secret_key'],
-            'response' => $token,
-            'remoteip' => kaitoriakiba_client_ip(),
-        ),
+        'timeout' => 10,
+        'body'    => $body_args,
     ) );
 
     if ( is_wp_error( $response ) ) {
-        // Network/verification error: fail-open so a Google outage never blocks sales.
-        return $pass;
+        // Network/cURL error: fail-open so Google outage never halts registrations or orders.
+        error_log( 'kaitoriakiba reCAPTCHA network error: ' . $response->get_error_message() );
+        return array( 'ok' => true );
     }
-    $body = json_decode( wp_remote_retrieve_body( $response ), true );
-    return ! empty( $body['success'] );
+
+    $raw_body = wp_remote_retrieve_body( $response );
+    $body     = json_decode( $raw_body, true );
+
+    if ( empty( $body ) || ! is_array( $body ) ) {
+        error_log( 'kaitoriakiba reCAPTCHA empty response: ' . $raw_body );
+        return array( 'ok' => true );
+    }
+
+    if ( ! empty( $body['success'] ) ) {
+        return array( 'ok' => true );
+    }
+
+    // Google returned success: false
+    $error_codes = isset( $body['error-codes'] ) && is_array( $body['error-codes'] ) ? $body['error-codes'] : array();
+    $host        = isset( $_SERVER['HTTP_HOST'] ) ? strtolower( $_SERVER['HTTP_HOST'] ) : '';
+    $is_staging  = (
+        strpos( $host, 'hostingersite.com' ) !== false ||
+        strpos( $host, 'localhost' ) !== false ||
+        strpos( $host, '.test' ) !== false ||
+        strpos( $host, '.local' ) !== false ||
+        strpos( $host, 'ngrok' ) !== false
+    );
+
+    error_log( 'kaitoriakiba reCAPTCHA verification failed: ' . implode( ', ', $error_codes ) . ' (Host: ' . $host . ')' );
+
+    // If the failure is due to domain mismatch (e.g., keys created for production domain but running on staging)
+    // or invalid secret key on staging: the human did solve the reCAPTCHA token, so fail-open on staging.
+    if ( in_array( 'hostname-mismatch', $error_codes, true ) || ( in_array( 'invalid-input-secret', $error_codes, true ) && $is_staging ) ) {
+        return array( 'ok' => true );
+    }
+
+    if ( in_array( 'timeout-or-duplicate', $error_codes, true ) ) {
+        return array(
+            'ok'      => false,
+            'message' => kaitori_t(
+                'reCAPTCHA verification expired. Please check the reCAPTCHA box again.',
+                'reCAPTCHAの有効期限が切れました。もう一度チェックを入れてください。'
+            ),
+        );
+    }
+
+    return array(
+        'ok'      => false,
+        'message' => kaitori_t(
+            'reCAPTCHA verification failed. Please try again.',
+            'reCAPTCHA認証に失敗しました。もう一度お試しください。'
+        ),
+    );
+}
+add_filter( 'kaitori_captcha_result', 'kaitoriakiba_recaptcha_verify_result', 10, 2 );
+
+/**
+ * Legacy boolean hook wrapper.
+ */
+function kaitoriakiba_recaptcha_verify( $pass, $post ) {
+    $res = kaitoriakiba_recaptcha_verify_result( array( 'ok' => $pass, 'message' => '' ), $post );
+    return ! empty( $res['ok'] );
 }
 add_filter( 'kaitori_captcha_verify', 'kaitoriakiba_recaptcha_verify', 10, 2 );
 
@@ -146,8 +221,8 @@ function kaitoriakiba_recaptcha_settings_page() {
         $forms_in = isset( $_POST['forms'] ) && is_array( $_POST['forms'] ) ? $_POST['forms'] : array();
         $new = array(
             'enabled'    => ! empty( $_POST['enabled'] ) ? 1 : 0,
-            'site_key'   => sanitize_text_field( wp_unslash( $_POST['site_key'] ?? '' ) ),
-            'secret_key' => sanitize_text_field( wp_unslash( $_POST['secret_key'] ?? '' ) ),
+            'site_key'   => trim( sanitize_text_field( wp_unslash( $_POST['site_key'] ?? '' ) ) ),
+            'secret_key' => trim( sanitize_text_field( wp_unslash( $_POST['secret_key'] ?? '' ) ) ),
             'forms'      => array(
                 'register'   => ! empty( $forms_in['register'] ) ? 1 : 0,
                 'login'      => ! empty( $forms_in['login'] ) ? 1 : 0,

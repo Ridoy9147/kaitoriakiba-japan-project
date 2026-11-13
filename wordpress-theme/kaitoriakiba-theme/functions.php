@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KAITORIAKIBA_VERSION', '2.9.3' );
+define( 'KAITORIAKIBA_VERSION', '2.9.4' );
 define( 'KAITORIAKIBA_DIR', get_template_directory() );
 define( 'KAITORIAKIBA_URI', get_template_directory_uri() );
 
@@ -104,8 +104,9 @@ function kaitoriakiba_enqueue_scripts() {
         'favorites'  => function_exists( 'kaitoriakiba_get_user_favorites' ) ? kaitoriakiba_get_user_favorites() : array(),
         'i18n_error' => kaitori_t( 'A communication error occurred. Please try again shortly.', '通信エラーが発生しました。しばらくしてからもう一度お試しください。' ),
         'i18n'       => array(
-            'imei_error'    => kaitori_t( 'Please enter a valid 15-digit IMEI number.', 'IMEI番号は15桁の数字で入力してください。' ),
-            'sending'       => kaitori_t( 'Sending…', '送信中...' ),
+            'imei_error'         => kaitori_t( 'Please enter a valid 15-digit IMEI number.', 'IMEI番号は15桁の数字で入力してください。' ),
+            'recaptcha_required' => kaitori_t( 'Please verify that you are not a robot by checking the reCAPTCHA box.', '「私はロボットではありません」にチェックを入れてください。' ),
+            'sending'            => kaitori_t( 'Sending…', '送信中...' ),
             'uploading'     => kaitori_t( 'Uploading documents…', '書類アップロード中...' ),
             'registering'   => kaitori_t( 'Registering…', '登録中...' ),
             'logging_in'    => kaitori_t( 'Logging in…', 'ログイン中...' ),

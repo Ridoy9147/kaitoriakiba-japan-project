@@ -666,6 +666,20 @@
             e.preventDefault();
 
             var $form = $(this);
+
+            // Client-side reCAPTCHA check if active on form
+            if (typeof grecaptcha !== 'undefined' && $form.find('.g-recaptcha').length) {
+                var rCheck = grecaptcha.getResponse();
+                if (!rCheck) {
+                    kaitoriPopup(
+                        (kaitori_ajax.i18n && kaitori_ajax.i18n.recaptcha_required) ||
+                        'Please verify that you are not a robot by checking the reCAPTCHA box.',
+                        'warning'
+                    );
+                    return false;
+                }
+            }
+
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-reg');
             var originalText = $submitBtn.html();
 
@@ -674,6 +688,14 @@
             var formData = new FormData(this);
             formData.append('action', 'kaitori_register_user');
             formData.append('security', kaitori_ajax.security);
+
+            // Ensure g-recaptcha-response is explicitly included
+            if (typeof grecaptcha !== 'undefined') {
+                var rToken = grecaptcha.getResponse();
+                if (rToken) {
+                    formData.set('g-recaptcha-response', rToken);
+                }
+            }
 
             $.ajax({
                 url: kaitori_ajax.ajax_url,
@@ -690,11 +712,17 @@
                             setTimeout(function() { window.location.href = response.data.redirect_url; }, 1400);
                         }
                     } else {
+                        if (typeof grecaptcha !== 'undefined') {
+                            try { grecaptcha.reset(); } catch (err) {}
+                        }
                         kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
+                    if (typeof grecaptcha !== 'undefined') {
+                        try { grecaptcha.reset(); } catch (err) {}
+                    }
                     kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
@@ -705,6 +733,20 @@
             e.preventDefault();
 
             var $form = $(this);
+
+            // Client-side reCAPTCHA check if active on form
+            if (typeof grecaptcha !== 'undefined' && $form.find('.g-recaptcha').length) {
+                var rCheck = grecaptcha.getResponse();
+                if (!rCheck) {
+                    kaitoriPopup(
+                        (kaitori_ajax.i18n && kaitori_ajax.i18n.recaptcha_required) ||
+                        'Please verify that you are not a robot by checking the reCAPTCHA box.',
+                        'warning'
+                    );
+                    return false;
+                }
+            }
+
             var $submitBtn = $form.find('button[type="submit"], .btn-submit-login');
             var originalText = $submitBtn.html();
 
@@ -713,6 +755,14 @@
             var formData = new FormData(this);
             formData.append('action', 'kaitori_login_user');
             formData.append('security', kaitori_ajax.security);
+
+            // Ensure g-recaptcha-response is explicitly included
+            if (typeof grecaptcha !== 'undefined') {
+                var rToken = grecaptcha.getResponse();
+                if (rToken) {
+                    formData.set('g-recaptcha-response', rToken);
+                }
+            }
 
             $.ajax({
                 url: kaitori_ajax.ajax_url,
@@ -733,11 +783,17 @@
                             }
                         }, 1400);
                     } else {
+                        if (typeof grecaptcha !== 'undefined') {
+                            try { grecaptcha.reset(); } catch (err) {}
+                        }
                         kaitoriPopup(response.data.message || kaitori_ajax.i18n_error, 'error');
                     }
                 },
                 error: function() {
                     $submitBtn.prop('disabled', false).html(originalText);
+                    if (typeof grecaptcha !== 'undefined') {
+                        try { grecaptcha.reset(); } catch (err) {}
+                    }
                     kaitoriPopup(kaitori_ajax.i18n_error, 'error');
                 }
             });
